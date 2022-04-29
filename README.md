@@ -17,3 +17,21 @@ import xgt
 from xgt_neo4j_connector import Neo4jConnector
 ```
 
+## API
+
+The available properties are:
+
+  - neo4j_relationship_types
+  - neo4j_node_labels
+  - neo4j_property_keys)
+  - neo4j_node_type_properties
+  - neo4j_rel_type_properties
+  - neo4j_nodes
+  - neo4j_edges
+  
+The available methods are:
+
+  - get_xgt_schema_for
+  - create_xgt_schemas
+  - copy_data_from_neo4j_to_xgt
+  - transfer_from_neo4j_to_xgt_for

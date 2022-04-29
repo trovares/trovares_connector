@@ -69,26 +69,30 @@ class Neo4jConnector(object):
         return result
 
     @property
-    def neo4j_relationship_types(self):
+    def neo4j_relationship_types(self) -> list():
+        """
+        Retrieve a list of the neo4j relationship types.
+
+        Returns
+        -------
+        list
+          List of the string names of relationship types in the connected neo4j.
+        """
         if self._neo4j_relationship_types is None:
             self._neo4j_relationship_types = list(self.neo4j_edges.keys())
             self._neo4j_relationship_types.sort()
         return self._neo4j_relationship_types
 
     @property
-    def neo4j_node_type_properties(self):
-        if self._neo4j_node_type_properties is None:
-            self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
-        return self._neo4j_node_type_properties
-
-    @property
-    def neo4j_rel_type_properties(self):
-        if self._neo4j_rel_type_properties is None:
-            self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
-        return self._neo4j_rel_type_properties
-
-    @property
     def neo4j_node_labels(self):
+        """
+        Retrieve a list of the neo4j node labels.
+
+        Returns
+        -------
+        list
+          List of the string names of node labels in the connected neo4j.
+        """
         if self._neo4j_node_labels is None:
             self._neo4j_node_labels = list(self._neo4j_nodes.keys())
             self._neo4j_node_labels.sort()
@@ -96,21 +100,90 @@ class Neo4jConnector(object):
 
     @property
     def neo4j_property_keys(self):
+        """
+        Retrieve a list of the neo4j property keys.
+
+        Returns
+        -------
+        list
+          List of the string names of property keys in the connected neo4j.
+        """
         if self._neo4j_property_keys is None:
             self._neo4j_property_keys = list(self.__neo4j_property_keys())
             self._neo4j_property_keys.sort()
         return self._neo4j_property_keys
     
     @property
-    def neo4j_edges(self):
-        return self._neo4j_edges
-    
+    def neo4j_node_type_properties(self)->list():
+        """
+        Retrieve a list of the property types attached to the nodes in neo4j.
+        
+        Each element of this list is a dictionary describing the property,
+        including its name, its possible data types, and which node labels
+        it may be attached to.
+
+        Returns
+        -------
+        list
+          List of the string names of node property types in the connected neo4j.
+        """
+        if self._neo4j_node_type_properties is None:
+            self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
+        return self._neo4j_node_type_properties
+
     @property
-    def neo4j_nodes(self):
+    def neo4j_rel_type_properties(self) -> list():
+        """
+        Retrieve a list of the property types attached to the relationships in
+        neo4j.
+
+        Each element of this list is a dictionary describing the property,
+        including its name, its possible data types, and which relationship(s)
+        it may be attached to.
+
+        Returns
+        -------
+        list
+          List of the string names of relationship property types in the
+          connected neo4j.
+        """
+        if self._neo4j_rel_type_properties is None:
+            self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
+        return self._neo4j_rel_type_properties
+
+    @property
+    def neo4j_nodes(self) -> dict():
+        """
+        Retrieve a dictionary of the node labels (types) mapped to a
+        description of the node's schema.
+
+        Each dictionary entry has a key, which is the node label, and a value
+        that is a dictionary of property-names mapped to property-types.
+
+        Returns
+        -------
+        dict
+          Dictionary mapping the node labels to a description of the
+          node's schema.
+        """
         if self._neo4j_nodes is None:
             self._neo4j_nodes = self.__neo4j_nodes()
         return self._neo4j_nodes
     
+    @property
+    def neo4j_edges(self) -> dict():
+        """
+        Retrieve a dictionary of the edges (relationships) mapped to a
+        description of the edge's metadata, including its property schema and
+        its endpoint node labels (for both source and target).
+
+        Returns
+        -------
+        dict
+          Dictionary mapping the edge names to a description of the
+          edge's schema and edge endpoints.
+        """
+        return self._neo4j_edges
 
     def get_xgt_schema_for(self, vertices = None, edges = None,
                                  neo4j_id_name = 'neo4j_id',

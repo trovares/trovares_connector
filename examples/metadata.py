@@ -31,10 +31,10 @@ def show(label, values):
     pprint(values)
 
 show("relationship types:", c.neo4j_relationship_types)
-show("node type properties:", c.neo4j_node_type_properties)
-show("rel type properties:", c.neo4j_rel_type_properties)
 show("node labels:", c.neo4j_node_labels)
 show("property keys:", c.neo4j_property_keys)
+show("node type properties:", c.neo4j_node_type_properties)
+show("rel type properties:", c.neo4j_rel_type_properties)
 show("nodes:", c.neo4j_nodes)
 show("edges:", c.neo4j_edges)
 
