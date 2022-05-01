@@ -1,0 +1,275 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>xgt_neo4j_connector.Neo4jConnector &#8212; xgt_neo4j_connector 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="xgt_neo4j_connector Package" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="xgt_neo4j_connector Package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector.Neo4jConnector</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="xgt-neo4j-connector-neo4jconnector">
+<h1>xgt_neo4j_connector.Neo4jConnector<a class="headerlink" href="#xgt-neo4j-connector-neo4jconnector" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xgt_neo4j_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.__init__" title="xgt_neo4j_connector.Neo4jConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_from_neo4j_to_xgt</span></code>(xgt_schemas)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code>(xgt_schemas[, append])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schema_for</span></code>([vertices, edges, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_from_neo4j_to_xgt_for</span></code>([vertices, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEO4J_TYPE_TO_XGT_TYPE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_edges" title="xgt_neo4j_connector.Neo4jConnector.neo4j_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_edges</span></code></a></p></td>
+<td><p>Retrieve a dictionary of the edges (relationships) mapped to a description of the edge's metadata, including its property schema and its endpoint node labels (for both source and target).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_labels</span></code></a></p></td>
+<td><p>Retrieve a list of the neo4j node labels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_type_properties</span></code></a></p></td>
+<td><p>Retrieve a list of the property types attached to the nodes in neo4j.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_nodes" title="xgt_neo4j_connector.Neo4jConnector.neo4j_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_nodes</span></code></a></p></td>
+<td><p>Retrieve a dictionary of the node labels (types) mapped to a description of the node's schema.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys" title="xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_property_keys</span></code></a></p></td>
+<td><p>Retrieve a list of the neo4j property keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_rel_type_properties</span></code></a></p></td>
+<td><p>Retrieve a list of the property types attached to the relationships in neo4j.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types" title="xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_relationship_types</span></code></a></p></td>
+<td><p>Retrieve a list of the neo4j relationship types.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_edges">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a dictionary of the edges (relationships) mapped to a
+description of the edge’s metadata, including its property schema and
+its endpoint node labels (for both source and target).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary mapping the edge names to a description of the
+edge’s schema and edge endpoints.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_labels</span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of the neo4j node labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the string names of node labels in the connected neo4j.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of the property types attached to the nodes in neo4j.</p>
+<p>Each element of this list is a dictionary describing the property,
+including its name, its possible data types, and which node labels
+it may be attached to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the string names of node property types in the connected neo4j.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a dictionary of the node labels (types) mapped to a
+description of the node’s schema.</p>
+<p>Each dictionary entry has a key, which is the node label, and a value
+that is a dictionary of property-names mapped to property-types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary mapping the node labels to a description of the
+node’s schema.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_property_keys</span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of the neo4j property keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the string names of property keys in the connected neo4j.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_rel_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of the property types attached to the relationships in
+neo4j.</p>
+<p>Each element of this list is a dictionary describing the property,
+including its name, its possible data types, and which relationship(s)
+it may be attached to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the string names of relationship property types in the
+connected neo4j.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_relationship_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of the neo4j relationship types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of the string names of relationship types in the connected neo4j.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">xgt_neo4j_connector Package</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="xgt_neo4j_connector Package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector.Neo4jConnector</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Trovares, Inc..
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>

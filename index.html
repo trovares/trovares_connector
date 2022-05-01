@@ -1,0 +1,182 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>xgt_neo4j_connector Package &#8212; xgt_neo4j_connector 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="xgt_neo4j_connector.Neo4jConnector" href="xgt_neo4j_connector.Neo4jConnector.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="xgt_neo4j_connector.Neo4jConnector.html" title="xgt_neo4j_connector.Neo4jConnector"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector Package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<section id="xgt-neo4j-connector-package">
+<h1>xgt_neo4j_connector Package<a class="headerlink" href="#xgt-neo4j-connector-package" title="Permalink to this headline">¶</a></h1>
+<p>This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>You can install this python package by executing this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg<span class="o">=</span>xgt_neo4j_connector
+</pre></div>
+</div>
+</section>
+<section id="using-xgt-neo4j-connector">
+<h2>Using xgt_neo4j_connector<a class="headerlink" href="#using-xgt-neo4j-connector" title="Permalink to this headline">¶</a></h2>
+<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>xgt_neo4j_connector</cite> is all that is needed to operate this connector.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>These examples show typical usage patterns.</p>
+<section id="copy-entire-graph-from-neo4j-to-trovares-xgt">
+<h2>Copy entire graph from Neo4j to Trovares xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-trovares-xgt" title="Permalink to this headline">¶</a></h2>
+<p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationshp types (edge types) in the neo4j data.
+All of these data frames are created in Trovares xGT and then all of the data is copied from neo4j to xGT.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_from_neo4j_to_xgt_for</span><span class="p">(</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">neo4j_node_labels</span><span class="p">,</span>
+                                    <span class="n">edges</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">neo4j_relationship_types</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">
+<h2>Copy a portion of a graph based on node labels and/or relationship types<a class="headerlink" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types" title="Permalink to this headline">¶</a></h2>
+<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
+Using this idiom requires knowing some schema information about the graph data stored in neo4j.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+<span class="n">nodes_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">]</span>
+<span class="n">edges_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KNOWS&#39;</span><span class="p">]</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_from_neo4j_to_xgt_for</span><span class="p">(</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">nodes_to_copy</span><span class="p">,</span>
+                                    <span class="n">edges</span> <span class="o">=</span> <span class="n">edges_to_copy</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="api-details">
+<h1>API Details<a class="headerlink" href="#api-details" title="Permalink to this headline">¶</a></h1>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="xgt_neo4j_connector.Neo4jConnector.html#xgt_neo4j_connector.Neo4jConnector" title="xgt_neo4j_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">xgt_neo4j_connector Package</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#using-xgt-neo4j-connector">Using xgt_neo4j_connector</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-details">API Details</a></li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="xgt_neo4j_connector.Neo4jConnector.html"
+                          title="next chapter">xgt_neo4j_connector.Neo4jConnector</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="xgt_neo4j_connector.Neo4jConnector.html" title="xgt_neo4j_connector.Neo4jConnector"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector Package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Trovares, Inc..
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>
