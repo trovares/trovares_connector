@@ -2,6 +2,8 @@
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 
+Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_connector/).
+
 ## Installation
 
 You can install this python package by executing this command:
