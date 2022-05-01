@@ -292,12 +292,24 @@ class Neo4jConnector(object):
                             neo4j_id_name = 'neo4j_id',
                             neo4j_source_node_name = 'neo4j_source',
                             neo4j_target_node_name = 'neo4j_target',
-                            append = False):
+                            append = False) -> None:
+        """
+        Copies data from neo4j to Trovares xGT.
+        This function first infers the schemas for all of the needed frames in xGT to
+        store the requested data.
+        Then those frames are created in xGT.
+        Finally, all of the nodes and all of the relationships are copied,
+        one frame at a time, from neo4j to xGT.
+
+        Returns
+        -------
+        None
+        """
         xgt_schema = self.get_xgt_schema_for(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
         self.create_xgt_schemas(xgt_schema, append)
         self.copy_data_from_neo4j_to_xgt(xgt_schema)
-        return
+        return None
 
     def __neo4j_property_keys(self):
         q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
