@@ -84,7 +84,7 @@ class Neo4jConnector(object):
         return self._neo4j_relationship_types
 
     @property
-    def neo4j_node_labels(self):
+    def neo4j_node_labels(self) -> list():
         """
         Retrieve a list of the neo4j node labels.
 
@@ -99,7 +99,7 @@ class Neo4jConnector(object):
         return self._neo4j_node_labels
 
     @property
-    def neo4j_property_keys(self):
+    def neo4j_property_keys(self) -> list():
         """
         Retrieve a list of the neo4j property keys.
 
@@ -114,7 +114,7 @@ class Neo4jConnector(object):
         return self._neo4j_property_keys
     
     @property
-    def neo4j_node_type_properties(self)->list():
+    def neo4j_node_type_properties(self) -> list():
         """
         Retrieve a list of the property types attached to the nodes in neo4j.
         
