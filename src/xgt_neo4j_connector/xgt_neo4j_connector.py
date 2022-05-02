@@ -189,7 +189,30 @@ class Neo4jConnector(object):
                                  neo4j_id_name = 'neo4j_id',
                                  neo4j_source_node_name = 'neo4j_source',
                                  neo4j_target_node_name = 'neo4j_target',
-                          ):
+                          ) -> dict():
+        """
+        Retrieve a dictionary containing the schema information for all of 
+        the nodes/vertices and all of the edges requested.
+
+        Parameters
+        ----------
+        vertices : iterable
+            List of requested node labels (vertex frame names).  
+        edges : iterable
+            List of requested relationship type (edge frame) names.
+        neo4j_id_name : str
+            The name of the xGT column holding the neo4j node's ID value.
+        neo4j_source_node_name : str
+            The name of the xGT column holding the source node's ID value.
+        neo4j_source_node_name: str
+            The name of the xGT column holding the target node's ID value.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the schema information both all of the nodes/
+            vertices and all of the edges requested.
+        """
         result = {'vertices' : dict(), 'edges' : dict()}
         if vertices is None:
             vertices = list()
@@ -214,6 +237,32 @@ class Neo4jConnector(object):
         return result
 
     def create_xgt_schemas(self, xgt_schemas, append = False) -> None:
+        """
+        Creates vertex and/or edge frames in Trovares xGT.
+
+        This function first infers the schemas for all of the needed frames in xGT to
+        store the requested data.
+        Then those frames are created in xGT.
+        Finally, all of the nodes and all of the relationships are copied,
+        one frame at a time, from neo4j to xGT.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Dictionary containing schema information for vertex and edge frames
+            to create in xGT.
+            This dictionary can be the value returned from the 
+            :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
+        append : boolean
+            Set to true when the xGT frames are already created and holding data
+            that should be appended to.
+            Set to false when the xGT frames are to be newly created (removing
+            any existing frames with the same names prior to creation).
+
+        Returns
+        -------
+            None
+        """
         if not append:
             for edge in xgt_schemas['edges']:
                 self._xgt_server.drop_frame(edge)
@@ -295,15 +344,34 @@ class Neo4jConnector(object):
                             append = False) -> None:
         """
         Copies data from neo4j to Trovares xGT.
+
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
         Then those frames are created in xGT.
         Finally, all of the nodes and all of the relationships are copied,
         one frame at a time, from neo4j to xGT.
 
+        Parameters
+        ----------
+        vertices : iterable
+            List of requested node labels (vertex frame names).  
+        edges : iterable
+            List of requested relationship type (edge frame) names.
+        neo4j_id_name : str
+            The name of the xGT column holding the neo4j node's ID value.
+        neo4j_source_node_name : str
+            The name of the xGT column holding the source node's ID value.
+        neo4j_source_node_name : str
+            The name of the xGT column holding the target node's ID value.
+        append : boolean
+            Set to true when the xGT frames are already created and holding data
+            that should be appended to.
+            Set to false when the xGT frames are to be newly created (removing
+            any existing frames with the same names prior to creation).
+
         Returns
         -------
-        None
+            None
         """
         xgt_schema = self.get_xgt_schema_for(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
