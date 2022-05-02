@@ -67,11 +67,11 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_from_neo4j_to_xgt</span></code>(xgt_schemas)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code>(xgt_schemas[, append])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas" title="xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code></a>(xgt_schemas[, append])</p></td>
+<td><p>Creates vertex and/or edge frames in Trovares xGT.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schema_for</span></code>([vertices, edges, ...])</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schema_for</span></code></a>([vertices, edges, ...])</p></td>
+<td><p>Retrieve a dictionary containing the schema information for all of the nodes/vertices and all of the edges requested.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for" title="xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_from_neo4j_to_xgt_for</span></code></a>([vertices, ...])</p></td>
 <td><p>Copies data from neo4j to Trovares xGT.</p></td>
@@ -111,6 +111,59 @@
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas">
+<span class="sig-name descname"><span class="pre">create_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates vertex and/or edge frames in Trovares xGT.</p>
+<p>This function first infers the schemas for all of the needed frames in xGT to
+store the requested data.
+Then those frames are created in xGT.
+Finally, all of the nodes and all of the relationships are copied,
+one frame at a time, from neo4j to xGT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
+to create in xGT.
+This dictionary can be the value returned from the
+<a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schema_for()</span></code></a> method.</p></li>
+<li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
+that should be appended to.
+Set to false when the xGT frames are to be newly created (removing
+any existing frames with the same names prior to creation).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for">
+<span class="sig-name descname"><span class="pre">get_xgt_schema_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">{}</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a dictionary containing the schema information for all of
+the nodes/vertices and all of the edges requested.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.</p></li>
+<li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the neo4j node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary containing the schema information both all of the nodes/
+vertices and all of the edges requested.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_edges">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_edges" title="Permalink to this definition">¶</a></dt>
@@ -227,15 +280,28 @@ connected neo4j.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for">
 <span class="sig-name descname"><span class="pre">transfer_from_neo4j_to_xgt_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copies data from neo4j to Trovares xGT.
-This function first infers the schemas for all of the needed frames in xGT to
+<dd><p>Copies data from neo4j to Trovares xGT.</p>
+<p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
 Then those frames are created in xGT.
 Finally, all of the nodes and all of the relationships are copied,
 one frame at a time, from neo4j to xGT.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.</p></li>
+<li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the neo4j node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
+<li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
+<li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
+that should be appended to.
+Set to false when the xGT frames are to be newly created (removing
+any existing frames with the same names prior to creation).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
