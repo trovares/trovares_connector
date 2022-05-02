@@ -306,7 +306,26 @@ class Neo4jConnector(object):
 
         return None
 
-    def copy_data_from_neo4j_to_xgt(self, xgt_schemas):
+    def copy_data_from_neo4j_to_xgt(self, xgt_schemas) -> None:
+        """
+        Copies data from neo4j to the requested vertex and/or edge frames
+        in Trovares xGT.
+
+        This function copies data from neo4j to xGT for all of the nodes and
+        all of the relationships, one frame at a time.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Dictionary containing schema information for vertex and edge frames
+            to create in xGT.
+            This dictionary can be the value returned from the 
+            :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
+
+        Returns
+        -------
+            None
+        """
         for vertex, schema in xgt_schemas['vertices'].items():
             if self.__verbose or True:
                 print(f'Copy data for vertex {vertex} into schema: {schema}')
@@ -335,6 +354,7 @@ class Neo4jConnector(object):
                 if a != source_key and a != target_key:
                     query += f", e.{a} AS {a}"
             self.__arrow_copy_data(query, edge)
+        return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
                             vertices = None, edges = None,
