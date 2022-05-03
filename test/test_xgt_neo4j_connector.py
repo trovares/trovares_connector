@@ -10,7 +10,16 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.xgt = xgt.Connection()
     cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
-    cls.create_connector()
+    # Create a connector, retrying until neo4j becomes ready.
+    retries = 20
+    while retries >= 0:
+      try:
+        cls.neo4j = Neo4jConnector(cls.xgt)
+      except (neo4j.exceptions.ServiceUnavailable):
+        if retries == 0:
+          raise
+        retries -= 1
+        time.sleep(5)
 
   def teardown_class(cls):
     del cls.neo4j
@@ -21,14 +30,3 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     # Must pass at least one parameter to constructor.
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
-
-  def create_connector(self, max_retries = 20):
-    retries = max_retries
-    while retries >= 0:
-      try:
-        self.neo4j = Neo4jConnector(self.xgt)
-      except (neo4j.exceptions.ServiceUnavailable):
-        if retries == 0:
-          raise
-        retries -= 1
-        time.sleep(5)
