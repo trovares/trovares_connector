@@ -10,7 +10,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.xgt = xgt.Connection()
     cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
-    self.create_connector()
+    cls.create_connector()
 
   def teardown_class(cls):
     del cls.neo4j
