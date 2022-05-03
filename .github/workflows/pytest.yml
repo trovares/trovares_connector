@@ -14,6 +14,7 @@ on:
 
 jobs:
   test:
+    timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -38,6 +39,17 @@ jobs:
 
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 trovares/xgt"
+
+    - name: Launch neo4j
+      run: |
+        echo "CWD: ${CWD}"
+        mkdir -p neo4j-plugins
+        wget -o neo4j-plugins/neo4j-arrow-4.1-all.jar https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar
+        docker run --rm -d --name neo4j -p7474:7474 -p7687:7687 -p 9999:9999 --user=$(id -u):$(id -g) -v $PWD/neo4j-plugins:/plugins \
+            --env NEO4J_AUTH=neo4j/foo --env NEO4J_EDITION=community --env NEO4JLABS_PLUGINS='["graph-data-science"]' --env HOST=0.0.0.0  --env NEO$J_dbms_default__listen__address=0.0.0.0
+
+    - name: Show docker containers
+      run: "docker ps -a"
 
     - name: Run test suite
       run: |
