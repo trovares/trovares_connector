@@ -69,6 +69,18 @@ class Neo4jConnector(object):
         return result
 
     @property
+    def neo4j_driver(self) -> neo4j.Neo4jDriver:
+        """
+        Retrieve the Python driver connected to the neo4j database.
+
+        Returns
+        -------
+        neo4j.Neo4jDriver
+          The Python driver object that is connected to the neo4j database
+        """
+        return self._neo4j_driver
+
+    @property
     def neo4j_relationship_types(self) -> list():
         """
         Retrieve a list of the neo4j relationship types.
