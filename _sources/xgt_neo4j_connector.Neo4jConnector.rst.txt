@@ -28,6 +28,7 @@
    .. autosummary::
    
       ~Neo4jConnector.NEO4J_TYPE_TO_XGT_TYPE
+      ~Neo4jConnector.neo4j_driver
       ~Neo4jConnector.neo4j_edges
       ~Neo4jConnector.neo4j_node_labels
       ~Neo4jConnector.neo4j_node_type_properties

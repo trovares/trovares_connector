@@ -88,25 +88,28 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEO4J_TYPE_TO_XGT_TYPE</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_edges" title="xgt_neo4j_connector.Neo4jConnector.neo4j_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_edges</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_driver" title="xgt_neo4j_connector.Neo4jConnector.neo4j_driver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_driver</span></code></a></p></td>
+<td><p>Retrieve the Python driver connected to the neo4j database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_edges" title="xgt_neo4j_connector.Neo4jConnector.neo4j_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_edges</span></code></a></p></td>
 <td><p>Retrieve a dictionary of the edges (relationships) mapped to a description of the edge's metadata, including its property schema and its endpoint node labels (for both source and target).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_labels</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_labels</span></code></a></p></td>
 <td><p>Retrieve a list of the neo4j node labels.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_type_properties</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_node_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_node_type_properties</span></code></a></p></td>
 <td><p>Retrieve a list of the property types attached to the nodes in neo4j.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_nodes" title="xgt_neo4j_connector.Neo4jConnector.neo4j_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_nodes</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_nodes" title="xgt_neo4j_connector.Neo4jConnector.neo4j_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_nodes</span></code></a></p></td>
 <td><p>Retrieve a dictionary of the node labels (types) mapped to a description of the node's schema.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys" title="xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_property_keys</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys" title="xgt_neo4j_connector.Neo4jConnector.neo4j_property_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_property_keys</span></code></a></p></td>
 <td><p>Retrieve a list of the neo4j property keys.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_rel_type_properties</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties" title="xgt_neo4j_connector.Neo4jConnector.neo4j_rel_type_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_rel_type_properties</span></code></a></p></td>
 <td><p>Retrieve a list of the property types attached to the relationships in neo4j.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types" title="xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_relationship_types</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types" title="xgt_neo4j_connector.Neo4jConnector.neo4j_relationship_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_relationship_types</span></code></a></p></td>
 <td><p>Retrieve a list of the neo4j relationship types.</p></td>
 </tr>
 </tbody>
@@ -180,6 +183,20 @@ vertices and all of the edges requested.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_driver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_driver</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">neo4j.Neo4jDriver</span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the Python driver connected to the neo4j database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The Python driver object that is connected to the neo4j database</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>neo4j.Neo4jDriver</p>
 </dd>
 </dl>
 </dd></dl>
