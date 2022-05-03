@@ -3,8 +3,14 @@ name: PyTest
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'test/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'test/**'
 
 jobs:
   test:
@@ -29,6 +35,9 @@ jobs:
         pip install -r requirements.txt
         pip install pytest
         pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+
+    - name: Launch xGT
+      run: "docker run --rm -d --name xgt -p 4367:4367 trovares/xgt"
 
     - name: Run test suite
       run: |
