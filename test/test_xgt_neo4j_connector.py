@@ -1,5 +1,6 @@
 import unittest
 
+import xgt
 from xgt_neo4j_connector import Neo4jConnector
 
 class TestXgtNeo4jConnector(unittest.TestCase):
@@ -7,4 +8,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     # Must pass at least one parameter to constructor.
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
+    x = xgt.Connection()
+    c = Neo4jConnector(x)
 
