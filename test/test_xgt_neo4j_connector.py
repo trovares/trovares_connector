@@ -9,5 +9,5 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
     x = xgt.Connection()
-    c = Neo4jConnector(x)
+#   c = Neo4jConnector(x)
 
