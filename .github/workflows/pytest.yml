@@ -43,7 +43,7 @@ jobs:
     - name: Launch neo4j
       run: |
         mkdir -p neo4j/plugins neo4j/data
-        wget -o neo4j-plugins/neo4j-arrow-4.1-all.jar https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar
+        wget -o neo4j/plugins/neo4j-arrow-4.1-all.jar https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar
         docker run --rm -d --name neo4j -p7474:7474 -p7687:7687 -p 9999:9999 \
             --user=$(id -u):$(id -g) -v $PWD/neo4j/plugins:/plugins \
             -v $PWD/neo4j/data:/data \

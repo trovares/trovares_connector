@@ -30,3 +30,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     # Must pass at least one parameter to constructor.
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
+
+  def xgt_free_memory(self):
+    return self.xgt.free_user_memory_size
