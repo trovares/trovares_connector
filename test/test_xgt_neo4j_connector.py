@@ -17,5 +17,5 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     # Must pass at least one parameter to constructor.
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
-#   c = Neo4jConnector(x)
+    c = Neo4jConnector(self.xgt)
 
