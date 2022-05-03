@@ -40,9 +40,6 @@ jobs:
         pip install pytest
         pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 
-    - name: Launch xGT
-      run: "docker run --rm -d --name xgt -p 4367:4367 trovares/xgt"
-
     - name: Launch neo4j
       run: |
         mkdir -p neo4j/plugins
@@ -53,6 +50,9 @@ jobs:
             --env NEO4JLABS_PLUGINS='["graph-data-science"]' \
             --env HOST=0.0.0.0  --env NEO4J_dbms_default__listen__address=0.0.0.0 \
             neo4j:4.4.4
+
+    - name: Launch xGT
+      run: "docker run --rm -d --name xgt -p 4367:4367 trovares/xgt"
 
     - name: Show docker containers
       run: "docker ps -a"
