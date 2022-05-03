@@ -15,7 +15,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     retries = 20
     while retries >= 0:
       try:
-        cls.neo4j = Neo4jConnector(cls.xgt)
+        cls.neo4j = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
       except (neo4j.exceptions.ServiceUnavailable):
         if retries == 0:
           raise
