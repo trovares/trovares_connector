@@ -21,6 +21,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
           raise
         retries -= 1
         time.sleep(5)
+    print("Connector has been created.")
     # Create a connection to neo4j (via python driver).
     cls.neo4j_driver = cls.neo4j.neo4j_driver
 
@@ -30,13 +31,17 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     del cls.xgt
 
   def test_connector_creation(self) -> None:
+    print("test_connector_creation started.")
     # Must pass at least one parameter to constructor.
     with self.assertRaises(TypeError):
       c = Neo4jConnector()
+    print("test_connector_creation ended.")
 
   def test_neo4j(self):
+    print("test_neo4j started.")
     driver = self.neo4j_driver
     assert isinstance(driver, neo4j.Neo4jDriver)
+    print("test_neo4j ended.")
 
   def xgt_free_memory(self):
     return self.xgt.free_user_memory_size
