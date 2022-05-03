@@ -28,6 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest
+        pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 
     - name: Run test suite
       run: |
