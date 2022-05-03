@@ -11,7 +11,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
     # Create a connector, retrying until neo4j becomes ready.
-    retries = 20
+    retries = 5
     while retries >= 0:
       try:
         cls.neo4j = Neo4jConnector(cls.xgt)
