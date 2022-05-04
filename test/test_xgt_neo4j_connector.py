@@ -6,6 +6,7 @@ import xgt
 from xgt_neo4j_connector import Neo4jConnector
 
 class TestXgtNeo4jConnector(unittest.TestCase):
+  @classmethod
   def setup_class(cls):
     # Create a connection to Trovares xGT
     cls.xgt = xgt.Connection()
@@ -15,6 +16,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.neo4j_driver = cls.neo4j.neo4j_driver
     return
 
+  @classmethod
   def teardown_class(cls):
     del cls.neo4j
     cls.xgt.drop_namespace('test', force_drop = True)
@@ -32,6 +34,12 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         return cls._setup_connector(retries - 1)
     conn = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
     return conn
+
+  def setup_method(self, method):
+    pass
+
+  def teardown_method(self, method):
+    self._erase_neo4j_database()
 
   def test_connector_creation(self) -> None:
     # Must pass at least one parameter to constructor.
@@ -62,5 +70,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert isinstance(edges, dict)
     assert len(edges) == 0
 
-  def gt_free_memory(self):
-    return self.xgt.free_user_memory_size
+  def _erase_neo4j_database(self):
+    with self.neo4j_driver.session() as session:
+      result = session.run("MATCH (n) DETACH DELETE n")
