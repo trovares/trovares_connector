@@ -26,6 +26,7 @@ class Neo4jConnector(object):
         'INTEGER': xgt.INT,
         'Long': xgt.INT,
         'FLOAT': xgt.FLOAT,
+        'Double': xgt.FLOAT,
         'STRING': xgt.TEXT,
         'String': xgt.TEXT,
         'Boolean': xgt.BOOLEAN,

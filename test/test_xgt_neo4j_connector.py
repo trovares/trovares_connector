@@ -78,11 +78,16 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true})')
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
-    assert len(xgt_schema) == 4
-    # for prop in props:
-    #   name = prop['propertyName']
-    #   types = prop['propertyTypes']
     print(xgt_schema)
+    vertices = xgt_schema['vertices']['Node']
+    #schema = {(k,v) for (k,v) in itemize(vertices['schema'])}
+    schema = dict(vertices['schema'])
+    assert len(schema) == 5
+    assert schema['int'] == 'int'
+    assert schema['str'] == 'text'
+    assert schema['bool'] == 'boolean'
+    print(schema)
+    print(c.neo4j_node_type_properties)
 
   def _erase_neo4j_database(self):
     with self.neo4j_driver.session() as session:
