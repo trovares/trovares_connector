@@ -30,6 +30,9 @@ class Neo4jConnector(object):
         'STRING': xgt.TEXT,
         'String': xgt.TEXT,
         'Boolean': xgt.BOOLEAN,
+        'Date': xgt.DATE,
+        'Time': xgt.TIME,
+        'DateTime': xgt.DATETIME,
     }
 
     def __init__(self, xgt_server,

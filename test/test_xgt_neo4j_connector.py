@@ -75,15 +75,17 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
       # DateTime, LocalDateTime, and Duration.
       result = session.run(
-        'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true})')
+        'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+        'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100") })')
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     print(xgt_schema)
     vertices = xgt_schema['vertices']['Node']
-    #schema = {(k,v) for (k,v) in itemize(vertices['schema'])}
     schema = dict(vertices['schema'])
-    assert len(schema) == 5
+    assert len(schema) == 8
     assert schema['int'] == 'int'
+    assert schema['real'] == 'float'
     assert schema['str'] == 'text'
     assert schema['bool'] == 'boolean'
     print(schema)
