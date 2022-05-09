@@ -36,7 +36,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     return conn
 
   def setup_method(self, method):
-    pass
+    self._erase_neo4j_database()
 
   def teardown_method(self, method):
     self._erase_neo4j_database()
@@ -69,6 +69,20 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     edges = self.neo4j.neo4j_edges
     assert isinstance(edges, dict)
     assert len(edges) == 0
+
+  def test_node_attributes(self):
+    with self.neo4j_driver.session() as session:
+      # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
+      # DateTime, LocalDateTime, and Duration.
+      result = session.run(
+        'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true})')
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
+    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    assert len(xgt_schema) == 4
+    # for prop in props:
+    #   name = prop['propertyName']
+    #   types = prop['propertyTypes']
+    print(xgt_schema)
 
   def _erase_neo4j_database(self):
     with self.neo4j_driver.session() as session:

@@ -28,6 +28,7 @@ class Neo4jConnector(object):
         'FLOAT': xgt.FLOAT,
         'STRING': xgt.TEXT,
         'String': xgt.TEXT,
+        'Boolean': xgt.BOOLEAN,
     }
 
     def __init__(self, xgt_server,
@@ -581,7 +582,7 @@ class Neo4jConnector(object):
     def __neo4j_type_to_xgt_type(self, prop_type):
         if prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
             return self.NEO4J_TYPE_TO_XGT_TYPE[prop_type]
-        return xgt.UNKNOWN
+        return None
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
