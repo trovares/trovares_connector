@@ -94,8 +94,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert schema['date_attr'] == 'date'
     assert schema['time_attr'] == 'time'
     assert schema['datetime_attr'] == 'datetime'
-    assert schema['localtime_attr'] == 'localtime'
-    assert schema['localdatetime_attr'] == 'localdatetime'
+    assert schema['localtime_attr'] == 'time'
+    assert schema['localdatetime_attr'] == 'datetime'
     assert schema['duration_attr'] == 'int'
     print(schema)
     print(c.neo4j_node_type_properties)
