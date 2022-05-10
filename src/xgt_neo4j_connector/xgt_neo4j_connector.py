@@ -33,6 +33,9 @@ class Neo4jConnector(object):
         'Date': xgt.DATE,
         'Time': xgt.TIME,
         'DateTime': xgt.DATETIME,
+        'LocalTime': xgt.TIME,
+        'LocalDateTime': xgt.DATETIME,
+        'Duration': xgt.INT,
     }
 
     def __init__(self, xgt_server,

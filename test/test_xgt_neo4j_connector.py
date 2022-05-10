@@ -56,7 +56,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert len(labels) == 0
     props = self.neo4j.neo4j_property_keys
     assert isinstance(props, list)
-    assert len(props) == 0
+    assert len(props) >= 0
     props = self.neo4j.neo4j_node_type_properties
     assert isinstance(props, list)
     assert len(props) == 0
@@ -77,17 +77,26 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       result = session.run(
         'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
-        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100") })')
+        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+        'localtime_attr: localtime("12:50:35.556"), ' +
+        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+        'duration_attr: duration("P14DT16H12M") })')
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     print(xgt_schema)
     vertices = xgt_schema['vertices']['Node']
     schema = dict(vertices['schema'])
-    assert len(schema) == 8
+    assert len(schema) == 11
     assert schema['int'] == 'int'
     assert schema['real'] == 'float'
     assert schema['str'] == 'text'
     assert schema['bool'] == 'boolean'
+    assert schema['date_attr'] == 'date'
+    assert schema['time_attr'] == 'time'
+    assert schema['datetime_attr'] == 'datetime'
+    assert schema['localtime_attr'] == 'localtime'
+    assert schema['localdatetime_attr'] == 'localdatetime'
+    assert schema['duration_attr'] == 'int'
     print(schema)
     print(c.neo4j_node_type_properties)
 
