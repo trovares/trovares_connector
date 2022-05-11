@@ -24,6 +24,10 @@ You can install this python package by executing this command:
 
    python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 
+You also need to have the `neo4j_arrow <https://github.com/neo4j-field/neo4j-arrow>`_ plugin installed in your neo4j database.
+This can be done by placing the `neo4j_arrow.jar <https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar>`_ file in the appropriate ``plugins`` directory of your neo4j installation.
+
+
 Using xgt_neo4j_connector
 -------------------------
 
