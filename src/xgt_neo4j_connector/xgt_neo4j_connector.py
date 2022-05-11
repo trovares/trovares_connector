@@ -39,7 +39,7 @@ class Neo4jConnector(object):
     }
 
     def __init__(self, xgt_server,
-                       neo4j_host = 'localhost', 
+                       neo4j_host = 'localhost',
                        neo4j_port = 7474, neo4j_bolt_port = 7687,
                        neo4j_arrow_port = 9999, neo4j_auth = None,
                        verbose = False):
@@ -65,7 +65,7 @@ class Neo4jConnector(object):
         e = self.neo4j_rel_type_properties
         self._neo4j_edges = self.__neo4j_process_edges(e)
         self.__add_neo4j_schema_connectivity_to_neo4j_edges()
-        
+
 
     def __str__(self) -> str:
         result = ""
@@ -132,12 +132,12 @@ class Neo4jConnector(object):
             self._neo4j_property_keys = list(self.__neo4j_property_keys())
             self._neo4j_property_keys.sort()
         return self._neo4j_property_keys
-    
+
     @property
     def neo4j_node_type_properties(self) -> list():
         """
         Retrieve a list of the property types attached to the nodes in neo4j.
-        
+
         Each element of this list is a dictionary describing the property,
         including its name, its possible data types, and which node labels
         it may be attached to.
@@ -189,7 +189,7 @@ class Neo4jConnector(object):
         if self._neo4j_nodes is None:
             self._neo4j_nodes = self.__neo4j_nodes()
         return self._neo4j_nodes
-    
+
     @property
     def neo4j_edges(self) -> dict():
         """
@@ -211,13 +211,13 @@ class Neo4jConnector(object):
                                  neo4j_target_node_name = 'neo4j_target',
                           ) -> dict():
         """
-        Retrieve a dictionary containing the schema information for all of 
+        Retrieve a dictionary containing the schema information for all of
         the nodes/vertices and all of the edges requested.
 
         Parameters
         ----------
         vertices : iterable
-            List of requested node labels (vertex frame names).  
+            List of requested node labels (vertex frame names).
         edges : iterable
             List of requested relationship type (edge frame) names.
         neo4j_id_name : str
@@ -238,7 +238,7 @@ class Neo4jConnector(object):
             vertices = list()
         if edges is None:
             edges = dict()
-        
+
         for vertex in vertices:
             if vertex not in self.neo4j_node_labels:
                 raise ValueError(f"Neo4j Node Label {vertex} is not found.")
@@ -246,7 +246,7 @@ class Neo4jConnector(object):
             result['vertices'][vertex] = table_schema
             if self.__verbose:
                 print(f"xgt graph schema for vertex {vertex}: {table_schema}")
-        
+
         for edge in edges:
             schemas = self.__extract_xgt_edge_schemas(edge, vertices,
                                 neo4j_source_node_name, neo4j_target_node_name)
@@ -271,7 +271,7 @@ class Neo4jConnector(object):
         xgt_schemas : dict
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
-            This dictionary can be the value returned from the 
+            This dictionary can be the value returned from the
             :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
         append : boolean
             Set to true when the xGT frames are already created and holding data
@@ -339,7 +339,7 @@ class Neo4jConnector(object):
         xgt_schemas : dict
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
-            This dictionary can be the value returned from the 
+            This dictionary can be the value returned from the
             :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
 
         Returns
@@ -398,7 +398,7 @@ class Neo4jConnector(object):
         Parameters
         ----------
         vertices : iterable
-            List of requested node labels (vertex frame names).  
+            List of requested node labels (vertex frame names).
         edges : iterable
             List of requested relationship type (edge frame) names.
         neo4j_id_name : str
@@ -505,7 +505,7 @@ class Neo4jConnector(object):
                     nodes[name] = dict()
                 nodes[name][prop['propertyName']] = propTypes
         return nodes
-    
+
     def __neo4j_process_nodes(self, nodes):
         res = dict()
         for n in nodes:
@@ -547,7 +547,7 @@ class Neo4jConnector(object):
             if neo4j_id_name in neo4j_node:
                 raise ValueError(
                         f"Neo4j ID name {neo4j_id_name} is an attribute of node {neo4j_node}")
-        schema = [[key, self.__neo4j_type_to_xgt_type(type)] 
+        schema = [[key, self.__neo4j_type_to_xgt_type(type)]
                                 for key, type in neo4j_node.items()]
         schema.insert(0, [neo4j_id_name, xgt.INT])
         return {'schema' : schema, 'key' : neo4j_id_name}
@@ -558,16 +558,16 @@ class Neo4jConnector(object):
         result = dict()
         if edge not in self.neo4j_relationship_types:
             raise ValueError(f"Edge {edge} is not a known relationship type")
+        edge_info = self.neo4j_edges[edge]
         if self.__verbose:
             print(f"xgt graph schema for edge {edge}: {edge_info}")
-        edge_info = self.neo4j_edges[edge]
         schema = edge_info['schema']
         edge_endpoints = edge_info['endpoints']
         endpoints = f"{source}->{target}"
         if endpoints not in edge_endpoints:
             raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
 
-        schema = [[key, self.__neo4j_type_to_xgt_type(type)] 
+        schema = [[key, self.__neo4j_type_to_xgt_type(type)]
                                 for key, type in schema.items()]
         schema.insert(0, [neo4j_target_node_name, xgt.INT])
         schema.insert(0, [neo4j_source_node_name, xgt.INT])
