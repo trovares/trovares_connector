@@ -346,16 +346,20 @@ class Neo4jConnector(object):
         -------
             None
         """
+        def xlate_result_property(attr, attr_type) -> str:
+            if attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time':
+                return f", str(v.{a}) as {a}"
+            return f", v.{a} AS {a}"
         for vertex, schema in xgt_schemas['vertices'].items():
             if self.__verbose or True:
                 print(f'Copy data for vertex {vertex} into schema: {schema}')
             table_schema = schema['schema']
-            attributes = [_ for _, t in table_schema]
+            attributes = {_:t for _, t in table_schema}
             key = schema['key']
             query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
             for a in attributes:
                 if a != key:
-                    query += f", v.{a} AS {a}"
+                    query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
             self.__arrow_copy_data(query, vertex)
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
@@ -589,7 +593,7 @@ class Neo4jConnector(object):
     def __neo4j_type_to_xgt_type(self, prop_type):
         if prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
             return self.NEO4J_TYPE_TO_XGT_TYPE[prop_type]
-        return None
+        raise TypeError(f'The "{prop_type}" neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
