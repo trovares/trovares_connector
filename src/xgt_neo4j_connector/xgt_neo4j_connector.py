@@ -238,8 +238,6 @@ class Neo4jConnector(object):
 
         for vertex in vertices:
             if vertex not in self.neo4j_node_labels:
-                # The labels could have changed after the creation of the connector
-                # initialized, so update.
                 raise ValueError(f"Neo4j Node Label {vertex} is not found.")
             table_schema = self.__extract_xgt_vertex_schema(vertex, neo4j_id_name)
             result['vertices'][vertex] = table_schema
