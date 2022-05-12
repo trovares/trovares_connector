@@ -72,24 +72,24 @@ class Neo4jConnector(object):
     @property
     def neo4j_driver(self) -> neo4j.Neo4jDriver:
         """
-        Retrieve the Python driver connected to the neo4j database.
+        Retrieve the Python driver connected to the Neo4j database.
 
         Returns
         -------
         neo4j.Neo4jDriver
-          The Python driver object that is connected to the neo4j database
+          The Python driver object that is connected to the Neo4j database
         """
         return self._neo4j_driver
 
     @property
     def neo4j_relationship_types(self) -> list():
         """
-        Retrieve a list of the neo4j relationship types.
+        Retrieve a list of the Neo4j relationship types.
 
         Returns
         -------
         list
-          List of the string names of relationship types in the connected neo4j.
+          List of the string names of relationship types in the connected Neo4j.
         """
         self.__update_cache_state()
         if self._neo4j_relationship_types is None:
@@ -100,12 +100,12 @@ class Neo4jConnector(object):
     @property
     def neo4j_node_labels(self) -> list():
         """
-        Retrieve a list of the neo4j node labels.
+        Retrieve a list of the Neo4j node labels.
 
         Returns
         -------
         list
-          List of the string names of node labels in the connected neo4j.
+          List of the string names of node labels in the connected Neo4j.
         """
         self.__update_cache_state()
         if self._neo4j_node_labels is None:
@@ -116,12 +116,12 @@ class Neo4jConnector(object):
     @property
     def neo4j_property_keys(self) -> list():
         """
-        Retrieve a list of the neo4j property keys.
+        Retrieve a list of the Neo4j property keys.
 
         Returns
         -------
         list
-          List of the string names of property keys in the connected neo4j.
+          List of the string names of property keys in the connected Neo4j.
         """
         # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
         self._neo4j_property_keys = list(self.__neo4j_property_keys())
@@ -131,7 +131,7 @@ class Neo4jConnector(object):
     @property
     def neo4j_node_type_properties(self) -> list():
         """
-        Retrieve a list of the property types attached to the nodes in neo4j.
+        Retrieve a list of the property types attached to the nodes in Neo4j.
 
         Each element of this list is a dictionary describing the property,
         including its name, its possible data types, and which node labels
@@ -140,7 +140,7 @@ class Neo4jConnector(object):
         Returns
         -------
         list
-          List of the string names of node property types in the connected neo4j.
+          List of the string names of node property types in the connected Neo4j.
         """
         # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
         self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
@@ -150,7 +150,7 @@ class Neo4jConnector(object):
     def neo4j_rel_type_properties(self) -> list():
         """
         Retrieve a list of the property types attached to the relationships in
-        neo4j.
+        Neo4j.
 
         Each element of this list is a dictionary describing the property,
         including its name, its possible data types, and which relationship(s)
@@ -160,7 +160,7 @@ class Neo4jConnector(object):
         -------
         list
           List of the string names of relationship property types in the
-          connected neo4j.
+          connected Neo4j.
         """
         # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
         self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
@@ -218,7 +218,7 @@ class Neo4jConnector(object):
         edges : iterable
             List of requested relationship type (edge frame) names.
         neo4j_id_name : str
-            The name of the xGT column holding the neo4j node's ID value.
+            The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
             The name of the xGT column holding the source node's ID value.
         neo4j_source_node_name: str
@@ -261,7 +261,7 @@ class Neo4jConnector(object):
         store the requested data.
         Then those frames are created in xGT.
         Finally, all of the nodes and all of the relationships are copied,
-        one frame at a time, from neo4j to xGT.
+        one frame at a time, from Neo4j to xGT.
 
         Parameters
         ----------
@@ -296,7 +296,7 @@ class Neo4jConnector(object):
                     if frame.schema != table_schema:
                         raise ValueError(
                             f"Vertex Frame {vertex} has a schema {frame.schema}"
-                            + f" that is incompatible with neo4j: {table_schema}"
+                            + f" that is incompatible with Neo4j: {table_schema}"
                         )
                     create_frame = False
                 except:
@@ -325,10 +325,10 @@ class Neo4jConnector(object):
 
     def copy_data_from_neo4j_to_xgt(self, xgt_schemas) -> None:
         """
-        Copies data from neo4j to the requested vertex and/or edge frames
+        Copies data from Neo4j to the requested vertex and/or edge frames
         in Trovares xGT.
 
-        This function copies data from neo4j to xGT for all of the nodes and
+        This function copies data from Neo4j to xGT for all of the nodes and
         all of the relationships, one frame at a time.
 
         Parameters
@@ -384,13 +384,13 @@ class Neo4jConnector(object):
                             neo4j_target_node_name = 'neo4j_target',
                             append = False) -> None:
         """
-        Copies data from neo4j to Trovares xGT.
+        Copies data from Neo4j to Trovares xGT.
 
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
         Then those frames are created in xGT.
         Finally, all of the nodes and all of the relationships are copied,
-        one frame at a time, from neo4j to xGT.
+        one frame at a time, from Neo4j to xGT.
 
         Parameters
         ----------
@@ -399,7 +399,7 @@ class Neo4jConnector(object):
         edges : iterable
             List of requested relationship type (edge frame) names.
         neo4j_id_name : str
-            The name of the xGT column holding the neo4j node's ID value.
+            The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
             The name of the xGT column holding the source node's ID value.
         neo4j_source_node_name : str
@@ -590,7 +590,7 @@ class Neo4jConnector(object):
     def __neo4j_type_to_xgt_type(self, prop_type):
         if prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
             return self.NEO4J_TYPE_TO_XGT_TYPE[prop_type]
-        raise TypeError(f'The "{prop_type}" neo4j type is not yet supported')
+        raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
@@ -611,7 +611,7 @@ class Neo4jConnector(object):
             raise Exception('something is wrong...did you submit a job?')
         neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
         xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
-        # move data from neo4j to xGT in chunks
+        # move data from Neo4j to xGT in chunks
         count = 0
         while (True):
             try:
