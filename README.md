@@ -4,6 +4,13 @@ This package is for connecting the Trovares xGT graph analytics engine with the 
 
 Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_connector/).
 
+## Requirements
+
+ - [Neo4j Graph Data Science (GDS) library](https://github.com/neo4j/graph-data-science)
+ - [neo4j-arrow](https://github.com/neo4j-field/neo4j-arrow)
+
+These need to be installed as plugins to Neo4j.
+
 ## Installation
 
 You can install this python package by executing this command:
@@ -32,7 +39,7 @@ The available properties are:
   - neo4j_rel_type_properties
   - neo4j_nodes
   - neo4j_edges
-  
+
 The available methods are:
 
   - get_xgt_schema_for
