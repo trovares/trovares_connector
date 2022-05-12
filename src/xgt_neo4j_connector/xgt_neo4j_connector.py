@@ -59,13 +59,6 @@ class Neo4jConnector(object):
         self._neo4j_rel_type_properties = None
         self._neo4j_property_keys = None
         self._neo4j_node_labels = None
-        self._neo4j_nodes = None
-        n = self.neo4j_node_type_properties
-        self._neo4j_nodes = self.__neo4j_process_nodes(n)
-        e = self.neo4j_rel_type_properties
-        self._neo4j_edges = self.__neo4j_process_edges(e)
-        self.__add_neo4j_schema_connectivity_to_neo4j_edges()
-
 
     def __str__(self) -> str:
         result = ""
@@ -98,6 +91,7 @@ class Neo4jConnector(object):
         list
           List of the string names of relationship types in the connected neo4j.
         """
+        self.__update_cache_state()
         if self._neo4j_relationship_types is None:
             self._neo4j_relationship_types = list(self.neo4j_edges.keys())
             self._neo4j_relationship_types.sort()
@@ -113,6 +107,7 @@ class Neo4jConnector(object):
         list
           List of the string names of node labels in the connected neo4j.
         """
+        self.__update_cache_state()
         if self._neo4j_node_labels is None:
             self._neo4j_node_labels = list(self._neo4j_nodes.keys())
             self._neo4j_node_labels.sort()
@@ -128,9 +123,9 @@ class Neo4jConnector(object):
         list
           List of the string names of property keys in the connected neo4j.
         """
-        if self._neo4j_property_keys is None:
-            self._neo4j_property_keys = list(self.__neo4j_property_keys())
-            self._neo4j_property_keys.sort()
+        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
+        self._neo4j_property_keys = list(self.__neo4j_property_keys())
+        self._neo4j_property_keys.sort()
         return self._neo4j_property_keys
 
     @property
@@ -147,8 +142,8 @@ class Neo4jConnector(object):
         list
           List of the string names of node property types in the connected neo4j.
         """
-        if self._neo4j_node_type_properties is None:
-            self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
+        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
+        self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
         return self._neo4j_node_type_properties
 
     @property
@@ -167,8 +162,8 @@ class Neo4jConnector(object):
           List of the string names of relationship property types in the
           connected neo4j.
         """
-        if self._neo4j_rel_type_properties is None:
-            self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
+        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
+        self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
         return self._neo4j_rel_type_properties
 
     @property
@@ -186,6 +181,7 @@ class Neo4jConnector(object):
           Dictionary mapping the node labels to a description of the
           node's schema.
         """
+        self.__update_cache_state()
         if self._neo4j_nodes is None:
             self._neo4j_nodes = self.__neo4j_nodes()
         return self._neo4j_nodes
@@ -203,6 +199,7 @@ class Neo4jConnector(object):
           Dictionary mapping the edge names to a description of the
           edge's schema and edge endpoints.
         """
+        self.__update_cache_state()
         return self._neo4j_edges
 
     def get_xgt_schema_for(self, vertices = None, edges = None,
@@ -241,6 +238,8 @@ class Neo4jConnector(object):
 
         for vertex in vertices:
             if vertex not in self.neo4j_node_labels:
+                # The labels could have changed after the creation of the connector
+                # initialized, so update.
                 raise ValueError(f"Neo4j Node Label {vertex} is not found.")
             table_schema = self.__extract_xgt_vertex_schema(vertex, neo4j_id_name)
             result['vertices'][vertex] = table_schema
@@ -627,3 +626,24 @@ class Neo4jConnector(object):
         duration = time.time() - t0
         print(f"Time to transfer: {duration:,.2f}", flush=True)
         return duration
+
+    # TODO(landwehrj) : Is there a way to detect the cache is stale
+    # One option is to use the Neo4j count store of relationship/nodes
+    # to check if there are changes there. This wouldn't work in certain
+    # cases. Is there a way to get database modification time?
+    # Is it possible to query individual schema elements?
+    def __update_cache_state(self):
+        # TODO(landwehrj) : This gets called excessively.
+        # Improve the design to minimize calls.
+        self._neo4j_relationship_types = None
+        self._neo4j_node_type_properties = None
+        self._neo4j_rel_type_properties = None
+        self._neo4j_property_keys = None
+        self._neo4j_node_labels = None
+        self._neo4j_nodes = None
+        n = self.neo4j_node_type_properties
+        self._neo4j_nodes = self.__neo4j_process_nodes(n)
+        e = self.neo4j_rel_type_properties
+        self._neo4j_edges = self.__neo4j_process_edges(e)
+        self.__add_neo4j_schema_connectivity_to_neo4j_edges()
+

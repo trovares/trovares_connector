@@ -91,6 +91,32 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(schema)
     print(c.neo4j_node_type_properties)
 
+  def test_graph_update_after_connector_created(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
+    self._populate_node()
+    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    vertices = xgt_schema['vertices']['Node']
+    schema = dict(vertices['schema'])
+    assert len(schema) == 11
+    assert schema['int'] == 'int'
+    assert schema['real'] == 'float'
+    assert schema['str'] == 'text'
+    assert schema['bool'] == 'boolean'
+    assert schema['date_attr'] == 'date'
+    assert schema['time_attr'] == 'time'
+    assert schema['datetime_attr'] == 'datetime'
+    assert schema['localtime_attr'] == 'time'
+    assert schema['localdatetime_attr'] == 'datetime'
+    assert schema['duration_attr'] == 'int'
+
+  def test_graph_delete_after_connector_created(self):
+    self._populate_node()
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
+    with self.neo4j_driver.session() as session:
+      result = session.run("MATCH (n) DETACH DELETE n")
+    with self.assertRaises(ValueError):
+      xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+
   def disable_test_transfer_node(self):
     self._populate_node()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=True)
@@ -104,7 +130,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 1
-
 
   def _populate_node(self):
     with self.neo4j_driver.session() as session:
