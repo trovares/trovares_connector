@@ -323,7 +323,7 @@ class Neo4jConnector(object):
 
         return None
 
-    def copy_data_from_neo4j_to_xgt(self, xgt_schemas) -> None:
+    def copy_data_from_neo4j_to_xgt(self, xgt_schemas, use_bolt=True) -> None:
         """
         Copies data from Neo4j to the requested vertex and/or edge frames
         in Trovares xGT.
@@ -338,14 +338,17 @@ class Neo4jConnector(object):
             to create in xGT.
             This dictionary can be the value returned from the
             :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
+        use_bolt : boolean
+            Use bolt when transferring data from Neo4j to python instead of arrow.
+            By default this is true.
 
         Returns
         -------
             None
         """
         def xlate_result_property(attr, attr_type) -> str:
-            if attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time':
-                return f", str(v.{a}) as {a}"
+            if not use_bolt and (attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time'):
+                return f", toString(v.{a}) as {a}"
             return f", v.{a} AS {a}"
         for vertex, schema in xgt_schemas['vertices'].items():
             if self.__verbose or True:
@@ -357,7 +360,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != key:
                     query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
-            self.__arrow_copy_data(query, vertex)
+            self.__arrow_copy_data(query, vertex, attributes, use_bolt)
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
                 print(f'Copy data for node {edge} into schema: {schema_list}')
@@ -374,7 +377,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != source_key and a != target_key:
                     query += f", e.{a} AS {a}"
-            self.__arrow_copy_data(query, edge)
+            self.__arrow_copy_data(query, edge, attributes, use_bolt)
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -600,27 +603,48 @@ class Neo4jConnector(object):
             schema)
         return writer
 
-    def __arrow_copy_data(self, cypher_for_extract, frame):
+    def __arrow_copy_data(self, cypher_for_extract, frame, attributes, use_bolt):
         import time
         t0 = time.time()
-        neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
-                                            self._neo4j_auth[1])
-        ticket = neo4j_arrow_client.cypher(cypher_for_extract)
-        ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
-        if not ready:
-            raise Exception('something is wrong...did you submit a job?')
-        neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
-        xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
-        # move data from Neo4j to xGT in chunks
-        count = 0
-        while (True):
-            try:
-                batch = neo4j_reader.read_next_batch()
+        if use_bolt:
+            with self._neo4j_driver.session() as session:
+                result = session.run(cypher_for_extract)
+                first_record = result.peek()
+                data = [None] * len(first_record)
+                names = [None] * len(first_record)
+                for i in range(len(first_record)):
+                    data[i] = []
+                    names[i] = 'col' + str(i)
+                for record in result:
+                    for i, (val, key) in enumerate(zip(record, attributes)):
+                        attr_type = attributes[key]
+                        if attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time':
+                            data[i].append(val.to_native())
+                        else:
+                            data[i].append(val)
+                batch = pa.RecordBatch.from_arrays(data, names)
+                xgt_writer = self.__arrow_writer(frame, batch.schema)
                 xgt_writer.write(batch)
-                count += 1
-            except StopIteration:
-                break
-        xgt_writer.close()
+                xgt_writer.close()
+        else:
+            neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
+                                                self._neo4j_auth[1])
+            ticket = neo4j_arrow_client.cypher(cypher_for_extract)
+            ready = neo4j_arrow_client.wait_for_job(ticket, timeout=1)
+            if not ready:
+                raise Exception('something is wrong...did you submit a job?')
+            neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
+            xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
+            # move data from Neo4j to xGT in chunks
+            count = 0
+            while (True):
+                try:
+                    batch = neo4j_reader.read_next_batch()
+                    xgt_writer.write(batch)
+                    count += 1
+                except StopIteration:
+                    break
+            xgt_writer.close()
         duration = time.time() - t0
         print(f"Time to transfer: {duration:,.2f}", flush=True)
         return duration

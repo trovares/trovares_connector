@@ -131,19 +131,46 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 1
 
+  def test_transfer_node_working_types_bolt(self):
+    self._populate_node_working_types()
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    c.create_xgt_schemas(xgt_schema)
+    for vertex, schema in xgt_schema['vertices'].items():
+      table_schema = schema['schema']
+      attributes = {_:t for _, t in table_schema}
+      print(f"\nAttributes: {attributes}")
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    print(node_frame.get_data())
+
+  # Duration not working for bolt.
   def _populate_node(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
       # DateTime, LocalDateTime, and Duration.
+      # FIXME: Point listed in comment above, but not in the list
       result = session.run(
         'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
         'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration("P14DT16H12M") })')
+        'duration_attr: duration("P14DT16H12M")})')
       return result
     return None
+
+  def _populate_node_working_types(self):
+    with self.neo4j_driver.session() as session:
+      # Integer, Float, String, Boolean, Date, Time, LocalTime,
+      # DateTime, and LocalDateTime.
+      result = session.run(
+        'CREATE (node:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+        'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+        'localtime_attr: localtime("12:50:35.556"), ' +
+        'localdatetime_attr: localdatetime("2015185T19:32:24")})')
+      return result
 
   def _erase_neo4j_database(self):
     with self.neo4j_driver.session() as session:
