@@ -56,8 +56,9 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg<span class="o">=</span>xgt_neo4j_connector
 </pre></div>
 </div>
-<p>You also need to have the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow">neo4j_arrow</a> plugin installed in your neo4j database.
-This can be done by placing the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar">neo4j_arrow.jar</a> file in the appropriate <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory of your neo4j installation.</p>
+<p>You also need to have the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow">neo4j-arrow</a> and the <a class="reference external" href="https://github.com/neo4j/graph-data-science">Neo4j Graph Data Science (GDS) library</a> installed in your Neo4j database.
+The neo4j_arrow can be installed by placing the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar">neo4j-arrow.jar</a> file in the appropriate <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory of your Neo4j installation.
+Similarly, a <a class="reference external" href="https://neo4j.com/graph-data-science-software/">GDS library release</a> needs to be placed in the <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory or installed through the Neo4j Desktop client.</p>
 </section>
 <section id="using-xgt-neo4j-connector">
 <h2>Using xgt_neo4j_connector<a class="headerlink" href="#using-xgt-neo4j-connector" title="Permalink to this headline">¶</a></h2>
@@ -90,7 +91,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
 <section id="copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">
 <h2>Copy a portion of a graph based on node labels and/or relationship types<a class="headerlink" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types" title="Permalink to this headline">¶</a></h2>
 <p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
-Using this idiom requires knowing some schema information about the graph data stored in neo4j.</p>
+Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
 
