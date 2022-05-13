@@ -194,7 +194,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       return result
     return None
 
-  # Duration not working for bolt.
+  # Point not working for bolt.
   def _populate_node_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
@@ -204,9 +204,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
-        'localdatetime_attr: localdatetime("2015185T19:32:24")}), ' +
+        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+        'duration_attr: duration({days: 14, hours:16, minutes: 12})}), ' +
         '(:Node{})')
-      return result
 
   def _populate_node_working_types_arrow(self):
     with self.neo4j_driver.session() as session:
@@ -217,18 +217,19 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
       return result
 
-  # Duration not working for bolt.
+  # Point not working for bolt.
   def _populate_relationship_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
       result = session.run(
         'CREATE (:Node{})-' +
-        '[rel1:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
+        '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
-        'localdatetime_attr: localdatetime("2015185T19:32:24")}]' +
+        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+        'duration_attr: duration({days: 14, hours:16, minutes: 12})}]' +
         '->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
   def _populate_relationship_working_types_arrow(self):

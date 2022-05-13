@@ -360,7 +360,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != key:
                     query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
-            self.__arrow_copy_data(query, vertex, attributes, use_bolt)
+            self.__copy_data(query, vertex, use_bolt)
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
                 print(f'Copy data for node {edge} into schema: {schema_list}')
@@ -377,7 +377,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != source_key and a != target_key:
                     query += f", e.{a} AS {a}"
-            self.__arrow_copy_data(query, edge, attributes, use_bolt)
+            self.__copy_data(query, edge, use_bolt)
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -552,9 +552,12 @@ class Neo4jConnector(object):
                 raise ValueError(
                         f"Neo4j ID name {neo4j_id_name} is an attribute of node {neo4j_node}")
         schema = [[key, self.__neo4j_type_to_xgt_type(type)]
-                                for key, type in neo4j_node.items()]
+                  for key, type in neo4j_node.items()]
+        neo4j_schema = [[key, type] for key, type in neo4j_node.items()]
         schema.insert(0, [neo4j_id_name, xgt.INT])
-        return {'schema' : schema, 'key' : neo4j_id_name}
+        neo4j_schema.insert(0, [neo4j_id_name, 'INTEGER'])
+        return {'schema' : schema, 'neo4j_schema' : neo4j_schema,
+                'key' : neo4j_id_name}
 
     def __extract_xgt_edge_schema(self, edge, source, target,
                                   neo4j_source_node_name,
@@ -565,17 +568,21 @@ class Neo4jConnector(object):
         edge_info = self.neo4j_edges[edge]
         if self.__verbose:
             print(f"xgt graph schema for edge {edge}: {edge_info}")
-        schema = edge_info['schema']
+        info_schema = edge_info['schema']
         edge_endpoints = edge_info['endpoints']
         endpoints = f"{source}->{target}"
         if endpoints not in edge_endpoints:
             raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
 
         schema = [[key, self.__neo4j_type_to_xgt_type(type)]
-                                for key, type in schema.items()]
+                  for key, type in info_schema.items()]
+        neo4j_schema = [[key, type] for key, type in info_schema.items()]
         schema.insert(0, [neo4j_target_node_name, xgt.INT])
         schema.insert(0, [neo4j_source_node_name, xgt.INT])
-        return {'schema' : schema, 'source' : source, 'target' : target,
+        neo4j_schema.insert(0, [neo4j_target_node_name, 'INTEGER'])
+        neo4j_schema.insert(0, [neo4j_source_node_name, 'INTEGER'])
+        return {'schema' : schema, 'neo4j_schema' : neo4j_schema,
+                'source' : source, 'target' : target,
                 'source_key' : neo4j_source_node_name,
                 'target_key' : neo4j_target_node_name}
 
@@ -607,61 +614,69 @@ class Neo4jConnector(object):
             schema)
         return writer
 
-    def __arrow_copy_data(self, cypher_for_extract, frame, attributes, use_bolt):
+    def __copy_data(self, cypher_for_extract, frame, use_bolt):
         import time
         t0 = time.time()
         if use_bolt:
-            with self._neo4j_driver.session() as session:
-                result = session.run(cypher_for_extract)
-                first_record = result.peek()
-                data = [None] * len(first_record)
-                for i, value in enumerate(first_record):
-                    data[i] = []
-
-                for record in result:
-                    for i, (val, key) in enumerate(zip(record, attributes)):
-                        attr_type = attributes[key]
-                        if val is not None and (attr_type == 'datetime' or
-                                                attr_type == 'date' or
-                                                attr_type == 'time'):
-                            data[i].append(val.to_native())
-                        else:
-                            data[i].append(val)
-                schema = pa.schema([])
-                schema.append(pa.field('col' + str(i), pa.float32()))
-                # With xGT 10.1 we need to change double to float
-                # so we infer the schema manually.
-                for i, col in enumerate(data):
-                    type = pa.infer_type([col[0]])
-                    if type == pa.float64():
-                        type = pa.float32()
-                    schema = schema.append(pa.field('col' + str(i), type))
-                batch = pa.RecordBatch.from_arrays(data, schema=schema)
-                xgt_writer = self.__arrow_writer(frame, schema)
-                xgt_writer.write(batch)
-                xgt_writer.close()
+            self.__bolt_copy_data(cypher_for_extract, frame)
         else:
-            neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
-                                                self._neo4j_auth[1])
-            ticket = neo4j_arrow_client.cypher(cypher_for_extract)
-            ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
-            if not ready:
-                raise Exception('something is wrong...did you submit a job?')
-            neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
-            xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
-            # move data from Neo4j to xGT in chunks
-            count = 0
-            while (True):
-                try:
-                    batch = neo4j_reader.read_next_batch()
-                    xgt_writer.write(batch)
-                    count += 1
-                except StopIteration:
-                    break
-            xgt_writer.close()
+            self.__arrow_copy_data(cypher_for_extract, frame)
         duration = time.time() - t0
         print(f"Time to transfer: {duration:,.2f}", flush=True)
         return duration
+
+    def __bolt_copy_data(self, cypher_for_extract, frame):
+        with self._neo4j_driver.session() as session:
+            result = session.run(cypher_for_extract)
+            first_record = result.peek()
+            data = [None] * len(first_record)
+            for i, value in enumerate(first_record):
+                data[i] = []
+
+            for record in result:
+                for i, val in enumerate(record):
+                    if isinstance(val, (neo4j.time.Date, neo4j.time.Time,
+                                        neo4j.time.DateTime)):
+                        data[i].append(val.to_native())
+                    elif isinstance(val, neo4j.time.Duration):
+                        # For months this average seconds in a month.
+                        val = (val.months * 2628288 + val.days * 86400 +
+                               val.seconds) * 10**9 + val.nanoseconds
+                        data[i].append(val)
+                    else:
+                        data[i].append(val)
+            schema = pa.schema([])
+            # With xGT 10.1 we need to change double to float
+            # so we infer the schema manually.
+            for i, col in enumerate(data):
+                type = pa.infer_type([col[0]])
+                if type == pa.float64():
+                    type = pa.float32()
+                schema = schema.append(pa.field('col' + str(i), type))
+            batch = pa.RecordBatch.from_arrays(data, schema=schema)
+            xgt_writer = self.__arrow_writer(frame, schema)
+            xgt_writer.write(batch)
+            xgt_writer.close()
+
+    def __arrow_copy_data(self, cypher_for_extract, frame):
+        neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
+                                            self._neo4j_auth[1])
+        ticket = neo4j_arrow_client.cypher(cypher_for_extract)
+        ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
+        if not ready:
+            raise Exception('something is wrong...did you submit a job?')
+        neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
+        xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
+        # move data from Neo4j to xGT in chunks
+        count = 0
+        while (True):
+            try:
+                batch = neo4j_reader.read_next_batch()
+                xgt_writer.write(batch)
+                count += 1
+            except StopIteration:
+                break
+        xgt_writer.close()
 
     # TODO(landwehrj) : Is there a way to detect the cache is stale
     # One option is to use the Neo4j count store of relationship/nodes
