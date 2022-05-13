@@ -242,5 +242,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
   def _erase_neo4j_database(self):
-    with self.neo4j_driver.session() as session:
-      result = session.run("MATCH (n) DETACH DELETE n")
+    retries = 4
+    for retry in range(retries):
+        try:
+          with self.neo4j_driver.session() as session:
+              result = session.run("MATCH (n) DETACH DELETE n")
+          break
+        except (neo4j.exceptions.ServiceUnavailable):
+            print(f"Neo4j Unavailable, retries = {retry}")
+            time.sleep(3)
+            if retry < retries:
+                pass
