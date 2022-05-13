@@ -615,10 +615,9 @@ class Neo4jConnector(object):
                 result = session.run(cypher_for_extract)
                 first_record = result.peek()
                 data = [None] * len(first_record)
-                names = [None] * len(first_record)
-                for i in range(len(first_record)):
+                for i, value in enumerate(first_record):
                     data[i] = []
-                    names[i] = 'col' + str(i)
+
                 for record in result:
                     for i, (val, key) in enumerate(zip(record, attributes)):
                         attr_type = attributes[key]
@@ -628,8 +627,17 @@ class Neo4jConnector(object):
                             data[i].append(val.to_native())
                         else:
                             data[i].append(val)
-                batch = pa.RecordBatch.from_arrays(data, names)
-                xgt_writer = self.__arrow_writer(frame, batch.schema)
+                schema = pa.schema([])
+                schema.append(pa.field('col' + str(i), pa.float32()))
+                # With xGT 10.1 we need to change double to float
+                # so we infer the schema manually.
+                for i, col in enumerate(data):
+                    type = pa.infer_type([col[0]])
+                    if type == pa.float64():
+                        type = pa.float32()
+                    schema = schema.append(pa.field('col' + str(i), type))
+                batch = pa.RecordBatch.from_arrays(data, schema=schema)
+                xgt_writer = self.__arrow_writer(frame, schema)
                 xgt_writer.write(batch)
                 xgt_writer.close()
         else:

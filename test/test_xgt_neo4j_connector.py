@@ -212,8 +212,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String.
       result = session.run(
-        'CREATE (:Node{int: 343, real: 3.14, str: "string"})')
-        # TODO(someone) : none values don't work in arrow.
+        'CREATE (:Node{int: 343, str: "string"})')
+        # TODO(someone) : none values don't work in arrow and float64 don't work in xGT 10.1.
         #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
       return result
 
@@ -233,11 +233,13 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def _populate_relationship_working_types_arrow(self):
     with self.neo4j_driver.session() as session:
-      # Integer, Float, String.
+      # Integer, String.
       result = session.run(
         'CREATE (:Node{})-' +
-        '[:Relationship{int: 343, real: 3.14, str: "string"}]' +
+        '[:Relationship{int: 343, str: "string"}]' +
         '->(:Node{})')
+        # TODO(someone) : we float64 in xGT 10.1 aren't supported in arrow.
+        #'[:Relationship{int: 343, real: 3.14, str: "string"}]' +
         # TODO(someone) : none values don't work in arrow.
         #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
