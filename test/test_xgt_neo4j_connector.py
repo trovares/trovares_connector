@@ -132,7 +132,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 1
 
   def test_transfer_node_working_types_bolt(self):
-    self._populate_node_working_types()
+    self._populate_node_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
@@ -141,6 +141,19 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    print(node_frame.get_data())
+
+  def test_transfer_node_working_types_arrow(self):
+    self._populate_node_working_types_arrow()
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    c.create_xgt_schemas(xgt_schema)
+    for vertex, schema in xgt_schema['vertices'].items():
+      table_schema = schema['schema']
+      attributes = {_:t for _, t in table_schema}
+      print(f"\nAttributes: {attributes}")
+    c.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt=False)
     node_frame = self.xgt.get_vertex_frame('Node')
     print(node_frame.get_data())
 
@@ -160,7 +173,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       return result
     return None
 
-  def _populate_node_working_types(self):
+  def _populate_node_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
@@ -170,6 +183,13 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
         'localdatetime_attr: localdatetime("2015185T19:32:24")})')
+      return result
+
+  def _populate_node_working_types_arrow(self):
+    with self.neo4j_driver.session() as session:
+      # Integer, Float, String
+      result = session.run(
+        'CREATE (node:Node{int: 343, real: 3.14, str: "string"})')
       return result
 
   def _erase_neo4j_database(self):
