@@ -632,7 +632,7 @@ class Neo4jConnector(object):
             neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
                                                 self._neo4j_auth[1])
             ticket = neo4j_arrow_client.cypher(cypher_for_extract)
-            ready = neo4j_arrow_client.wait_for_job(ticket, timeout=1)
+            ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
             if not ready:
                 raise Exception('something is wrong...did you submit a job?')
             neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()

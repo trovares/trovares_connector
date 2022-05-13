@@ -157,7 +157,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_node_working_types_arrow(self):
     self._populate_node_working_types_arrow()
-    #self._populate_relationship_working_types_arrow()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
@@ -211,11 +210,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def _populate_node_working_types_arrow(self):
     with self.neo4j_driver.session() as session:
-      # Integer, Float, String
+      # Integer, Float, String.
       result = session.run(
         'CREATE (:Node{int: 343, real: 3.14, str: "string"})')
         # TODO(someone) : none values don't work in arrow.
-        #'CREATE (node1:Node{int: 343, real: 3.14, str: "string"}), (node2:Node{})')
+        #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
       return result
 
   # Duration not working for bolt.
@@ -234,7 +233,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def _populate_relationship_working_types_arrow(self):
     with self.neo4j_driver.session() as session:
-      # Integer, Float, String
+      # Integer, Float, String.
       result = session.run(
         'CREATE (:Node{})-' +
         '[:Relationship{int: 343, real: 3.14, str: "string"}]' +
