@@ -323,7 +323,7 @@ class Neo4jConnector(object):
 
         return None
 
-    def copy_data_from_neo4j_to_xgt(self, xgt_schemas, use_bolt=True) -> None:
+    def copy_data_from_neo4j_to_xgt(self, xgt_schemas, use_bolt = True) -> None:
         """
         Copies data from Neo4j to the requested vertex and/or edge frames
         in Trovares xGT.
@@ -385,7 +385,8 @@ class Neo4jConnector(object):
                             neo4j_id_name = 'neo4j_id',
                             neo4j_source_node_name = 'neo4j_source',
                             neo4j_target_node_name = 'neo4j_target',
-                            append = False) -> None:
+                            append = False,
+                            use_bolt = True) -> None:
         """
         Copies data from Neo4j to Trovares xGT.
 
@@ -412,6 +413,9 @@ class Neo4jConnector(object):
             that should be appended to.
             Set to false when the xGT frames are to be newly created (removing
             any existing frames with the same names prior to creation).
+        use_bolt : boolean
+            Use bolt when transferring data from Neo4j to python instead of arrow.
+            By default this is true.
 
         Returns
         -------
@@ -420,7 +424,7 @@ class Neo4jConnector(object):
         xgt_schema = self.get_xgt_schema_for(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
         self.create_xgt_schemas(xgt_schema, append)
-        self.copy_data_from_neo4j_to_xgt(xgt_schema)
+        self.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt)
         return None
 
     def __neo4j_property_keys(self):
