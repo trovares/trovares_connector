@@ -366,7 +366,7 @@ class Neo4jConnector(object):
                 print(f'Copy data for node {edge} into schema: {schema_list}')
             schema = schema_list[0]
             table_schema = schema['schema']
-            attributes = [_ for _, t in table_schema]
+            attributes = {_:t for _, t in table_schema}
             source = schema['source']
             source_key = schema['source_key']
             target = schema['target']
@@ -618,7 +618,9 @@ class Neo4jConnector(object):
                 for record in result:
                     for i, (val, key) in enumerate(zip(record, attributes)):
                         attr_type = attributes[key]
-                        if attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time':
+                        if val is not None and (attr_type == 'datetime' or
+                                                attr_type == 'date' or
+                                                attr_type == 'time'):
                             data[i].append(val.to_native())
                         else:
                             data[i].append(val)
