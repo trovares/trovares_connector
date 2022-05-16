@@ -142,7 +142,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       print(f"\nAttributes: {attributes}")
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
-    assert node_frame.num_rows == 2
+    assert node_frame.num_rows == 3
     print(node_frame.get_data())
 
   def test_transfer_relationship_working_types_bolt(self):
@@ -152,7 +152,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_edge_frame('Relationship')
-    assert node_frame.num_rows == 2
+    assert node_frame.num_rows == 3
     print(node_frame.get_data())
 
   def test_transfer_node_working_types_arrow(self):
@@ -241,7 +241,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
       result = session.run(
-        'CREATE (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+        'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
@@ -264,7 +264,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
       result = session.run(
-        'CREATE (:Node{})-' +
+        'CREATE (:Node{})-[:Relationship{}]->(:Node{}), (:Node{})-' +
         '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +

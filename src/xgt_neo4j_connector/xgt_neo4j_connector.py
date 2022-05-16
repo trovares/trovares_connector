@@ -38,6 +38,22 @@ class Neo4jConnector(object):
         'Duration': xgt.INT,
     }
 
+    NEO4J_TYPE_TO_ARROW_TYPE = {
+        'INTEGER': pa.int64(),
+        'Long': pa.int64(),
+        'FLOAT': pa.float32(),
+        'Double': pa.float32(),
+        'STRING': pa.string(),
+        'String': pa.string(),
+        'Boolean': pa.bool_(),
+        'Date': pa.date32(),
+        'Time': pa.time64('us'),
+        'DateTime': pa.timestamp('us'),
+        'LocalTime': pa.time64('us'),
+        'LocalDateTime': pa.timestamp('us'),
+        'Duration': pa.int64(),
+    }
+
     def __init__(self, xgt_server,
                        neo4j_host = 'localhost',
                        neo4j_port = 7474, neo4j_bolt_port = 7687,
@@ -360,7 +376,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != key:
                     query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
-            self.__copy_data(query, vertex, use_bolt)
+            self.__copy_data(query, vertex, schema['neo4j_schema'], use_bolt)
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
                 print(f'Copy data for node {edge} into schema: {schema_list}')
@@ -377,7 +393,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != source_key and a != target_key:
                     query += f", e.{a} AS {a}"
-            self.__copy_data(query, edge, use_bolt)
+            self.__copy_data(query, edge, schema['neo4j_schema'], use_bolt)
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -617,18 +633,18 @@ class Neo4jConnector(object):
             schema)
         return writer
 
-    def __copy_data(self, cypher_for_extract, frame, use_bolt):
+    def __copy_data(self, cypher_for_extract, frame, neo4j_schema, use_bolt):
         import time
         t0 = time.time()
         if use_bolt:
-            self.__bolt_copy_data(cypher_for_extract, frame)
+            self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
         else:
             self.__arrow_copy_data(cypher_for_extract, frame)
         duration = time.time() - t0
         print(f"Time to transfer: {duration:,.2f}", flush=True)
         return duration
 
-    def __bolt_copy_data(self, cypher_for_extract, frame):
+    def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame):
         with self._neo4j_driver.session() as session:
             result = session.run(cypher_for_extract)
             first_record = result.peek()
@@ -651,10 +667,8 @@ class Neo4jConnector(object):
             schema = pa.schema([])
             # With xGT 10.1 we need to change double to float
             # so we infer the schema manually.
-            for i, col in enumerate(data):
-                type = pa.infer_type([col[0]])
-                if type == pa.float64():
-                    type = pa.float32()
+            for value in neo4j_schema:
+                type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
                 schema = schema.append(pa.field('col' + str(i), type))
             batch = pa.RecordBatch.from_arrays(data, schema=schema)
             xgt_writer = self.__arrow_writer(frame, schema)
