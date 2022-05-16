@@ -179,6 +179,47 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 1
     print(node_frame.get_data())
 
+  def test_multiple_node_labels_to_negative(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run(
+            'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
+    with self.assertRaises(ValueError):
+        c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+
+  def test_multiple_node_labels_from_negative(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run(
+            'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
+    with self.assertRaises(ValueError):
+        c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+
+  def test_multiple_property_types_vertex_negative(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run(
+            'CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})')
+    with self.assertRaises(ValueError):
+        c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+
+  def test_multiple_property_types_edge_negative(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run(
+            'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})')
+    with self.assertRaises(ValueError):
+        c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+
+  def test_different_properties_combine_into_single_schema(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run(
+            'CREATE (:Node{x: 1}), (:Node{y: "hello"})')
+    schema = c.get_xgt_schema_for(vertices=['Node'])
+    node_schema = schema['vertices']['Node']['schema']
+    assert len(node_schema) == 3
+
   def _populate_node(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,

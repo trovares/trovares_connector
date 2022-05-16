@@ -602,7 +602,10 @@ class Neo4jConnector(object):
         return schemas
 
     def __neo4j_type_to_xgt_type(self, prop_type):
-        if prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
+        if isinstance(prop_type, list):
+                raise ValueError(
+                    f"Multiple types for property not supported.")
+        elif prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
             return self.NEO4J_TYPE_TO_XGT_TYPE[prop_type]
         raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
