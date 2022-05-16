@@ -27,6 +27,7 @@
 
    .. autosummary::
    
+      ~Neo4jConnector.NEO4J_TYPE_TO_ARROW_TYPE
       ~Neo4jConnector.NEO4J_TYPE_TO_XGT_TYPE
       ~Neo4jConnector.neo4j_driver
       ~Neo4jConnector.neo4j_edges
