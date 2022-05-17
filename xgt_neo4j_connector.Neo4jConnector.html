@@ -173,12 +173,14 @@ any existing frames with the same names prior to creation).</p></li>
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for">
 <span class="sig-name descname"><span class="pre">get_xgt_schema_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">{}</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve a dictionary containing the schema information for all of
-the nodes/vertices and all of the edges requested.</p>
+the nodes/vertices and all of the edges requested.
+If both vertices and edges is None, it will retrieve them all.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
-<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.
+Any vertices not given for an edge will be automatically requested.</p></li>
 <li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the Neo4j node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
