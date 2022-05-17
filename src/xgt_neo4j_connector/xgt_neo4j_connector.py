@@ -110,11 +110,7 @@ class Neo4jConnector(object):
         list
           List of the string names of relationship types in the connected Neo4j.
         """
-        self.__update_cache_state()
-        if self._neo4j_relationship_types is None:
-            self._neo4j_relationship_types = list(self.neo4j_edges.keys())
-            self._neo4j_relationship_types.sort()
-        return self._neo4j_relationship_types
+        return self.__neo4j_relationship_types()
 
     @property
     def neo4j_node_labels(self) -> list():
@@ -126,11 +122,7 @@ class Neo4jConnector(object):
         list
           List of the string names of node labels in the connected Neo4j.
         """
-        self.__update_cache_state()
-        if self._neo4j_node_labels is None:
-            self._neo4j_node_labels = list(self._neo4j_nodes.keys())
-            self._neo4j_node_labels.sort()
-        return self._neo4j_node_labels
+        return self.__neo4j_node_labels()
 
     @property
     def neo4j_property_keys(self) -> list():
@@ -142,10 +134,7 @@ class Neo4jConnector(object):
         list
           List of the string names of property keys in the connected Neo4j.
         """
-        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
-        self._neo4j_property_keys = list(self.__neo4j_property_keys())
-        self._neo4j_property_keys.sort()
-        return self._neo4j_property_keys
+        return self.__neo4j_property_keys()
 
     @property
     def neo4j_node_type_properties(self) -> list():
@@ -161,9 +150,8 @@ class Neo4jConnector(object):
         list
           List of the string names of node property types in the connected Neo4j.
         """
-        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
-        self._neo4j_node_type_properties = self.__neo4j_nodeTypeProperties()
-        return self._neo4j_node_type_properties
+
+        return self.__neo4j_node_type_properties()
 
     @property
     def neo4j_rel_type_properties(self) -> list():
@@ -181,9 +169,7 @@ class Neo4jConnector(object):
           List of the string names of relationship property types in the
           connected Neo4j.
         """
-        # TODO(landwehrj) : Figure out a way to cache values without reducing usability.
-        self._neo4j_rel_type_properties = self.__neo4j_relTypeProperties()
-        return self._neo4j_rel_type_properties
+        return self.__neo4j_rel_type_properties()
 
     @property
     def neo4j_nodes(self) -> dict():
@@ -200,10 +186,7 @@ class Neo4jConnector(object):
           Dictionary mapping the node labels to a description of the
           node's schema.
         """
-        self.__update_cache_state()
-        if self._neo4j_nodes is None:
-            self._neo4j_nodes = self.__neo4j_nodes()
-        return self._neo4j_nodes
+        return self.__neo4j_nodes()
 
     @property
     def neo4j_edges(self) -> dict():
@@ -218,8 +201,7 @@ class Neo4jConnector(object):
           Dictionary mapping the edge names to a description of the
           edge's schema and edge endpoints.
         """
-        self.__update_cache_state()
-        return self._neo4j_edges
+        return self.__neo4j_edges()
 
     def get_xgt_schema_for(self, vertices = None, edges = None,
                                  neo4j_id_name = 'neo4j_id',
@@ -255,17 +237,19 @@ class Neo4jConnector(object):
         if edges is None:
             edges = dict()
 
+        self.__update_cache_state()
+
         for vertex in vertices:
-            if vertex not in self.neo4j_node_labels:
+            if vertex not in self.__neo4j_node_labels(False):
                 raise ValueError(f"Neo4j Node Label {vertex} is not found.")
-            table_schema = self.__extract_xgt_vertex_schema(vertex, neo4j_id_name)
+            table_schema = self.__extract_xgt_vertex_schema(vertex, neo4j_id_name, False)
             result['vertices'][vertex] = table_schema
             if self.__verbose:
                 print(f"xgt graph schema for vertex {vertex}: {table_schema}")
 
         for edge in edges:
             schemas = self.__extract_xgt_edge_schemas(edge, vertices,
-                                neo4j_source_node_name, neo4j_target_node_name)
+                neo4j_source_node_name, neo4j_target_node_name, False)
             result['edges'][edge] = schemas
             if len(schemas) > 1:
                 raise ValueError(
@@ -454,42 +438,44 @@ class Neo4jConnector(object):
                 session.run(q)
                 return True
         except Exception as e:
-            print(e)
             pass
         return False
 
-    def __neo4j_property_keys(self):
-        q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
-        with self._neo4j_driver.session(database=self._neo4j_database,
-                                        default_access_mode=neo4j.READ_ACCESS) as session:
-            result = session.run(q)
-            return [record["propertyKey"] for record in result]
-        return None
+    def __neo4j_property_keys(self, flush_cache = True):
+        if flush_cache:
+            q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.READ_ACCESS) as session:
+                result = session.run(q)
+                self._neo4j_property_keys = list([record["propertyKey"] for record in result])
+                self._neo4j_property_keys.sort()
+        return self._neo4j_property_keys
 
-    def __neo4j_nodeTypeProperties(self):
-        fields = ('nodeType', 'nodeLabels', 'propertyName', 'propertyTypes', 'mandatory')
-        if self._neo4j_has_apoc:
-            q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-        else:
-            q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database,
-                                        default_access_mode=neo4j.READ_ACCESS) as session:
-            result = session.run(q)
-            node_props = [{_ : record[_] for _ in fields} for record in result]
-            return node_props
-        return None
+    def __neo4j_node_type_properties(self, flush_cache = True):
+        if flush_cache:
+            fields = ('nodeType', 'nodeLabels', 'propertyName', 'propertyTypes', 'mandatory')
+            if self._neo4j_has_apoc:
+                q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+            else:
+                q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.READ_ACCESS) as session:
+                result = session.run(q)
+                self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in result]
+        return self._neo4j_node_type_properties
 
-    def __neo4j_relTypeProperties(self):
-        fields = ('relType', 'propertyName', 'propertyTypes', 'mandatory')
-        if self._neo4j_has_apoc:
-            q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-        else:
-            q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database,
-                                        default_access_mode=neo4j.READ_ACCESS) as session:
-            result = session.run(q)
-            return [{_ : record[_] for _ in fields} for record in result]
-        return None
+    def __neo4j_rel_type_properties(self, flush_cache = True):
+        if flush_cache:
+            fields = ('relType', 'propertyName', 'propertyTypes', 'mandatory')
+            if self._neo4j_has_apoc:
+                q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+            else:
+                q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.READ_ACCESS) as session:
+                result = session.run(q)
+                self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in result]
+        return self._neo4j_rel_type_properties
 
     def __add_neo4j_schema_connectivity_to_neo4j_edges(self) -> None:
         def extract_node_info(node):
@@ -539,18 +525,25 @@ class Neo4jConnector(object):
             #return [[(_, record[_]) for _ in fields] for record in result]
         return (nodes, edges)
 
-    def __neo4j_nodes(self):
-        nodes = dict()
-        for prop in self.neo4j_node_type_properties:
-            labels = prop['nodeLabels']
-            propTypes = prop['propertyTypes']
-            if len(propTypes) == 1:
-                    propTypes = propTypes[0]
-            for name in labels:
-                if name not in nodes:
-                    nodes[name] = dict()
-                nodes[name][prop['propertyName']] = propTypes
-        return nodes
+    def __neo4j_nodes(self, flush_cache = True):
+        if flush_cache:
+            nodes = dict()
+            for prop in self.__neo4j_node_type_properties(flush_cache):
+                labels = prop['nodeLabels']
+                propTypes = prop['propertyTypes']
+                if len(propTypes) == 1:
+                        propTypes = propTypes[0]
+                for name in labels:
+                    if name not in nodes:
+                        nodes[name] = dict()
+                    nodes[name][prop['propertyName']] = propTypes
+            self._neo4j_nodes = nodes
+        return self._neo4j_nodes
+
+    def __neo4j_edges(self, flush_cache = True) -> dict():
+        if flush_cache:
+          self.__update_cache_state()
+        return self._neo4j_edges
 
     def __neo4j_process_nodes(self, nodes):
         res = dict()
@@ -586,9 +579,11 @@ class Neo4jConnector(object):
                 res[relType]['schema'][propName] = propType
         return res
 
-    def __extract_xgt_vertex_schema(self, vertex, neo4j_id_name):
-        if vertex in self.neo4j_nodes:
-            neo4j_node = self.neo4j_nodes[vertex]
+    def __extract_xgt_vertex_schema(self, vertex, neo4j_id_name, flush_cache = True):
+        if flush_cache:
+          self.__update_cache_state()
+        if vertex in self.__neo4j_nodes(False):
+            neo4j_node = self.__neo4j_nodes(False)[vertex]
             neo4j_node_attributes = list(neo4j_node.keys())
             if neo4j_id_name in neo4j_node:
                 raise ValueError(
@@ -603,11 +598,14 @@ class Neo4jConnector(object):
 
     def __extract_xgt_edge_schema(self, edge, source, target,
                                   neo4j_source_node_name,
-                                  neo4j_target_node_name):
+                                  neo4j_target_node_name,
+                                  flush_cache = True):
+        if flush_cache:
+          self.__update_cache_state()
         result = dict()
-        if edge not in self.neo4j_relationship_types:
+        if edge not in self.__neo4j_relationship_types(False):
             raise ValueError(f"Edge {edge} is not a known relationship type")
-        edge_info = self.neo4j_edges[edge]
+        edge_info = self.__neo4j_edges(False)[edge]
         if self.__verbose:
             print(f"xgt graph schema for edge {edge}: {edge_info}")
         info_schema = edge_info['schema']
@@ -630,9 +628,11 @@ class Neo4jConnector(object):
 
     def __extract_xgt_edge_schemas(self, edge, vertices,
                                     neo4j_source_node_name,
-                                    neo4j_target_node_name):
+                                    neo4j_target_node_name, flush_cache = True):
+        if flush_cache:
+          self.__update_cache_state()
         schemas = []
-        neo4j_edge = self.neo4j_edges[edge]
+        neo4j_edge = self.__neo4j_edges(False)[edge]
         for source in neo4j_edge['sources']:
             if source in vertices:
                 for target in neo4j_edge['targets']:
@@ -640,7 +640,7 @@ class Neo4jConnector(object):
                         schemas.append(
                             self.__extract_xgt_edge_schema(edge,
                                 source, target, neo4j_source_node_name,
-                                neo4j_target_node_name))
+                                neo4j_target_node_name, flush_cache))
         return schemas
 
     def __neo4j_type_to_xgt_type(self, prop_type):
@@ -722,14 +722,28 @@ class Neo4jConnector(object):
                 break
         xgt_writer.close()
 
+    def __neo4j_relationship_types(self, flush_cache = True) -> list():
+        if flush_cache:
+          self.__update_cache_state()
+        if self._neo4j_relationship_types is None:
+            self._neo4j_relationship_types = list(self._neo4j_edges.keys())
+            self._neo4j_relationship_types.sort()
+        return self._neo4j_relationship_types
+
+    def __neo4j_node_labels(self, flush_cache = True) -> list():
+        if flush_cache:
+          self.__update_cache_state()
+        if self._neo4j_node_labels is None:
+            self._neo4j_node_labels = list(self._neo4j_nodes.keys())
+            self._neo4j_node_labels.sort()
+        return self._neo4j_node_labels
+
     # TODO(landwehrj) : Is there a way to detect the cache is stale
     # One option is to use the Neo4j count store of relationship/nodes
     # to check if there are changes there. This wouldn't work in certain
     # cases. Is there a way to get database modification time?
     # Is it possible to query individual schema elements?
     def __update_cache_state(self):
-        # TODO(landwehrj) : This gets called excessively.
-        # Improve the design to minimize calls.
         self._neo4j_relationship_types = None
         self._neo4j_node_type_properties = None
         self._neo4j_rel_type_properties = None
