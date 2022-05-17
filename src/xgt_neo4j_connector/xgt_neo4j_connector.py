@@ -58,6 +58,7 @@ class Neo4jConnector(object):
                        neo4j_host = 'localhost',
                        neo4j_port = 7474, neo4j_bolt_port = 7687,
                        neo4j_arrow_port = 9999, neo4j_auth = None,
+                       neo4j_database = neo4j.DEFAULT_DATABASE,
                        verbose = False):
         self._xgt_server = xgt_server
         self._neo4j_host = neo4j_host
@@ -65,6 +66,7 @@ class Neo4jConnector(object):
         self._neo4j_bolt_port = neo4j_bolt_port
         self._neo4j_arrow_port = neo4j_arrow_port
         self._neo4j_auth = neo4j_auth
+        self._neo4j_database = neo4j_database
         self.__verbose = verbose
 
         self._default_namespace = xgt_server.get_default_namespace()
@@ -445,7 +447,7 @@ class Neo4jConnector(object):
 
     def __neo4j_property_keys(self):
         q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(q)
             return [record["propertyKey"] for record in result]
         return None
@@ -453,7 +455,7 @@ class Neo4jConnector(object):
     def __neo4j_nodeTypeProperties(self):
         fields = ('nodeType', 'nodeLabels', 'propertyName', 'propertyTypes', 'mandatory')
         q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(q)
             node_props = [{_ : record[_] for _ in fields} for record in result]
             return node_props
@@ -462,7 +464,7 @@ class Neo4jConnector(object):
     def __neo4j_relTypeProperties(self):
         fields = ('relType', 'propertyName', 'propertyTypes', 'mandatory')
         q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(q)
             return [{_ : record[_] for _ in fields} for record in result]
         return None
@@ -474,7 +476,7 @@ class Neo4jConnector(object):
                 return list(labels)[0]
             return labels
         q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(q)
             for record in result:
                 for e in record['relationships']:
@@ -503,7 +505,7 @@ class Neo4jConnector(object):
         q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
         nodes = []
         edges = []
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(q)
             for record in result:
                 for n in record['nodes']:
@@ -645,7 +647,7 @@ class Neo4jConnector(object):
         return duration
 
     def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame):
-        with self._neo4j_driver.session() as session:
+        with self._neo4j_driver.session(database=self._neo4j_database) as session:
             result = session.run(cypher_for_extract)
             first_record = result.peek()
             data = [None] * len(first_record)
@@ -677,7 +679,7 @@ class Neo4jConnector(object):
 
     def __arrow_copy_data(self, cypher_for_extract, frame):
         neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
-                                            self._neo4j_auth[1])
+                                           self._neo4j_auth[1])
         ticket = neo4j_arrow_client.cypher(cypher_for_extract)
         ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
         if not ready:
