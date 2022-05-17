@@ -34,7 +34,7 @@ The available properties are:
 
   - neo4j_relationship_types
   - neo4j_node_labels
-  - neo4j_property_keys)
+  - neo4j_property_keys
   - neo4j_node_type_properties
   - neo4j_rel_type_properties
   - neo4j_nodes
