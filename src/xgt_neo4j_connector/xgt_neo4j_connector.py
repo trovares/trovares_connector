@@ -211,6 +211,7 @@ class Neo4jConnector(object):
         """
         Retrieve a dictionary containing the schema information for all of
         the nodes/vertices and all of the edges requested.
+        If both vertices and edges is None, it will retrieve them all.
 
         Parameters
         ----------
@@ -218,6 +219,7 @@ class Neo4jConnector(object):
             List of requested node labels (vertex frame names).
         edges : iterable
             List of requested relationship type (edge frame) names.
+            Any vertices not given for an edge will be automatically requested.
         neo4j_id_name : str
             The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
@@ -232,12 +234,27 @@ class Neo4jConnector(object):
             vertices and all of the edges requested.
         """
         result = {'vertices' : dict(), 'edges' : dict()}
-        if vertices is None:
-            vertices = list()
-        if edges is None:
-            edges = dict()
 
         self.__update_cache_state()
+
+        if vertices is None and edges is None:
+           vertices = {vertex : None for vertex in self.__neo4j_node_labels(False)}
+           edges = {edge : None for edge in self.__neo4j_relationship_types(False)}
+        elif edges is None:
+            edges = { }
+        elif vertices is None:
+            vertices = { }
+
+        # Any vertices not given for an edge will be added to vertices.
+        for edge in edges:
+            if edge not in self.__neo4j_relationship_types(False):
+                raise ValueError(f"Neo4j Relationship {edge} is not found.")
+            schemas = self.__extract_xgt_edge_schemas(edge, vertices,
+                neo4j_source_node_name, neo4j_target_node_name, False)
+            result['edges'][edge] = schemas
+            if len(schemas) > 1:
+                raise ValueError(
+                    f"Relationship Types from/to multiple node labels not supported.")
 
         for vertex in vertices:
             if vertex not in self.__neo4j_node_labels(False):
@@ -247,13 +264,6 @@ class Neo4jConnector(object):
             if self.__verbose:
                 print(f"xgt graph schema for vertex {vertex}: {table_schema}")
 
-        for edge in edges:
-            schemas = self.__extract_xgt_edge_schemas(edge, vertices,
-                neo4j_source_node_name, neo4j_target_node_name, False)
-            result['edges'][edge] = schemas
-            if len(schemas) > 1:
-                raise ValueError(
-                    f"Relationship Types from/to multiple node labels not supported.")
         return result
 
     def create_xgt_schemas(self, xgt_schemas, append = False) -> None:
@@ -634,13 +644,15 @@ class Neo4jConnector(object):
         schemas = []
         neo4j_edge = self.__neo4j_edges(False)[edge]
         for source in neo4j_edge['sources']:
-            if source in vertices:
-                for target in neo4j_edge['targets']:
-                    if target in vertices:
-                        schemas.append(
-                            self.__extract_xgt_edge_schema(edge,
-                                source, target, neo4j_source_node_name,
-                                neo4j_target_node_name, flush_cache))
+            if source not in vertices:
+                vertices[source] = None
+            for target in neo4j_edge['targets']:
+                if target not in vertices:
+                    vertices[target] = None
+                schemas.append(
+                    self.__extract_xgt_edge_schema(edge,
+                    source, target, neo4j_source_node_name,
+                    neo4j_target_node_name, flush_cache))
         return schemas
 
     def __neo4j_type_to_xgt_type(self, prop_type):

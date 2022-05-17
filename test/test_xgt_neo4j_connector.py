@@ -151,9 +151,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_edge_frame('Relationship')
-    assert node_frame.num_rows == 3
-    print(node_frame.get_data())
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert edge_frame.num_rows == 3
+    print(edge_frame.get_data())
+
+  def test_transfer_relationship_without_vertex_bolt(self):
+    self._populate_relationship_working_types_bolt()
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    xgt_schema = c.get_xgt_schema_for(edges=['Relationship'])
+    c.create_xgt_schemas(xgt_schema)
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert node_frame.num_rows == 6
+    assert edge_frame.num_rows == 3
+    assert node_frame.get_data(length=1)[0][1] == 1
 
   def test_transfer_node_working_types_arrow(self):
     self._populate_node_working_types_arrow()
@@ -175,9 +187,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt=False)
-    node_frame = self.xgt.get_edge_frame('Relationship')
-    assert node_frame.num_rows == 1
-    print(node_frame.get_data())
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert edge_frame.num_rows == 1
+    print(edge_frame.get_data())
 
   def test_multiple_node_labels_to_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
@@ -264,14 +276,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
       result = session.run(
-        'CREATE (:Node{})-[:Relationship{}]->(:Node{}), (:Node{})-' +
+        'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
         '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
         'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
         'duration_attr: duration({days: 14, hours:16, minutes: 12})}]' +
-        '->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
+        '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})')
 
   def _populate_relationship_working_types_arrow(self):
     with self.neo4j_driver.session() as session:
