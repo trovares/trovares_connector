@@ -154,6 +154,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 3
     print(edge_frame.get_data())
+    self.xgt.drop_frame("Relationship")
 
   def test_transfer_relationship_without_vertex_bolt(self):
     self._populate_relationship_working_types_bolt()
@@ -166,6 +167,19 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 6
     assert edge_frame.num_rows == 3
     assert node_frame.get_data(length=1)[0][1] == 1
+    self.xgt.drop_frame("Relationship")
+
+  def test_transfer_everything_bolt(self):
+    self._populate_relationship_working_types_bolt()
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    xgt_schema = c.get_xgt_schema_for()
+    c.create_xgt_schemas(xgt_schema)
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert node_frame.num_rows == 6
+    assert edge_frame.num_rows == 3
+    self.xgt.drop_frame("Relationship")
 
   def test_transfer_node_working_types_arrow(self):
     self._populate_node_working_types_arrow()
@@ -190,6 +204,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 1
     print(edge_frame.get_data())
+    self.xgt.drop_frame("Relationship")
 
   def test_multiple_node_labels_to_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
