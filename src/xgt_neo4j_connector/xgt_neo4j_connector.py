@@ -72,6 +72,7 @@ class Neo4jConnector(object):
         self._default_namespace = xgt_server.get_default_namespace()
         self._neo4j_driver = neo4j.GraphDatabase.driver(f"neo4j://{self._neo4j_host}",
                                                         auth=self._neo4j_auth)
+        self._neo4j_has_apoc = self.__neo4j_check_for_apoc()
         self._neo4j_relationship_types = None
         self._neo4j_node_type_properties = None
         self._neo4j_rel_type_properties = None
@@ -445,17 +446,34 @@ class Neo4jConnector(object):
         self.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt)
         return None
 
+    def __neo4j_check_for_apoc(self):
+        try:
+            q="RETURN apoc.version()"
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.READ_ACCESS) as session:
+                session.run(q)
+                return True
+        except Exception as e:
+            print(e)
+            pass
+        return False
+
     def __neo4j_property_keys(self):
         q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(q)
             return [record["propertyKey"] for record in result]
         return None
 
     def __neo4j_nodeTypeProperties(self):
         fields = ('nodeType', 'nodeLabels', 'propertyName', 'propertyTypes', 'mandatory')
-        q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        if self._neo4j_has_apoc:
+            q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+        else:
+            q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(q)
             node_props = [{_ : record[_] for _ in fields} for record in result]
             return node_props
@@ -463,8 +481,12 @@ class Neo4jConnector(object):
 
     def __neo4j_relTypeProperties(self):
         fields = ('relType', 'propertyName', 'propertyTypes', 'mandatory')
-        q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        if self._neo4j_has_apoc:
+            q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+        else:
+            q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(q)
             return [{_ : record[_] for _ in fields} for record in result]
         return None
@@ -476,7 +498,8 @@ class Neo4jConnector(object):
                 return list(labels)[0]
             return labels
         q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(q)
             for record in result:
                 for e in record['relationships']:
@@ -505,7 +528,8 @@ class Neo4jConnector(object):
         q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
         nodes = []
         edges = []
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(q)
             for record in result:
                 for n in record['nodes']:
@@ -647,7 +671,8 @@ class Neo4jConnector(object):
         return duration
 
     def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame):
-        with self._neo4j_driver.session(database=self._neo4j_database) as session:
+        with self._neo4j_driver.session(database=self._neo4j_database,
+                                        default_access_mode=neo4j.READ_ACCESS) as session:
             result = session.run(cypher_for_extract)
             first_record = result.peek()
             data = [None] * len(first_record)
