@@ -685,33 +685,47 @@ class Neo4jConnector(object):
     def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame):
         with self._neo4j_driver.session(database=self._neo4j_database,
                                         default_access_mode=neo4j.READ_ACCESS) as session:
+            schema = pa.schema([])
+            # With xGT 10.1 we need to change double to float
+            # so we infer the schema manually.
+            for i, value in enumerate(neo4j_schema):
+                type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+                schema = schema.append(pa.field('col' + str(i), type))
+
             result = session.run(cypher_for_extract)
             first_record = result.peek()
             data = [None] * len(first_record)
-            for i, value in enumerate(first_record):
-                data[i] = []
 
+            block_size = 10000
+            for i, value in enumerate(first_record):
+                data[i] = [None] * block_size
+
+            xgt_writer = self.__arrow_writer(frame, schema)
+            chunk_count = 0
             for record in result:
                 for i, val in enumerate(record):
                     if isinstance(val, (neo4j.time.Date, neo4j.time.Time,
                                         neo4j.time.DateTime)):
-                        data[i].append(val.to_native())
+                        data[i][chunk_count] = val.to_native()
                     elif isinstance(val, neo4j.time.Duration):
                         # For months this average seconds in a month.
                         val = (val.months * 2628288 + val.days * 86400 +
                                val.seconds) * 10**9 + val.nanoseconds
-                        data[i].append(val)
+                        data[i][chunk_count] = val
                     else:
-                        data[i].append(val)
-            schema = pa.schema([])
-            # With xGT 10.1 we need to change double to float
-            # so we infer the schema manually.
-            for value in neo4j_schema:
-                type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
-                schema = schema.append(pa.field('col' + str(i), type))
-            batch = pa.RecordBatch.from_arrays(data, schema=schema)
-            xgt_writer = self.__arrow_writer(frame, schema)
-            xgt_writer.write(batch)
+                        data[i][chunk_count] = val
+                chunk_count = chunk_count + 1
+                if chunk_count == block_size:
+                    chunk_count = 0
+                    batch = pa.RecordBatch.from_arrays(data, schema=schema)
+                    xgt_writer.write(batch)
+
+            if chunk_count > 0:
+                for j in range(len(data)):
+                    data[j] = data[j][:-(block_size - chunk_count)]
+                batch = pa.RecordBatch.from_arrays(data, schema=schema)
+                xgt_writer.write(batch)
+
             xgt_writer.close()
 
     def __arrow_copy_data(self, cypher_for_extract, frame):
