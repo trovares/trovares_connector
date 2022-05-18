@@ -731,7 +731,8 @@ class Neo4jConnector(object):
     def __arrow_copy_data(self, cypher_for_extract, frame):
         neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
                                            self._neo4j_auth[1])
-        ticket = neo4j_arrow_client.cypher(cypher_for_extract)
+        ticket = neo4j_arrow_client.cypher(cypher_for_extract,
+                                           self._neo4j_database)
         ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
         if not ready:
             raise Exception('something is wrong...did you submit a job?')
