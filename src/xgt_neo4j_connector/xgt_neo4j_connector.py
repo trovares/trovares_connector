@@ -67,6 +67,8 @@ class Neo4jConnector(object):
         self._neo4j_arrow_port = neo4j_arrow_port
         self._neo4j_auth = neo4j_auth
         self._neo4j_database = neo4j_database
+        # neo4j arrow can't take none as a parameter for the database.
+        self._neo4j_database_arrow = 'neo4j' if neo4j_database == None else neo4j_database
         self.__verbose = verbose
 
         self._default_namespace = xgt_server.get_default_namespace()
@@ -732,7 +734,7 @@ class Neo4jConnector(object):
         neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
                                            self._neo4j_auth[1])
         ticket = neo4j_arrow_client.cypher(cypher_for_extract,
-                                           self._neo4j_database)
+                                           self._neo4j_database_arrow)
         ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
         if not ready:
             raise Exception('something is wrong...did you submit a job?')
