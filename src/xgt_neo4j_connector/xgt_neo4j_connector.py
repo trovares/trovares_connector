@@ -59,7 +59,8 @@ class Neo4jConnector(object):
                        neo4j_port = 7474, neo4j_bolt_port = 7687,
                        neo4j_arrow_port = 9999, neo4j_auth = None,
                        neo4j_database = neo4j.DEFAULT_DATABASE,
-                       verbose = False):
+                       verbose = False, disable_apoc = False,
+                       disable_py2neo = False):
         self._xgt_server = xgt_server
         self._neo4j_host = neo4j_host
         self._neo4j_port = neo4j_port
@@ -74,7 +75,18 @@ class Neo4jConnector(object):
         self._default_namespace = xgt_server.get_default_namespace()
         self._neo4j_driver = neo4j.GraphDatabase.driver(f"neo4j://{self._neo4j_host}",
                                                         auth=self._neo4j_auth)
-        self._neo4j_has_apoc = self.__neo4j_check_for_apoc()
+        self._neo4j_has_apoc = False if disable_apoc else self.__neo4j_check_for_apoc()
+        if self.__verbose and self._neo4j_has_apoc:
+            print("Using apoc to query schema.")
+        try:
+            from py2neo import Graph
+            self._py2neo_driver = None if disable_py2neo else Graph(
+                "neo4j://" + self._neo4j_host + ":" +str(neo4j_bolt_port),
+                auth=neo4j_auth, name=neo4j_database)
+            if self.__verbose:
+                print("Using py2neo for transfers on bolt.")
+        except:
+            self._py2neo_driver = None
         self._neo4j_relationship_types = None
         self._neo4j_node_type_properties = None
         self._neo4j_rel_type_properties = None
@@ -677,7 +689,10 @@ class Neo4jConnector(object):
         import time
         t0 = time.time()
         if use_bolt:
-            self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
+            if self._py2neo_driver is None:
+                self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
+            else:
+                self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame)
         else:
             self.__arrow_copy_data(cypher_for_extract, frame)
         duration = time.time() - t0
@@ -699,7 +714,7 @@ class Neo4jConnector(object):
             data = [None] * len(first_record)
 
             block_size = 10000
-            for i, value in enumerate(first_record):
+            for i in range(len(first_record)):
                 data[i] = [None] * block_size
 
             xgt_writer = self.__arrow_writer(frame, schema)
@@ -729,6 +744,50 @@ class Neo4jConnector(object):
                 xgt_writer.write(batch)
 
             xgt_writer.close()
+
+    def __py2neo_copy_data(self, cypher_for_extract, neo4j_schema, frame):
+        schema = pa.schema([])
+        # With xGT 10.1 we need to change double to float
+        # so we infer the schema manually.
+        for i, value in enumerate(neo4j_schema):
+            type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+            schema = schema.append(pa.field('col' + str(i), type))
+
+        result = self._py2neo_driver.query(cypher_for_extract)
+        data = [None] * len(result.keys())
+
+        block_size = 10000
+        for i in range(len(result.keys())):
+            data[i] = [None] * block_size
+
+        xgt_writer = self.__arrow_writer(frame, schema)
+        chunk_count = 0
+        # Types Used by py2neo
+        from interchange.time import Date, Time, DateTime, Duration
+        for record in result:
+            for i, val in enumerate(record):
+                if isinstance(val, (Date, Time, DateTime)):
+                    data[i][chunk_count] = val.to_native()
+                elif isinstance(val, Duration):
+                    # For months this average seconds in a month.
+                    val = (val.months * 2628288 + val.days * 86400 +
+                           val.seconds) * 10**9 + int(val.subseconds * 10**9)
+                    data[i][chunk_count] = val
+                else:
+                    data[i][chunk_count] = val
+            chunk_count = chunk_count + 1
+            if chunk_count == block_size:
+                chunk_count = 0
+                batch = pa.RecordBatch.from_arrays(data, schema=schema)
+                xgt_writer.write(batch)
+
+        if chunk_count > 0:
+            for j in range(len(data)):
+                data[j] = data[j][:-(block_size - chunk_count)]
+            batch = pa.RecordBatch.from_arrays(data, schema=schema)
+            xgt_writer.write(batch)
+
+        xgt_writer.close()
 
     def __arrow_copy_data(self, cypher_for_extract, frame):
         neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
