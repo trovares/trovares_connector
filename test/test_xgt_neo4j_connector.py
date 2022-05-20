@@ -28,7 +28,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       conn = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
       # Validate the db can run queries.
       with conn.neo4j_driver.session() as session:
-          session.run("call db.info()")
+        session.run("call db.info()")
       return conn
     except (neo4j.exceptions.ServiceUnavailable):
       print(f"Neo4j Unavailable, retries = {retries}")
@@ -201,7 +201,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_append(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with c.neo4j_driver.session() as session:
-        session.run('CREATE (:Node{int: 343, str: "string"})')
+      session.run('CREATE (:Node{int: 343, str: "string"})')
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
 
@@ -209,9 +209,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.create_xgt_schemas(xgt_schema, append=True)
 
     with c.neo4j_driver.session() as session:
-        result = session.run("MATCH (n) DETACH DELETE n")
+      result = session.run("MATCH (n) DETACH DELETE n")
     with c.neo4j_driver.session() as session:
-        session.run('CREATE (:Node{int: 344, str: "string"})')
+      session.run('CREATE (:Node{int: 344, str: "string"})')
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 2
@@ -223,7 +223,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_dropping(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with c.neo4j_driver.session() as session:
-        session.run('CREATE (:Node{})-[:Relationship]->(:Node{})')
+      session.run('CREATE (:Node{})-[:Relationship]->(:Node{})')
     xgt_schema1 = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
     xgt_schema2 = c.get_xgt_schema_for(vertices=['Node'])
 
@@ -236,11 +236,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.get_edge_frame('Relationship')
 
     with self.assertRaises(xgt.XgtFrameDependencyError):
-        c.create_xgt_schemas(xgt_schema2)
+      c.create_xgt_schemas(xgt_schema2)
     c.create_xgt_schemas(xgt_schema2, force=True)
     self.xgt.get_vertex_frame('Node')
     with self.assertRaises(xgt.XgtNameError):
-        self.xgt.get_edge_frame('Relationship')
+      self.xgt.get_edge_frame('Relationship')
 
   def test_transfer_relationship_working_types_arrow(self):
     self._populate_relationship_working_types_arrow()
@@ -256,40 +256,39 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_multiple_node_labels_to_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
-        session.run(
-            'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
+      session.run(
+          'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
     with self.assertRaises(ValueError):
-        c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+      c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
 
   def test_multiple_node_labels_from_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
-        session.run(
-            'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
+      session.run(
+          'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
     with self.assertRaises(ValueError):
-        c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+      c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
 
   def test_multiple_property_types_vertex_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
-        session.run(
-            'CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})')
+      session.run('CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})')
     with self.assertRaises(ValueError):
-        c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+      c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
 
   def test_multiple_property_types_edge_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
-        session.run(
-            'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})')
+      session.run(
+          'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})')
     with self.assertRaises(ValueError):
-        c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+      c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
 
   def test_different_properties_combine_into_single_schema(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
-        session.run(
-            'CREATE (:Node{x: 1}), (:Node{y: "hello"})')
+      session.run(
+          'CREATE (:Node{x: 1}), (:Node{y: "hello"})')
     schema = c.get_xgt_schema_for(vertices=['Node'])
     node_schema = schema['vertices']['Node']['schema']
     assert len(node_schema) == 3
@@ -360,14 +359,5 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
   def _erase_neo4j_database(self):
-    retries = 4
-    for retry in range(retries):
-        try:
-          with self.neo4j_driver.session() as session:
-              result = session.run("MATCH (n) DETACH DELETE n")
-          break
-        except (neo4j.exceptions.ServiceUnavailable):
-            print(f"Neo4j Unavailable, retries = {retry}")
-            time.sleep(3)
-            if retry < retries:
-                pass
+    with self.neo4j_driver.session() as session:
+      session.run("MATCH (n) DETACH DELETE n")
