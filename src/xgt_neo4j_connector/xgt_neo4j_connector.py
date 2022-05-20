@@ -60,7 +60,7 @@ class Neo4jConnector(object):
                        neo4j_arrow_port = 9999, neo4j_auth = None,
                        neo4j_database = neo4j.DEFAULT_DATABASE,
                        verbose = False, disable_apoc = False,
-                       disable_py2neo = False):
+                       disable_py2neo = True):
         self._xgt_server = xgt_server
         self._neo4j_host = neo4j_host
         self._neo4j_port = neo4j_port
@@ -276,11 +276,12 @@ class Neo4jConnector(object):
             table_schema = self.__extract_xgt_vertex_schema(vertex, neo4j_id_name, False)
             result['vertices'][vertex] = table_schema
             if self.__verbose:
-                print(f"xgt graph schema for vertex {vertex}: {table_schema}")
+                print(f"xGT graph schema for vertex {vertex}: {table_schema}")
 
         return result
 
-    def create_xgt_schemas(self, xgt_schemas, append = False) -> None:
+    def create_xgt_schemas(self, xgt_schemas, append = False,
+                           force = False) -> None:
         """
         Creates vertex and/or edge frames in Trovares xGT.
 
@@ -302,6 +303,8 @@ class Neo4jConnector(object):
             that should be appended to.
             Set to false when the xGT frames are to be newly created (removing
             any existing frames with the same names prior to creation).
+        force : boolean
+            Set to true to force xGT to drop edges when a vertex frame has dependencies.
 
         Returns
         -------
@@ -311,7 +314,17 @@ class Neo4jConnector(object):
             for edge in xgt_schemas['edges']:
                 self._xgt_server.drop_frame(edge)
             for vertex in xgt_schemas['vertices']:
-                self._xgt_server.drop_frame(vertex)
+                try:
+                    self._xgt_server.drop_frame(vertex)
+                except xgt.XgtFrameDependencyError as e:
+                    if force:
+                        # Would be better if this could be done without doing this.
+                        edge_frames = str(e).split(':')[-1].split(' ')[1:]
+                        for edge in edge_frames:
+                            self._xgt_server.drop_frame(edge)
+                        self._xgt_server.drop_frame(vertex)
+                    else:
+                        raise e
 
         for vertex, schema in xgt_schemas['vertices'].items():
             table_schema = schema['schema']
@@ -338,7 +351,7 @@ class Neo4jConnector(object):
             schema = schema_list[0]
             table_schema = schema['schema']
             if self.__verbose or True:
-                print(f"xgt graph schema for edge {edge}: {table_schema}")
+                print(f"xGT graph schema for edge {edge}: {table_schema}")
             self._xgt_server.create_edge_frame(
                     name = edge, schema = table_schema,
                     source = schema['source'],
@@ -413,6 +426,7 @@ class Neo4jConnector(object):
                             neo4j_source_node_name = 'neo4j_source',
                             neo4j_target_node_name = 'neo4j_target',
                             append = False,
+                            force = False,
                             use_bolt = True) -> None:
         """
         Copies data from Neo4j to Trovares xGT.
@@ -440,6 +454,8 @@ class Neo4jConnector(object):
             that should be appended to.
             Set to false when the xGT frames are to be newly created (removing
             any existing frames with the same names prior to creation).
+        force : boolean
+            Set to true to force xGT to drop edges when a vertex frame has dependencies.
         use_bolt : boolean
             Use bolt when transferring data from Neo4j to python instead of arrow.
             By default this is true.
@@ -450,7 +466,7 @@ class Neo4jConnector(object):
         """
         xgt_schema = self.get_xgt_schema_for(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
-        self.create_xgt_schemas(xgt_schema, append)
+        self.create_xgt_schemas(xgt_schema, append, force)
         self.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt)
         return None
 
@@ -631,7 +647,7 @@ class Neo4jConnector(object):
             raise ValueError(f"Edge {edge} is not a known relationship type")
         edge_info = self.__neo4j_edges(False)[edge]
         if self.__verbose:
-            print(f"xgt graph schema for edge {edge}: {edge_info}")
+            print(f"xGT graph schema for edge {edge}: {edge_info}")
         info_schema = edge_info['schema']
         edge_endpoints = edge_info['endpoints']
         endpoints = f"{source}->{target}"

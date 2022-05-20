@@ -195,6 +195,50 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 1
     print(node_frame.get_data())
 
+  def test_append(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with c.neo4j_driver.session() as session:
+        session.run('CREATE (:Node{int: 343, str: "string"})')
+    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    c.create_xgt_schemas(xgt_schema)
+
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.create_xgt_schemas(xgt_schema, append=True)
+
+    with c.neo4j_driver.session() as session:
+        result = session.run("MATCH (n) DETACH DELETE n")
+    with c.neo4j_driver.session() as session:
+        session.run('CREATE (:Node{int: 344, str: "string"})')
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 2
+
+    c.create_xgt_schemas(xgt_schema, append=False)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 0
+
+  def test_dropping(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with c.neo4j_driver.session() as session:
+        session.run('CREATE (:Node{})-[:Relationship]->(:Node{})')
+    xgt_schema1 = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+    xgt_schema2 = c.get_xgt_schema_for(vertices=['Node'])
+
+    c.create_xgt_schemas(xgt_schema1)
+    self.xgt.get_vertex_frame('Node')
+    self.xgt.get_edge_frame('Relationship')
+
+    c.create_xgt_schemas(xgt_schema1)
+    self.xgt.get_vertex_frame('Node')
+    self.xgt.get_edge_frame('Relationship')
+
+    with self.assertRaises(xgt.XgtFrameDependencyError):
+        c.create_xgt_schemas(xgt_schema2)
+    c.create_xgt_schemas(xgt_schema2, force=True)
+    self.xgt.get_vertex_frame('Node')
+    with self.assertRaises(xgt.XgtNameError):
+        self.xgt.get_edge_frame('Relationship')
+
   def test_transfer_relationship_working_types_arrow(self):
     self._populate_relationship_working_types_arrow()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
