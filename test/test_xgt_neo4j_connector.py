@@ -26,6 +26,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _setup_connector(cls, retries = 20):
     try:
       conn = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
+      # Validate the db can run queries.
+      with conn.neo4j_driver.session() as session:
+          session.run("call db.info()")
       return conn
     except (neo4j.exceptions.ServiceUnavailable):
       print(f"Neo4j Unavailable, retries = {retries}")
