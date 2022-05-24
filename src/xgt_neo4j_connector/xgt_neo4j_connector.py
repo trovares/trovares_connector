@@ -2,7 +2,6 @@ import pyarrow as pa
 import pyarrow.flight as pf
 
 import neo4j
-import neo4j_arrow as na
 import xgt
 
 class BasicClientAuthHandler(pf.ClientAuthHandler):
@@ -22,7 +21,7 @@ class BasicClientAuthHandler(pf.ClientAuthHandler):
         return self.token
 
 class Neo4jConnector(object):
-    NEO4J_TYPE_TO_XGT_TYPE = {
+    _NEO4J_TYPE_TO_XGT_TYPE = {
         'INTEGER': xgt.INT,
         'Long': xgt.INT,
         'FLOAT': xgt.FLOAT,
@@ -38,7 +37,7 @@ class Neo4jConnector(object):
         'Duration': xgt.INT,
     }
 
-    NEO4J_TYPE_TO_ARROW_TYPE = {
+    _NEO4J_TYPE_TO_ARROW_TYPE = {
         'INTEGER': pa.int64(),
         'Long': pa.int64(),
         'FLOAT': pa.float32(),
@@ -60,7 +59,41 @@ class Neo4jConnector(object):
                        neo4j_arrow_port = 9999, neo4j_auth = None,
                        neo4j_database = neo4j.DEFAULT_DATABASE,
                        verbose = False, disable_apoc = False,
-                       disable_py2neo = True):
+                       driver = 'neo4j-bolt'):
+        """
+        Initializes the connector class.
+
+        Parameters
+        ----------
+        xgt_server : xgt.Connection
+            Connection object to xGT.
+        neo4j_host : str
+            Host address of the Neo4j server.
+        neo4j_port : int
+            HTTP port of the Neo4j server.
+            Used with HTTP drivers.
+        neo4j_bolt_port : int
+            Bolt port of the Neo4j server.
+        neo4j_arrow_port : int
+            Arrow port of the Neo4j server.
+            Used with Arrow driver.
+        neo4j_auth : neo4j.Auth
+            Authentication details.
+        neo4j_database : str
+            Neo4j database to connect to.
+        verbose : bool
+            Print detailed information during calls.
+        disable_apoc : bool
+            If the connector finds APOC, it will use that to improve schema queries.
+            If set to True this disables that feature.
+        driver : str
+            Driver to use for transferring data from Neo4j.
+            Options include 'neo4j-bolt', 'py2neo-bolt', 'py2neo-http', and 'neo4j-arrow'.
+            Some connections, such as schema querying will still go through 'neo4j-bolt',
+            but all data transferring will use the method selected here.
+            'neo4j-arrow' is considered very experimental.
+        """
+
         self._xgt_server = xgt_server
         self._neo4j_host = neo4j_host
         self._neo4j_port = neo4j_port
@@ -73,20 +106,39 @@ class Neo4jConnector(object):
         self.__verbose = verbose
 
         self._default_namespace = xgt_server.get_default_namespace()
+        # These are just kept as seperate variables because they may need
+        self._neo4j_driver = None
+        self._py2neo_driver = None
+        self._arrow_driver = None
+
+        if self.__verbose:
+            print('Using' + driver + 'for transfers on bolt.')
+
         self._neo4j_driver = neo4j.GraphDatabase.driver(f"neo4j://{self._neo4j_host}",
                                                         auth=self._neo4j_auth)
+        if driver == 'neo4j-bolt':
+            pass
+        elif driver == 'py2neo-bolt':
+            from py2neo import Graph
+            self._py2neo_driver = Graph(
+                "neo4j://" + self._neo4j_host + ":" +str(neo4j_bolt_port),
+                auth=neo4j_auth, name=neo4j_database)
+        elif driver == 'py2neo-http':
+            from py2neo import Graph
+            self._py2neo_driver = Graph(
+                "http://" + self._neo4j_host + ":" +str(neo4j_port),
+                auth=neo4j_auth, name=neo4j_database)
+        elif driver == 'neo4j-arrow':
+            import neo4j_arrow as na
+            self._arrow_driver = na.Neo4jArrow(self._neo4j_auth[0],
+                                               self._neo4j_auth[1])
+        else:
+            raise ValueError(f"Unknown driver, {driver}.")
+
         self._neo4j_has_apoc = False if disable_apoc else self.__neo4j_check_for_apoc()
         if self.__verbose and self._neo4j_has_apoc:
             print("Using apoc to query schema.")
-        try:
-            from py2neo import Graph
-            self._py2neo_driver = None if disable_py2neo else Graph(
-                "neo4j://" + self._neo4j_host + ":" +str(neo4j_bolt_port),
-                auth=neo4j_auth, name=neo4j_database)
-            if self.__verbose:
-                print("Using py2neo for transfers on bolt.")
-        except:
-            self._py2neo_driver = None
+
         self._neo4j_relationship_types = None
         self._neo4j_node_type_properties = None
         self._neo4j_rel_type_properties = None
@@ -103,16 +155,20 @@ class Neo4jConnector(object):
         return result
 
     @property
-    def neo4j_driver(self) -> neo4j.Neo4jDriver:
+    def neo4j_driver(self):
         """
         Retrieve the Python driver connected to the Neo4j database.
 
         Returns
         -------
-        neo4j.Neo4jDriver
+        neo4j.Neo4jDriver or py2neo.Graph
           The Python driver object that is connected to the Neo4j database
+          depends on the driver selected during the connection.
         """
-        return self._neo4j_driver
+        if self._py2neo_driver is None:
+            return self._neo4j_driver
+        else:
+            return self._py2neo_driver
 
     @property
     def neo4j_relationship_types(self) -> list():
@@ -363,7 +419,7 @@ class Neo4jConnector(object):
 
         return None
 
-    def copy_data_from_neo4j_to_xgt(self, xgt_schemas, use_bolt = True) -> None:
+    def copy_data_from_neo4j_to_xgt(self, xgt_schemas) -> None:
         """
         Copies data from Neo4j to the requested vertex and/or edge frames
         in Trovares xGT.
@@ -378,16 +434,13 @@ class Neo4jConnector(object):
             to create in xGT.
             This dictionary can be the value returned from the
             :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
-        use_bolt : boolean
-            Use bolt when transferring data from Neo4j to python instead of arrow.
-            By default this is true.
 
         Returns
         -------
             None
         """
         def xlate_result_property(attr, attr_type) -> str:
-            if not use_bolt and (attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time'):
+            if self._arrow_driver is not None and (attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time'):
                 return f", toString(v.{a}) as {a}"
             return f", v.{a} AS {a}"
         for vertex, schema in xgt_schemas['vertices'].items():
@@ -400,7 +453,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != key:
                     query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
-            self.__copy_data(query, vertex, schema['neo4j_schema'], use_bolt)
+            self.__copy_data(query, vertex, schema['neo4j_schema'])
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
                 print(f'Copy data for node {edge} into schema: {schema_list}')
@@ -417,7 +470,7 @@ class Neo4jConnector(object):
             for a in attributes:
                 if a != source_key and a != target_key:
                     query += f", e.{a} AS {a}"
-            self.__copy_data(query, edge, schema['neo4j_schema'], use_bolt)
+            self.__copy_data(query, edge, schema['neo4j_schema'])
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -426,8 +479,7 @@ class Neo4jConnector(object):
                             neo4j_source_node_name = 'neo4j_source',
                             neo4j_target_node_name = 'neo4j_target',
                             append = False,
-                            force = False,
-                            use_bolt = True) -> None:
+                            force = False) -> None:
         """
         Copies data from Neo4j to Trovares xGT.
 
@@ -456,9 +508,6 @@ class Neo4jConnector(object):
             any existing frames with the same names prior to creation).
         force : boolean
             Set to true to force xGT to drop edges when a vertex frame has dependencies.
-        use_bolt : boolean
-            Use bolt when transferring data from Neo4j to python instead of arrow.
-            By default this is true.
 
         Returns
         -------
@@ -467,15 +516,47 @@ class Neo4jConnector(object):
         xgt_schema = self.get_xgt_schema_for(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
         self.create_xgt_schemas(xgt_schema, append, force)
-        self.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt)
+        self.copy_data_from_neo4j_to_xgt(xgt_schema)
         return None
+
+    class py2neo_run_closure():
+        def __init__(self, connector, query):
+            self._result = connector._py2neo_driver.query(query)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type,exc_value, exc_traceback):
+            pass
+
+        def result(self):
+            return self._result
+
+    class neo4j_run_closure():
+        def __init__(self, connector, query):
+            self._query = query
+            self._connector = connector
+
+        def __enter__(self):
+            self._session = self._connector._neo4j_driver.session(database=self._connector._neo4j_database,
+                                                                  default_access_mode=neo4j.READ_ACCESS)
+            return self
+        def __exit__(self, exc_type,exc_value, exc_traceback):
+            self._session.close()
+
+        def result(self):
+            return self._session.run(self._query)
+
+    def __query(self, query, use_neo4j_always = False):
+        if not use_neo4j_always and self._py2neo_driver is not None:
+            return self.py2neo_run_closure(self, query)
+        else:
+            return self.neo4j_run_closure(self, query)
 
     def __neo4j_check_for_apoc(self):
         try:
-            q="RETURN apoc.version()"
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.READ_ACCESS) as session:
-                session.run(q)
+            with self.__query("RETURN apoc.version()") as query:
+                query.result()
                 return True
         except Exception as e:
             pass
@@ -483,11 +564,8 @@ class Neo4jConnector(object):
 
     def __neo4j_property_keys(self, flush_cache = True):
         if flush_cache:
-            q="CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey"
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.READ_ACCESS) as session:
-                result = session.run(q)
-                self._neo4j_property_keys = list([record["propertyKey"] for record in result])
+            with self.__query("CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey") as query:
+                self._neo4j_property_keys = list([record["propertyKey"] for record in query.result()])
                 self._neo4j_property_keys.sort()
         return self._neo4j_property_keys
 
@@ -498,10 +576,8 @@ class Neo4jConnector(object):
                 q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
             else:
                 q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.READ_ACCESS) as session:
-                result = session.run(q)
-                self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in result]
+            with self.__query(q) as query:
+                self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_node_type_properties
 
     def __neo4j_rel_type_properties(self, flush_cache = True):
@@ -511,10 +587,8 @@ class Neo4jConnector(object):
                 q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
             else:
                 q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.READ_ACCESS) as session:
-                result = session.run(q)
-                self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in result]
+            with self.__query(q) as query:
+                self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_rel_type_properties
 
     def __add_neo4j_schema_connectivity_to_neo4j_edges(self) -> None:
@@ -524,46 +598,29 @@ class Neo4jConnector(object):
                 return list(labels)[0]
             return labels
         q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
-        with self._neo4j_driver.session(database=self._neo4j_database,
-                                        default_access_mode=neo4j.READ_ACCESS) as session:
-            result = session.run(q)
-            for record in result:
+        # TODO(landwehrj) Can schema be done with py2neo?
+        with self.__query(q, True) as query:
+            for record in query.result():
                 for e in record['relationships']:
                     nodes = e.nodes
                     source = nodes[0]
                     target = nodes[1]
-                    type = e.type
+                    e_type = e.type
                     if self.__verbose:
                         print(f"Edge Connectivity: {e}")
-                        print(f" -> type => {type}")
+                        print(f" -> type => {e_type}")
                         print(f" -> source nodes => {source}")
                         print(f" -> target nodes => {nodes[1]}")
-                        print(f"  -> Edge {type}: {self._neo4j_edges[type]}\n")
-                    if 'endpoints' not in self._neo4j_edges[type]:
-                        self._neo4j_edges[type]['endpoints'] = set()
-                        self._neo4j_edges[type]['sources'] = set()
-                        self._neo4j_edges[type]['targets'] = set()
-                    self._neo4j_edges[type]['endpoints'].add(
+                        print(f"  -> Edge {e_type}: {self._neo4j_edges[e_type]}\n")
+                    if 'endpoints' not in self._neo4j_edges[e_type]:
+                        self._neo4j_edges[e_type]['endpoints'] = set()
+                        self._neo4j_edges[e_type]['sources'] = set()
+                        self._neo4j_edges[e_type]['targets'] = set()
+                    self._neo4j_edges[e_type]['endpoints'].add(
                         f"{extract_node_info(source)}->{extract_node_info(target)}")
-                    self._neo4j_edges[type]['sources'].add(extract_node_info(source))
-                    self._neo4j_edges[type]['targets'].add(extract_node_info(target))
+                    self._neo4j_edges[e_type]['sources'].add(extract_node_info(source))
+                    self._neo4j_edges[e_type]['targets'].add(extract_node_info(target))
         return None
-
-    def __neo4j_schema_connectivity(self):
-        fields = ('nodes', 'relationships')
-        q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
-        nodes = []
-        edges = []
-        with self._neo4j_driver.session(database=self._neo4j_database,
-                                        default_access_mode=neo4j.READ_ACCESS) as session:
-            result = session.run(q)
-            for record in result:
-                for n in record['nodes']:
-                    nodes.append(n)
-                for e in record['relationships']:
-                    edges.append(e)
-            #return [[(_, record[_]) for _ in fields] for record in result]
-        return (nodes, edges)
 
     def __neo4j_nodes(self, flush_cache = True):
         if flush_cache:
@@ -689,8 +746,8 @@ class Neo4jConnector(object):
         if isinstance(prop_type, list):
                 raise ValueError(
                     f"Multiple types for property not supported.")
-        elif prop_type in self.NEO4J_TYPE_TO_XGT_TYPE:
-            return self.NEO4J_TYPE_TO_XGT_TYPE[prop_type]
+        elif prop_type in self._NEO4J_TYPE_TO_XGT_TYPE:
+            return self._NEO4J_TYPE_TO_XGT_TYPE[prop_type]
         raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
@@ -701,16 +758,15 @@ class Neo4jConnector(object):
             schema)
         return writer
 
-    def __copy_data(self, cypher_for_extract, frame, neo4j_schema, use_bolt):
+    def __copy_data(self, cypher_for_extract, frame, neo4j_schema):
         import time
         t0 = time.time()
-        if use_bolt:
-            if self._py2neo_driver is None:
-                self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
-            else:
-                self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame)
-        else:
+        if self._py2neo_driver is not None:
+            self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame)
+        elif self._arrow_driver is not None:
             self.__arrow_copy_data(cypher_for_extract, frame)
+        else:
+            self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
         duration = time.time() - t0
         print(f"Time to transfer: {duration:,.2f}", flush=True)
         return duration
@@ -722,8 +778,8 @@ class Neo4jConnector(object):
             # With xGT 10.1 we need to change double to float
             # so we infer the schema manually.
             for i, value in enumerate(neo4j_schema):
-                type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
-                schema = schema.append(pa.field('col' + str(i), type))
+                arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+                schema = schema.append(pa.field('col' + str(i), arrow_type))
 
             result = session.run(cypher_for_extract)
             first_record = result.peek()
@@ -766,8 +822,8 @@ class Neo4jConnector(object):
         # With xGT 10.1 we need to change double to float
         # so we infer the schema manually.
         for i, value in enumerate(neo4j_schema):
-            type = self.NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
-            schema = schema.append(pa.field('col' + str(i), type))
+            arrow_type = self._NEO4J_TYPE_TO_ARROW_TYPE[value[1]]
+            schema = schema.append(pa.field('col' + str(i), arrow_type))
 
         result = self._py2neo_driver.query(cypher_for_extract)
         data = [None] * len(result.keys())
@@ -806,14 +862,12 @@ class Neo4jConnector(object):
         xgt_writer.close()
 
     def __arrow_copy_data(self, cypher_for_extract, frame):
-        neo4j_arrow_client = na.Neo4jArrow(self._neo4j_auth[0],
-                                           self._neo4j_auth[1])
-        ticket = neo4j_arrow_client.cypher(cypher_for_extract,
+        ticket = self._arrow_driver.cypher(cypher_for_extract,
                                            self._neo4j_database_arrow)
-        ready = neo4j_arrow_client.wait_for_job(ticket, timeout=60)
+        ready = self._arrow_driver.wait_for_job(ticket, timeout=60)
         if not ready:
             raise Exception('something is wrong...did you submit a job?')
-        neo4j_reader = neo4j_arrow_client.stream(ticket).to_reader()
+        neo4j_reader = self._arrow_driver.stream(ticket).to_reader()
         xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
         # move data from Neo4j to xGT in chunks
         count = 0

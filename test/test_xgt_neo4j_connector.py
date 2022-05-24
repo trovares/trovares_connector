@@ -186,14 +186,15 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_node_working_types_arrow(self):
     self._populate_node_working_types_arrow()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
+                       driver="neo4j-arrow")
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
       table_schema = schema['schema']
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
-    c.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt=False)
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 1
     print(node_frame.get_data())
@@ -244,10 +245,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_relationship_working_types_arrow(self):
     self._populate_relationship_working_types_arrow()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
+                       driver="neo4j-arrow")
     xgt_schema = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schema, use_bolt=False)
+    c.copy_data_from_neo4j_to_xgt(xgt_schema)
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 1
     print(edge_frame.get_data())
