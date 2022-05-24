@@ -111,6 +111,20 @@ Using this idiom requires knowing some schema information about the graph data s
                                        edges = edges_to_copy)
 
 
+Limitations
+===========
+
+Doesn't support the following:
+
+* Multiple node types for a single relationship type.
+* Multiple types for a single property.
+* Point data type.
+* Transferring data from xGT to Neo4j.
+
+Other limitations:
+
+* Duration data type is converted into an integer representing nanoseconds.
+
 API Details
 ===========
 

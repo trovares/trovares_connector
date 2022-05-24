@@ -142,6 +142,20 @@ Using this idiom requires knowing some schema information about the graph data s
 </div>
 </section>
 </section>
+<section id="limitations">
+<h1>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h1>
+<p>Doesn’t support the following:</p>
+<ul class="simple">
+<li><p>Multiple node types for a single relationship type.</p></li>
+<li><p>Multiple types for a single property.</p></li>
+<li><p>Point data type.</p></li>
+<li><p>Transferring data from xGT to Neo4j.</p></li>
+</ul>
+<p>Other limitations:</p>
+<ul class="simple">
+<li><p>Duration data type is converted into an integer representing nanoseconds.</p></li>
+</ul>
+</section>
 <section id="api-details">
 <h1>API Details<a class="headerlink" href="#api-details" title="Permalink to this headline">¶</a></h1>
 <table class="autosummary longtable docutils align-default">
@@ -179,6 +193,7 @@ Using this idiom requires knowing some schema information about the graph data s
 <li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#limitations">Limitations</a></li>
 <li><a class="reference internal" href="#api-details">API Details</a></li>
 </ul>
 
