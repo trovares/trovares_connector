@@ -50,15 +50,50 @@
 <h1>xgt_neo4j_connector Package<a class="headerlink" href="#xgt-neo4j-connector-package" title="Permalink to this headline">¶</a></h1>
 <p>This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.</p>
 <p>The <a class="reference external" href="http://github.com/trovares/xgt_neo4j_connector/">source code</a> is available on github.</p>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/neo4j/">Neo4j Python package</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/xgt/">xGT Python package</a></p></li>
+</ul>
+<p>These can be installed through pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install xgt neo4j
+</pre></div>
+</div>
+</section>
+<section id="optional">
+<h2>Optional<a class="headerlink" href="#optional" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference external" href="https://github.com/neo4j-contrib/neo4j-apoc-procedures">APOC</a></dt><dd><p>Improves schema querying.
+Automatically used if installed as a plugin for Neo4j.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference external" href="https://pypi.org/project/py2neo/">Py2neo Python package</a></dt><dd><p>Alternative Neo4j driver that provides http or bolt connections.
+Transfers are 2X as fast, but the memory requirements can be excessive for large transfers.
+This can be selected via the driver parameter in the connector.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow">Neo4j-arrow plugin and Python package</a></dt><dd><p>Alternative driver for transfers that is very experimental.
+This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
+In addition it requires the neo4j-arrow python package found in the above link.
+At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
+This can be selected via the driver parameter in the connector.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>You can install this python package by executing this command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg<span class="o">=</span>xgt_neo4j_connector
 </pre></div>
 </div>
-<p>You also need to have the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow">neo4j-arrow</a> and the <a class="reference external" href="https://github.com/neo4j/graph-data-science">Neo4j Graph Data Science (GDS) library</a> installed in your Neo4j database.
-The neo4j_arrow can be installed by placing the <a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar">neo4j-arrow.jar</a> file in the appropriate <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory of your Neo4j installation.
-Similarly, a <a class="reference external" href="https://neo4j.com/graph-data-science-software/">GDS library release</a> needs to be placed in the <code class="docutils literal notranslate"><span class="pre">plugins</span></code> directory or installed through the Neo4j Desktop client.</p>
 </section>
 <section id="using-xgt-neo4j-connector">
 <h2>Using xgt_neo4j_connector<a class="headerlink" href="#using-xgt-neo4j-connector" title="Permalink to this headline">¶</a></h2>
@@ -133,6 +168,8 @@ Using this idiom requires knowing some schema information about the graph data s
     <h3><a href="#">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">xgt_neo4j_connector Package</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#optional">Optional</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#using-xgt-neo4j-connector">Using xgt_neo4j_connector</a></li>
 </ul>
