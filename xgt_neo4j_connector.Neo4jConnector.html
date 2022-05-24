@@ -48,11 +48,35 @@
 <h1>xgt_neo4j_connector.Neo4jConnector<a class="headerlink" href="#xgt-neo4j-connector-neo4jconnector" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xgt_neo4j_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_py2neo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xgt_neo4j_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j-bolt'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_py2neo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j-bolt'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the connector class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
+<li><p><strong>neo4j_host</strong> (<em>str</em>) – Host address of the Neo4j server.</p></li>
+<li><p><strong>neo4j_port</strong> (<em>int</em>) – HTTP port of the Neo4j server.
+Used with HTTP drivers.</p></li>
+<li><p><strong>neo4j_bolt_port</strong> (<em>int</em>) – Bolt port of the Neo4j server.</p></li>
+<li><p><strong>neo4j_arrow_port</strong> (<em>int</em>) – Arrow port of the Neo4j server.
+Used with Arrow driver.</p></li>
+<li><p><strong>neo4j_auth</strong> (<em>neo4j.Auth</em>) – Authentication details.</p></li>
+<li><p><strong>neo4j_database</strong> (<em>str</em>) – Neo4j database to connect to.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
+<li><p><strong>disable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this disables that feature.</p></li>
+<li><p><strong>driver</strong> (<em>str</em>) – Driver to use for transferring data from Neo4j.
+Options include ‘neo4j-bolt’, ‘py2neo-bolt’, ‘py2neo-http’, and ‘neo4j-arrow’.
+Some connections, such as schema querying will still go through ‘neo4j-bolt’,
+but all data transferring will use the method selected here.
+‘neo4j-arrow’ is considered very experimental.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
@@ -61,10 +85,10 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.__init__" title="xgt_neo4j_connector.Neo4jConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="xgt_neo4j_connector.Neo4jConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
+<td><p>Initializes the connector class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt" title="xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_from_neo4j_to_xgt</span></code></a>(xgt_schemas[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt" title="xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_from_neo4j_to_xgt</span></code></a>(xgt_schemas)</p></td>
 <td><p>Copies data from Neo4j to the requested vertex and/or edge frames in Trovares xGT.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas" title="xgt_neo4j_connector.Neo4jConnector.create_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code></a>(xgt_schemas[, append, force])</p></td>
@@ -85,12 +109,6 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEO4J_TYPE_TO_ARROW_TYPE</span></code></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">NEO4J_TYPE_TO_XGT_TYPE</span></code></p></td>
-<td><p></p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_driver" title="xgt_neo4j_connector.Neo4jConnector.neo4j_driver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_driver</span></code></a></p></td>
 <td><p>Retrieve the Python driver connected to the Neo4j database.</p></td>
 </tr>
@@ -118,22 +136,47 @@
 </tbody>
 </table>
 <dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7474</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_bolt_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7687</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_arrow_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_database</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j-bolt'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the connector class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
+<li><p><strong>neo4j_host</strong> (<em>str</em>) – Host address of the Neo4j server.</p></li>
+<li><p><strong>neo4j_port</strong> (<em>int</em>) – HTTP port of the Neo4j server.
+Used with HTTP drivers.</p></li>
+<li><p><strong>neo4j_bolt_port</strong> (<em>int</em>) – Bolt port of the Neo4j server.</p></li>
+<li><p><strong>neo4j_arrow_port</strong> (<em>int</em>) – Arrow port of the Neo4j server.
+Used with Arrow driver.</p></li>
+<li><p><strong>neo4j_auth</strong> (<em>neo4j.Auth</em>) – Authentication details.</p></li>
+<li><p><strong>neo4j_database</strong> (<em>str</em>) – Neo4j database to connect to.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
+<li><p><strong>disable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this disables that feature.</p></li>
+<li><p><strong>driver</strong> (<em>str</em>) – Driver to use for transferring data from Neo4j.
+Options include ‘neo4j-bolt’, ‘py2neo-bolt’, ‘py2neo-http’, and ‘neo4j-arrow’.
+Some connections, such as schema querying will still go through ‘neo4j-bolt’,
+but all data transferring will use the method selected here.
+‘neo4j-arrow’ is considered very experimental.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt">
-<span class="sig-name descname"><span class="pre">copy_data_from_neo4j_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bolt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy_data_from_neo4j_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.copy_data_from_neo4j_to_xgt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copies data from Neo4j to the requested vertex and/or edge frames
 in Trovares xGT.</p>
 <p>This function copies data from Neo4j to xGT for all of the nodes and
 all of the relationships, one frame at a time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
+<dd class="field-odd"><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
 to create in xGT.
 This dictionary can be the value returned from the
-<a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schema_for()</span></code></a> method.</p></li>
-<li><p><strong>use_bolt</strong> (<em>boolean</em>) – Use bolt when transferring data from Neo4j to python instead of arrow.
-By default this is true.</p></li>
-</ul>
+<a class="reference internal" href="#xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for" title="xgt_neo4j_connector.Neo4jConnector.get_xgt_schema_for"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schema_for()</span></code></a> method.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
@@ -199,14 +242,15 @@ vertices and all of the edges requested.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.neo4j_driver">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_driver</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">neo4j.Neo4jDriver</span></em><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_driver" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_driver</span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.neo4j_driver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the Python driver connected to the Neo4j database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The Python driver object that is connected to the Neo4j database</p>
+<dd class="field-odd"><p>The Python driver object that is connected to the Neo4j database
+depends on the driver selected during the connection.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>neo4j.Neo4jDriver</p>
+<dd class="field-even"><p>neo4j.Neo4jDriver or py2neo.Graph</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,7 +370,7 @@ connected Neo4j.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for">
-<span class="sig-name descname"><span class="pre">transfer_from_neo4j_to_xgt_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bolt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_from_neo4j_to_xgt_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xgt_neo4j_connector.Neo4jConnector.transfer_from_neo4j_to_xgt_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copies data from Neo4j to Trovares xGT.</p>
 <p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
@@ -346,8 +390,6 @@ that should be appended to.
 Set to false when the xGT frames are to be newly created (removing
 any existing frames with the same names prior to creation).</p></li>
 <li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
-<li><p><strong>use_bolt</strong> (<em>boolean</em>) – Use bolt when transferring data from Neo4j to python instead of arrow.
-By default this is true.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
