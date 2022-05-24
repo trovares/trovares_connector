@@ -6,10 +6,8 @@ Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_
 
 ## Requirements
 
- - [Neo4j Graph Data Science (GDS) library](https://github.com/neo4j/graph-data-science)
- - [neo4j-arrow](https://github.com/neo4j-field/neo4j-arrow)
-
-These need to be installed as plugins to Neo4j.
+ - [Neo4j Python](https://pypi.org/project/neo4j/)
+ - [xGT Python](https://pypi.org/project/xgt/)
 
 ## Installation
 
