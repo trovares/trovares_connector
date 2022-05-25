@@ -94,6 +94,82 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(schema)
     print(c.neo4j_node_type_properties)
 
+  def test_neo4j_relationship_types(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run(
+          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})')
+    self.assertCountEqual(c.neo4j_relationship_types, ['Relationship1', 'Relationship2'])
+
+  def test_neo4j_node_labels(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run('CREATE (:Node1{}), (:Node2{int : 1})')
+    self.assertCountEqual(c.neo4j_node_labels, ['Node1', 'Node2'])
+
+  def test_neo4j_property_keys(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    self.assertCountEqual(
+        c.neo4j_property_keys,
+        ['bool', 'date_attr', 'datetime_attr', 'duration_attr', 'int', 'localdatetime_attr',
+         'localtime_attr', 'real', 'str', 'time_attr', 'x', 'y'])
+
+  def test_neo4j_rel_type_properties(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run(
+          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1, str: "hello"}]->(:Node2{}),'
+          '(:Node1{})-[:Relationship2{str: "goodbye"}]->(:Node2{})')
+    self.assertCountEqual(
+        c.neo4j_rel_type_properties,
+        [{'relType': ':`Relationship1`', 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
+         {'relType': ':`Relationship2`', 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
+         {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+
+  def test_neo4j_node_type_properties(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+        session.run('CREATE (:Node1{}), (:Node2{int : 1, str : "hello"}), (:Node2{str : "goodbye"})')
+    self.assertCountEqual(
+        c.neo4j_node_type_properties,
+        [{'nodeType': ':`Node1`', 'nodeLabels': ['Node1'], 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'int', 'propertyTypes': ['Long'], 'mandatory': False},
+         {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
+
+  def test_neo4j_edges(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run(
+          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})')
+    assert len(c.neo4j_edges) == 2
+    assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node2->Node1'}
+    assert c.neo4j_edges['Relationship1']['sources'] == {'Node2'}
+    assert c.neo4j_edges['Relationship1']['targets'] == {'Node1'}
+    assert c.neo4j_edges['Relationship1']['schema'] == {}
+    assert c.neo4j_edges['Relationship2']['endpoints'] == {'Node1->Node2'}
+    assert c.neo4j_edges['Relationship2']['sources'] == {'Node1'}
+    assert c.neo4j_edges['Relationship2']['targets'] == {'Node2'}
+    assert c.neo4j_edges['Relationship2']['schema'] == {'int' : 'Long'}
+
+  def test_neo4j_edges_multi(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run(
+          'CREATE (:Node2{})-[:Relationship1{int: 2}]->(:Node1{}), (:Node1{})-[:Relationship1{int: 1}]->(:Node2{})')
+    assert len(c.neo4j_edges) == 1
+    assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node1->Node2', 'Node2->Node1'}
+    assert c.neo4j_edges['Relationship1']['sources'] == {'Node1', 'Node2'}
+    assert c.neo4j_edges['Relationship1']['targets'] == {'Node1', 'Node2'}
+    assert c.neo4j_edges['Relationship1']['schema'] == {'int' : 'Long'}
+
+  def test_neo4j_nodes(self):
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    with self.neo4j_driver.session() as session:
+      session.run('CREATE (:Node1{}), (:Node2{int : 1})')
+    assert len(c.neo4j_nodes) == 2
+    assert c.neo4j_nodes['Node1'] == {}
+    assert c.neo4j_nodes['Node2'] == {'int' : 'Long'}
+
   def test_graph_update_after_connector_created(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
     self._populate_node()
