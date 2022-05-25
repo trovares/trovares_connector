@@ -322,9 +322,6 @@ class Neo4jConnector(object):
             schemas = self.__extract_xgt_edge_schemas(edge, vertices,
                 neo4j_source_node_name, neo4j_target_node_name, False)
             result['edges'][edge] = schemas
-            if len(schemas) > 1:
-                raise ValueError(
-                    f"Relationship Types from/to multiple node labels not supported.")
 
         for vertex in vertices:
             if vertex not in self.__neo4j_node_labels(False):
@@ -369,6 +366,13 @@ class Neo4jConnector(object):
         if not append:
             for edge in xgt_schemas['edges']:
                 self._xgt_server.drop_frame(edge)
+                schemas = xgt_schemas['edges'][edge]
+                # Frame name refers to multiple edges:
+                if (len(schemas) > 0):
+                    for schema in schemas:
+                        multi_edge_name = self.__edge_name_transform(edge, schema['source'], schema['target'], True)
+                        self._xgt_server.drop_frame(multi_edge_name)
+
             for vertex in xgt_schemas['vertices']:
                 try:
                     self._xgt_server.drop_frame(vertex)
@@ -404,18 +408,20 @@ class Neo4jConnector(object):
                 )
 
         for edge, schema_list in xgt_schemas['edges'].items():
-            schema = schema_list[0]
-            table_schema = schema['schema']
-            if self.__verbose or True:
-                print(f"xGT graph schema for edge {edge}: {table_schema}")
-            self._xgt_server.create_edge_frame(
-                    name = edge, schema = table_schema,
-                    source = schema['source'],
-                    source_key = schema['source_key'],
-                    target = schema['target'],
-                    target_key = schema['target_key'],
-                    attempts = 5,
-                )
+            transform = True if len(schema_list) > 1 else False
+            for schema in schema_list:
+                table_schema = schema['schema']
+                if self.__verbose:
+                    print(f"xGT graph schema for edge {edge}: {table_schema}")
+                name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
+                self._xgt_server.create_edge_frame(
+                        name = name, schema = table_schema,
+                        source = schema['source'],
+                        source_key = schema['source_key'],
+                        target = schema['target'],
+                        target_key = schema['target_key'],
+                        attempts = 5,
+                    )
 
         return None
 
@@ -457,20 +463,22 @@ class Neo4jConnector(object):
         for edge, schema_list in xgt_schemas['edges'].items():
             if self.__verbose or True:
                 print(f'Copy data for node {edge} into schema: {schema_list}')
-            schema = schema_list[0]
-            table_schema = schema['schema']
-            attributes = {_:t for _, t in table_schema}
-            source = schema['source']
-            source_key = schema['source_key']
-            target = schema['target']
-            target_key = schema['target_key']
-            query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
-            query += f" id(u) AS {source_key}"
-            query += f", id(v) AS {target_key}"
-            for a in attributes:
-                if a != source_key and a != target_key:
-                    query += f", e.{a} AS {a}"
-            self.__copy_data(query, edge, schema['neo4j_schema'])
+            transform = True if len(schema_list) > 1 else False
+            for schema in schema_list:
+                name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
+                table_schema = schema['schema']
+                attributes = {_:t for _, t in table_schema}
+                source = schema['source']
+                source_key = schema['source_key']
+                target = schema['target']
+                target_key = schema['target_key']
+                query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
+                query += f" id(u) AS {source_key}"
+                query += f", id(v) AS {target_key}"
+                for a in attributes:
+                    if a != source_key and a != target_key:
+                        query += f", e.{a} AS {a}"
+                self.__copy_data(query, name, schema['neo4j_schema'])
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -597,15 +605,36 @@ class Neo4jConnector(object):
             if len(labels) == 1:
                 return list(labels)[0]
             return labels
-        q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
+        if self._neo4j_has_apoc:
+            q="CALL apoc.meta.graph()"
+        else:
+            q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
         # TODO(landwehrj) Can schema be done with py2neo?
         with self.__query(q, True) as query:
             for record in query.result():
+                has_multiple_relations = len(record['relationships']) > 1
                 for e in record['relationships']:
                     nodes = e.nodes
                     source = nodes[0]
                     target = nodes[1]
                     e_type = e.type
+
+                    source_name = extract_node_info(source)
+                    target_name = extract_node_info(target)
+
+                    if not self._neo4j_has_apoc and has_multiple_relations:
+                        # Neo4j does not return the correct schema for multi-edges
+                        # without APOC so we need to do additional queries to filter fake edges:
+                        # See https://github.com/neo4j/neo4j/issues/9726
+                        schema_exists = False
+                        q = f"MATCH (:{source_name})-[e:{e_type}]->(:{target_name}) return count(e) > 0"
+                        with self.__query(q) as query:
+                            for result in query.result():
+                                schema_exists = result[0]
+
+                        if (not schema_exists):
+                            continue
+
                     if self.__verbose:
                         print(f"Edge Connectivity: {e}")
                         print(f" -> type => {e_type}")
@@ -628,12 +657,13 @@ class Neo4jConnector(object):
             for prop in self.__neo4j_node_type_properties(flush_cache):
                 labels = prop['nodeLabels']
                 propTypes = prop['propertyTypes']
-                if len(propTypes) == 1:
+                if propTypes is not None and len(propTypes) == 1:
                         propTypes = propTypes[0]
                 for name in labels:
                     if name not in nodes:
                         nodes[name] = dict()
-                    nodes[name][prop['propertyName']] = propTypes
+                    if propTypes is not None:
+                        nodes[name][prop['propertyName']] = propTypes
             self._neo4j_nodes = nodes
         return self._neo4j_nodes
 
@@ -709,7 +739,10 @@ class Neo4jConnector(object):
         edge_endpoints = edge_info['endpoints']
         endpoints = f"{source}->{target}"
         if endpoints not in edge_endpoints:
-            raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
+            if len(edge_endpoints) == 1:
+                raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
+            else:
+                return
 
         schema = [[key, self.__neo4j_type_to_xgt_type(type)]
                   for key, type in info_schema.items()]
@@ -736,10 +769,11 @@ class Neo4jConnector(object):
             for target in neo4j_edge['targets']:
                 if target not in vertices:
                     vertices[target] = None
-                schemas.append(
-                    self.__extract_xgt_edge_schema(edge,
+                result = self.__extract_xgt_edge_schema(edge,
                     source, target, neo4j_source_node_name,
-                    neo4j_target_node_name, flush_cache))
+                    neo4j_target_node_name, flush_cache)
+                if result is not None:
+                    schemas.append(result)
         return schemas
 
     def __neo4j_type_to_xgt_type(self, prop_type):
@@ -895,6 +929,12 @@ class Neo4jConnector(object):
             self._neo4j_node_labels = list(self._neo4j_nodes.keys())
             self._neo4j_node_labels.sort()
         return self._neo4j_node_labels
+
+    def __edge_name_transform(self, edge, source, target, transform_name):
+        if transform_name:
+            return source + '_' + edge + '_' + target
+        else:
+            return edge
 
     # TODO(landwehrj) : Is there a way to detect the cache is stale
     # One option is to use the Neo4j count store of relationship/nodes

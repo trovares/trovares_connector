@@ -255,21 +255,37 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(edge_frame.get_data())
     self.xgt.drop_frame("Relationship")
 
-  def test_multiple_node_labels_to_negative(self):
+  def test_multiple_node_labels_to(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
       session.run(
           'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
-    with self.assertRaises(ValueError):
-      c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    schema = c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    c.create_xgt_schemas(schema)
+    c.copy_data_from_neo4j_to_xgt(schema)
 
-  def test_multiple_node_labels_from_negative(self):
+    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node2')
+    assert node_frame.num_rows == 1
+    self.xgt.drop_frame("Node1_Relationship_Node1")
+    self.xgt.drop_frame("Node1_Relationship_Node2")
+
+  def test_multiple_node_labels_from(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
       session.run(
           'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
-    with self.assertRaises(ValueError):
-      c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    schema = c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    c.create_xgt_schemas(schema)
+    c.copy_data_from_neo4j_to_xgt(schema)
+
+    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('Node2_Relationship_Node1')
+    assert node_frame.num_rows == 1
+    self.xgt.drop_frame("Node1_Relationship_Node1")
+    self.xgt.drop_frame("Node2_Relationship_Node1")
 
   def test_multiple_property_types_vertex_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
