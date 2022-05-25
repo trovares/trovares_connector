@@ -55,9 +55,10 @@
 <ul class="simple">
 <li><p><a class="reference external" href="https://pypi.org/project/neo4j/">Neo4j Python package</a></p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/xgt/">xGT Python package</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pyarrow/">Pyarrow package</a></p></li>
 </ul>
 <p>These can be installed through pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install xgt neo4j
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install xgt neo4j pyarrow
 </pre></div>
 </div>
 </section>
@@ -146,7 +147,6 @@ Using this idiom requires knowing some schema information about the graph data s
 <h1>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h1>
 <p>Doesn’t support the following:</p>
 <ul class="simple">
-<li><p>Multiple node types for a single relationship type.</p></li>
 <li><p>Multiple types for a single property.</p></li>
 <li><p>Point data type.</p></li>
 <li><p>Transferring data from xGT to Neo4j.</p></li>
@@ -154,7 +154,25 @@ Using this idiom requires knowing some schema information about the graph data s
 <p>Other limitations:</p>
 <ul class="simple">
 <li><p>Duration data type is converted into an integer representing nanoseconds.</p></li>
+<li><p>Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
+See below for more details.</p></li>
 </ul>
+<section id="single-relationship-with-multiple-node-conversion">
+<h2>Single relationship with multiple node conversion<a class="headerlink" href="#single-relationship-with-multiple-node-conversion" title="Permalink to this headline">¶</a></h2>
+<p>xGT is schema based and requires an edge to have distinct types.
+Neo4j is schema-less so can have multiple node types per edge type.
+In the case where the are multiple node types for single edge type, the connector will convert the single edge type in Neo4j into multiple edge types in xGT.
+xGT will take the original edge type and create edge types in the format: source_label + _ + edge_label + _ target_label.
+This only occurs for these cases.</p>
+<p>An example would be the following schema in Neo4j:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">D</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Would get converted to the following when transferring to xGT:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">A_PART_OF_B</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">B_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">C_PART_OF_D</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">D</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="api-details">
 <h1>API Details<a class="headerlink" href="#api-details" title="Permalink to this headline">¶</a></h1>
@@ -193,7 +211,10 @@ Using this idiom requires knowing some schema information about the graph data s
 <li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#limitations">Limitations</a></li>
+<li><a class="reference internal" href="#limitations">Limitations</a><ul>
+<li><a class="reference internal" href="#single-relationship-with-multiple-node-conversion">Single relationship with multiple node conversion</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#api-details">API Details</a></li>
 </ul>
 

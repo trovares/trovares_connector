@@ -20,12 +20,13 @@ Requirements
 
 * `Neo4j Python package <https://pypi.org/project/neo4j/>`_
 * `xGT Python package <https://pypi.org/project/xgt/>`_
+* `Pyarrow package <https://pypi.org/project/pyarrow/>`_
 
 These can be installed through pip:
 
 .. code-block:: bash
 
-   python -m pip install xgt neo4j
+   python -m pip install xgt neo4j pyarrow
 
 Optional
 --------
@@ -110,13 +111,11 @@ Using this idiom requires knowing some schema information about the graph data s
    conn.transfer_from_neo4j_to_xgt_for(vertices = nodes_to_copy,
                                        edges = edges_to_copy)
 
-
 Limitations
 ===========
 
 Doesn't support the following:
 
-* Multiple node types for a single relationship type.
 * Multiple types for a single property.
 * Point data type.
 * Transferring data from xGT to Neo4j.
@@ -124,6 +123,29 @@ Doesn't support the following:
 Other limitations:
 
 * Duration data type is converted into an integer representing nanoseconds.
+* Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
+  See below for more details.
+
+Single relationship with multiple node conversion
+-------------------------------------------------
+
+xGT is schema based and requires an edge to have distinct types.
+Neo4j is schema-less so can have multiple node types per edge type.
+In the case where the are multiple node types for single edge type, the connector will convert the single edge type in Neo4j into multiple edge types in xGT.
+xGT will take the original edge type and create edge types in the format: source_label + _ + edge_label + _ target_label.
+This only occurs for these cases.
+
+An example would be the following schema in Neo4j:
+
+.. code-block:: cypher
+
+  (:A)-[:PART_OF]->(:B)-[:PART_OF]->(:C)-[:PART_OF]->(:D)
+
+Would get converted to the following when transferring to xGT:
+
+.. code-block:: cypher
+
+  (:A)-[:A_PART_OF_B]->(:B)-[:B_PART_OF_C]->(:C)-[:C_PART_OF_D]->(:D)
 
 API Details
 ===========
