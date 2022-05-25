@@ -92,6 +92,7 @@ class Neo4jConnector(object):
             Some connections, such as schema querying will still go through 'neo4j-bolt',
             but all data transferring will use the method selected here.
             'neo4j-arrow' is considered very experimental.
+            See the documentation for requirements for using.
         """
 
         self._xgt_server = xgt_server

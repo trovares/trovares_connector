@@ -8,6 +8,7 @@ Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_
 
  - [Neo4j Python](https://pypi.org/project/neo4j/)
  - [xGT Python](https://pypi.org/project/xgt/)
+ - [Pyarrow](https://pypi.org/project/pyarrow/)
 
 ## Installation
 
