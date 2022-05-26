@@ -107,13 +107,13 @@ class Neo4jConnector(object):
         self.__verbose = verbose
 
         self._default_namespace = xgt_server.get_default_namespace()
-        # These are just kept as seperate variables because they may need
+        # These are just kept as seperate variables because they may be needed
         self._neo4j_driver = None
         self._py2neo_driver = None
         self._arrow_driver = None
 
         if self.__verbose:
-            print('Using' + driver + 'for transfers on bolt.')
+            print('Using ' + driver + ' for transfers of data.')
 
         self._neo4j_driver = neo4j.GraphDatabase.driver(f"neo4j://{self._neo4j_host}",
                                                         auth=self._neo4j_auth)

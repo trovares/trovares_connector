@@ -123,6 +123,7 @@ Doesn't support the following:
 Other limitations:
 
 * Duration data type is converted into an integer representing nanoseconds.
+* Multiple labels on a single node will translate into multiple nodes in xGT.
 * Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
   See below for more details.
 
@@ -146,6 +147,18 @@ Would get converted to the following when transferring to xGT:
 .. code-block:: cypher
 
   (:A)-[:A_PART_OF_B]->(:B)-[:B_PART_OF_C]->(:C)-[:C_PART_OF_D]->(:D)
+
+In addition, multiple labels on single node will cause a similar behavior:
+
+.. code-block:: cypher
+
+  (:A:B)-[:PART_OF]->(:C)
+
+Would get converted to the following when transferring to xGT:
+
+.. code-block:: cypher
+
+  (:A)-[:A_PART_OF_C]->(:C), (:B)-[:B_PART_OF_C]->(:C)
 
 API Details
 ===========
