@@ -154,6 +154,7 @@ Using this idiom requires knowing some schema information about the graph data s
 <p>Other limitations:</p>
 <ul class="simple">
 <li><p>Duration data type is converted into an integer representing nanoseconds.</p></li>
+<li><p>Multiple labels on a single node will translate into multiple nodes in xGT.</p></li>
 <li><p>Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
 See below for more details.</p></li>
 </ul>
@@ -170,6 +171,14 @@ This only occurs for these cases.</p>
 </div>
 <p>Would get converted to the following when transferring to xGT:</p>
 <div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">A_PART_OF_B</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">B_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">C_PART_OF_D</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">D</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In addition, multiple labels on single node will cause a similar behavior:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Would get converted to the following when transferring to xGT:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">A_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">),</span><span class="w"> </span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">B_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
