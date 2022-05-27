@@ -148,7 +148,7 @@ Would get converted to the following when transferring to xGT:
 
   (:A)-[:A_PART_OF_B]->(:B)-[:B_PART_OF_C]->(:C)-[:C_PART_OF_D]->(:D)
 
-In addition, multiple labels on single node will cause a similar behavior:
+In addition, multiple labels on a single node will cause a similar behavior:
 
 .. code-block:: cypher
 
