@@ -497,6 +497,7 @@ class Neo4jConnector(object):
         Then those frames are created in xGT.
         Finally, all of the nodes and all of the relationships are copied,
         one frame at a time, from Neo4j to xGT.
+        If both vertices and edges is None, it will retrieve them all.
 
         Parameters
         ----------
@@ -504,6 +505,7 @@ class Neo4jConnector(object):
             List of requested node labels (vertex frame names).
         edges : iterable
             List of requested relationship type (edge frame) names.
+            Any vertices not given for an edge will be automatically requested.
         neo4j_id_name : str
             The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
@@ -527,6 +529,119 @@ class Neo4jConnector(object):
         self.create_xgt_schemas(xgt_schema, append, force)
         self.copy_data_from_neo4j_to_xgt(xgt_schema)
         return None
+
+        """
+        Copies data from Trovares xGT to Neo4j.
+
+        All of the nodes and all of the relationships are copied,
+        one frame at a time, from xGT to Neo4j.
+        If both vertices and edges is None, it will retrieve them all.
+
+        Parameters
+        ----------
+        vertices : iterable
+            List of requested node labels (vertex frame names).
+        edges : iterable
+            List of requested relationship type (edge frame) names.
+            Any vertices not given for an edge will be automatically requested.
+        namespace : str
+            Namespace for the selected frames.
+            If none will use the default namespace.
+
+        Returns
+        -------
+            None
+        """
+    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None):
+        import time
+        xgt_server = self._xgt_server
+        if vertices == None and edges == None:
+            vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
+            edges = [frame.name for frame in xgt_server.get_edge_frames(namespace=namespace)]
+            namespace = None
+        elif vertices == None:
+            vertices = []
+        elif edges == None:
+            edges = []
+
+        if namespace is not None:
+            vertices = [namespace + "__" + vertex for vertex in vertices]
+            edges = [namespace + "__" + edge for edge in vertices]
+
+        id_neo4j_map = { }
+
+        for edge in edges:
+            edge_frame = xgt_server.get_edge_frame(edge)
+            vertices.append(edge_frame.source_name)
+            vertices.append(edge_frame.target_name)
+
+        def convert(value):
+            if value is None:
+                return 'Null'
+            elif isinstance(value, str):
+                return '"' + value + '"'
+            else:
+                return str(value)
+
+        for vertex in vertices:
+            if vertex in id_neo4j_map:
+                continue
+            t0 = time.time()
+            id_neo4j_map[vertex] = { }
+            vertex_frame = xgt_server.get_vertex_frame(vertex)
+            create_string = 'create (a:' + vertex + '{{{0}}}) return ID(a)'
+
+            schema = vertex_frame.schema
+            data = vertex_frame.get_data()
+            labels = [val[0] for val in schema]
+
+            for i, value in enumerate(schema):
+                if value[0] == vertex_frame.key:
+                    key_pos = i
+                    break
+
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.WRITE_ACCESS) as session:
+                for row in data:
+                    elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != key_pos)
+                    result = session.run(create_string.format(elements))
+                    for val in result:
+                        id_neo4j_map[vertex][row[key_pos]] = val[0]
+            duration = time.time() - t0
+            print(f"Time to transfer: {duration:,.2f}", flush=True)
+
+        for edge in edges:
+            t0 = time.time()
+            edge_frame = xgt_server.get_edge_frame(edge)
+            source = edge_frame.source_name
+            target = edge_frame.target_name
+            source_frame = xgt_server.get_vertex_frame(source)
+            target_frame = xgt_server.get_vertex_frame(target)
+            source_map = id_neo4j_map[source]
+            target_map = id_neo4j_map[target]
+            create_string = 'match (a:' + source + '), (b:' + target + ') where ID(a) = {0} and ID(b) = {1} create (a)-[:' + edge + '{{{2}}}]->(b)'
+
+            schema = edge_frame.schema
+            data = edge_frame.get_data()
+            labels = [val[0] for val in schema]
+
+            for i, value in enumerate(schema):
+                if value[0] == edge_frame.source_key:
+                    src_key_pos = i
+                    break
+
+            for i, value in enumerate(schema):
+                if value[0] == edge_frame.target_key:
+                    trg_key_pos = i
+                    break
+
+            with self._neo4j_driver.session(database=self._neo4j_database,
+                                            default_access_mode=neo4j.WRITE_ACCESS) as session:
+                for row in data:
+                    elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != src_key_pos and i != trg_key_pos)
+                    session.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+            duration = time.time() - t0
+            print(f"Time to transfer: {duration:,.2f}", flush=True)
 
     class py2neo_run_closure():
         def __init__(self, connector, query):
