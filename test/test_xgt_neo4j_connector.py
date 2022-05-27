@@ -224,6 +224,45 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 3
     print(node_frame.get_data())
 
+  def test_transfer_nodes_to_neo4j(self):
+    #self._populate_node_working_types_bolt()
+    with self.neo4j_driver.session() as session:
+        session.run('CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true}), (:Node{})')
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c.transfer_from_neo4j_to_xgt_for(vertices=['Node'])
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 3
+    print(node_frame.get_data())
+    with self.neo4j_driver.session() as session:
+      session.run("MATCH (n) DETACH DELETE n")
+    c.transfer_from_xgt_to_neo4j_for(vertices=['Node'])
+    self.xgt.drop_frame("Node")
+    c.transfer_from_neo4j_to_xgt_for(vertices=['Node'])
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 3
+    print(node_frame.get_data())
+
+  def test_transfer_edges_to_neo4j(self):
+    #self._populate_node_working_types_bolt()
+    with self.neo4j_driver.session() as session:
+      session.run(
+        'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
+        '[:Relationship{int: 343, real: 3.14, str: "string", bool: true}]' +
+        '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})')
+    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c.transfer_from_neo4j_to_xgt_for(edges=['Relationship'])
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert edge_frame.num_rows == 3
+    print(edge_frame.get_data())
+    with self.neo4j_driver.session() as session:
+      session.run("MATCH (n) DETACH DELETE n")
+    c.transfer_from_xgt_to_neo4j_for(edges=['Relationship'])
+    self.xgt.drop_frame("Relationship")
+    c.transfer_from_neo4j_to_xgt_for(edges=['Relationship'])
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert edge_frame.num_rows == 3
+    print(edge_frame.get_data())
+
   def test_transfer_relationship_working_types_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
