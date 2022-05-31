@@ -620,11 +620,14 @@ class Neo4jConnector(object):
                         for i, x in enumerate(chunk):
                             for j, y in enumerate(x):
                                 rows[j].append(y.as_py())
+                        tx = session.begin_transaction()
                         for row in rows:
                             elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if i != key_pos)
-                            result = session.run(create_string.format(elements))
+                            result = tx.run(create_string.format(elements))
                             for val in result:
                                 id_neo4j_map[vertex][row[key_pos]] = val[0]
+                        tx.commit()
+                        tx.close()
                     except StopIteration:
                         break
             duration = time.time() - t0
@@ -666,9 +669,12 @@ class Neo4jConnector(object):
                         for i, x in enumerate(chunk):
                             for j, y in enumerate(x):
                                 rows[j].append(y.as_py())
+                        tx = session.begin_transaction()
                         for row in rows:
                             elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != src_key_pos and i != trg_key_pos)
-                            session.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+                            tx.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+                        tx.commit()
+                        tx.close()
                     except StopIteration:
                         break
             duration = time.time() - t0
