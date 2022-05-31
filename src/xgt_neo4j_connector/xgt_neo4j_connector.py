@@ -56,11 +56,13 @@ class Neo4jConnector(object):
 
     def __init__(self, xgt_server,
                        neo4j_host = 'localhost',
-                       neo4j_port = 7474, neo4j_bolt_port = 7687,
+                       neo4j_bolt_port = 7687, neo4j_http_port = 7474,
                        neo4j_arrow_port = 9999, neo4j_auth = None,
                        neo4j_database = neo4j.DEFAULT_DATABASE,
                        verbose = False, disable_apoc = False,
-                       driver = 'neo4j-bolt'):
+                       driver = 'neo4j-bolt',
+                       neo4j_protocol = 'neo4j',
+                       neo4j_http_protocol = 'http'):
         """
         Initializes the connector class.
 
@@ -70,11 +72,11 @@ class Neo4jConnector(object):
             Connection object to xGT.
         neo4j_host : str
             Host address of the Neo4j server.
-        neo4j_port : int
-            HTTP port of the Neo4j server.
-            Used with HTTP drivers.
         neo4j_bolt_port : int
             Bolt port of the Neo4j server.
+        neo4j_http_port : int
+            HTTP port of the Neo4j server.
+            Used with HTTP drivers.
         neo4j_arrow_port : int
             Arrow port of the Neo4j server.
             Used with Arrow driver.
@@ -94,15 +96,23 @@ class Neo4jConnector(object):
             but all data transferring will use the method selected here.
             'neo4j-arrow' is considered very experimental.
             See the documentation for requirements for using.
+        neo4j_protocol : str
+            Protocol used when connecting to Neo4j through bolt.
+            Acceptable values include: neo4j, neo4j+s, neo4j+ssc, bolt, bolt+s, and bolt+ssc.
+        neo4j_http_protocol : str
+            Protocol used when connecting to Neo4j through http with http drivers.
+            Acceptable values include: http, https, http+s, http+ssc.
         """
 
         self._xgt_server = xgt_server
         self._neo4j_host = neo4j_host
-        self._neo4j_port = neo4j_port
         self._neo4j_bolt_port = neo4j_bolt_port
+        self._neo4j_http_port = neo4j_http_port
         self._neo4j_arrow_port = neo4j_arrow_port
         self._neo4j_auth = neo4j_auth
         self._neo4j_database = neo4j_database
+        self._neo4j_protocol = neo4j_protocol
+        self._neo4j_http_protocol = neo4j_http_protocol
         # neo4j arrow can't take none as a parameter for the database.
         self._neo4j_database_arrow = 'neo4j' if neo4j_database == None else neo4j_database
         self.__verbose = verbose
@@ -116,19 +126,19 @@ class Neo4jConnector(object):
         if self.__verbose:
             print('Using ' + driver + ' for transfers of data.')
 
-        self._neo4j_driver = neo4j.GraphDatabase.driver(f"neo4j://{self._neo4j_host}",
+        self._neo4j_driver = neo4j.GraphDatabase.driver(f"{self._neo4j_protocol}://{self._neo4j_host}",
                                                         auth=self._neo4j_auth)
         if driver == 'neo4j-bolt':
             pass
         elif driver == 'py2neo-bolt':
             from py2neo import Graph
             self._py2neo_driver = Graph(
-                "neo4j://" + self._neo4j_host + ":" +str(neo4j_bolt_port),
+                self._neo4j_protocol + "://" + self._neo4j_host + ":" +str(neo4j_bolt_port),
                 auth=neo4j_auth, name=neo4j_database)
         elif driver == 'py2neo-http':
             from py2neo import Graph
             self._py2neo_driver = Graph(
-                "http://" + self._neo4j_host + ":" +str(neo4j_port),
+                self._neo4j_http_protocol + "://" + self._neo4j_host + ":" +str(neo4j_http_port),
                 auth=neo4j_auth, name=neo4j_database)
         elif driver == 'neo4j-arrow':
             import neo4j_arrow as na
@@ -157,20 +167,16 @@ class Neo4jConnector(object):
         return result
 
     @property
-    def neo4j_driver(self):
+    def neo4j_driver(self) -> neo4j.Neo4jDriver:
         """
-        Retrieve the Python driver connected to the Neo4j database.
+        Retrieve the Python bolt driver connected to the Neo4j database.
 
         Returns
         -------
-        neo4j.Neo4jDriver or py2neo.Graph
-          The Python driver object that is connected to the Neo4j database
-          depends on the driver selected during the connection.
+        neo4j.Neo4jDriver
+          The Python bolt driver object that is connected to the Neo4j database.
         """
-        if self._py2neo_driver is None:
-            return self._neo4j_driver
-        else:
-            return self._py2neo_driver
+        return self._neo4j_driver
 
     @property
     def neo4j_relationship_types(self) -> list():
