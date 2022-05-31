@@ -1,3 +1,4 @@
+import datetime
 import pyarrow as pa
 import pyarrow.flight as pf
 
@@ -580,6 +581,13 @@ class Neo4jConnector(object):
                 return 'Null'
             elif isinstance(value, str):
                 return '"' + value + '"'
+            elif isinstance(value, datetime.datetime):
+                format_string = 'datetime({{year:{0},month:{1},day:{2},hour:{3},minute:{4},second:{5},microsecond:{6}}})'
+                return format_string.format(value.year, value.month, value.day, value.hour, value.minute, value.second, value.microsecond)
+            elif isinstance(value, datetime.date):
+                return 'date({{year:{0},month:{1},day:{2}}})'.format(value.year, value.month, value.day)
+            elif isinstance(value, datetime.time):
+                return 'time({{hour:{0},minute:{1},second:{2},microsecond:{3}}})'.format(value.hour, value.minute, value.second, value.microsecond)
             else:
                 return str(value)
 
@@ -592,7 +600,8 @@ class Neo4jConnector(object):
             create_string = 'create (a:' + vertex + '{{{0}}}) return ID(a)'
 
             schema = vertex_frame.schema
-            data = vertex_frame.get_data()
+            reader = self.__arrow_reader(vertex)
+
             labels = [val[0] for val in schema]
 
             for i, value in enumerate(schema):
@@ -602,11 +611,22 @@ class Neo4jConnector(object):
 
             with self._neo4j_driver.session(database=self._neo4j_database,
                                             default_access_mode=neo4j.WRITE_ACCESS) as session:
-                for row in data:
-                    elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != key_pos)
-                    result = session.run(create_string.format(elements))
-                    for val in result:
-                        id_neo4j_map[vertex][row[key_pos]] = val[0]
+                while (True):
+                    try:
+                        chunk = reader.read_chunk().data
+                        rows = [None] * chunk.num_rows
+                        for i in range(chunk.num_rows):
+                            rows[i] = []
+                        for i, x in enumerate(chunk):
+                            for j, y in enumerate(x):
+                                rows[j].append(y.as_py())
+                        for row in rows:
+                            elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if i != key_pos)
+                            result = session.run(create_string.format(elements))
+                            for val in result:
+                                id_neo4j_map[vertex][row[key_pos]] = val[0]
+                    except StopIteration:
+                        break
             duration = time.time() - t0
             print(f"Time to transfer: {duration:,.2f}", flush=True)
 
@@ -622,7 +642,7 @@ class Neo4jConnector(object):
             create_string = 'match (a:' + source + '), (b:' + target + ') where ID(a) = {0} and ID(b) = {1} create (a)-[:' + edge + '{{{2}}}]->(b)'
 
             schema = edge_frame.schema
-            data = edge_frame.get_data()
+            reader = self.__arrow_reader(edge)
             labels = [val[0] for val in schema]
 
             for i, value in enumerate(schema):
@@ -637,9 +657,20 @@ class Neo4jConnector(object):
 
             with self._neo4j_driver.session(database=self._neo4j_database,
                                             default_access_mode=neo4j.WRITE_ACCESS) as session:
-                for row in data:
-                    elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != src_key_pos and i != trg_key_pos)
-                    session.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+                while (True):
+                    try:
+                        chunk = reader.read_chunk().data
+                        rows = [None] * chunk.num_rows
+                        for i in range(chunk.num_rows):
+                            rows[i] = []
+                        for i, x in enumerate(chunk):
+                            for j, y in enumerate(x):
+                                rows[j].append(y.as_py())
+                        for row in rows:
+                            elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != src_key_pos and i != trg_key_pos)
+                            session.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+                    except StopIteration:
+                        break
             duration = time.time() - t0
             print(f"Time to transfer: {duration:,.2f}", flush=True)
 
@@ -907,6 +938,11 @@ class Neo4jConnector(object):
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
         return writer
+
+    def __arrow_reader(self, frame_name):
+        arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
+        arrow_conn.authenticate(BasicClientAuthHandler())
+        return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, cypher_for_extract, frame, neo4j_schema):
         import time

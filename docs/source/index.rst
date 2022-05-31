@@ -118,7 +118,6 @@ Doesn't support the following:
 
 * Multiple types for a single property.
 * Point data type.
-* Transferring data from xGT to Neo4j.
 
 Other limitations:
 
