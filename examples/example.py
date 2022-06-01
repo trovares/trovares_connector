@@ -47,10 +47,10 @@ def individual_steps(nodes_to_copy, edges_to_copy):
     Note that the individual steps would allow a user to update/modify the
     xGT schema prior to creating the frames in xGT.
     """
-    xgt_schema = c.get_xgt_schema_for(vertices=nodes_to_copy, edges = edges_to_copy)
+    xgt_schema = c.get_xgt_schema_for(vertices=nodes_to_copy, edges=edges_to_copy)
     # Can update/modify schema parts (e.g., xgt.DATETIME instead of xgt.TEXT)
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_from_neo4j_to_xgt(xgt_schemas)
 
 
-c.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy, edges = edges_to_copy)
+c.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy, edges=edges_to_copy)

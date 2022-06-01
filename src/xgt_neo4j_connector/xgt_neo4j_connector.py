@@ -554,12 +554,17 @@ class Neo4jConnector(object):
         namespace : str
             Namespace for the selected frames.
             If none will use the default namespace.
+        edge_keys : boolean
+            If true will transfer edge key columns.
+        vertex_keys : boolean
+            If true will transfer vertex key columns.
 
         Returns
         -------
             None
         """
-    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None):
+    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None,
+                                       edge_keys = False, vertex_keys = False):
         import time
         xgt_server = self._xgt_server
         if vertices == None and edges == None:
@@ -628,7 +633,7 @@ class Neo4jConnector(object):
                                 rows[j].append(y.as_py())
                         tx = session.begin_transaction()
                         for row in rows:
-                            elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if i != key_pos)
+                            elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if vertex_keys or i != key_pos)
                             result = tx.run(create_string.format(elements))
                             for val in result:
                                 id_neo4j_map[vertex][row[key_pos]] = val[0]
@@ -677,7 +682,7 @@ class Neo4jConnector(object):
                                 rows[j].append(y.as_py())
                         tx = session.begin_transaction()
                         for row in rows:
-                            elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if i != src_key_pos and i != trg_key_pos)
+                            elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if edge_keys or (i != src_key_pos and i != trg_key_pos))
                             tx.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
                         tx.commit()
                         tx.close()

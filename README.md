@@ -45,3 +45,4 @@ The available methods are:
   - create_xgt_schemas
   - copy_data_from_neo4j_to_xgt
   - transfer_from_neo4j_to_xgt_for
+  - transfer_from_xgt_to_neo4j_for
