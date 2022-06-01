@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        # TODO(landwehrj) Workaround for backwards compatibility issues with protobuf
+        pip install 'protobuf>=3.12.0,<=3.20.1'
     - name: Build HTML
       uses: ammaraskar/sphinx-action@0.4
     - name: Upload artifacts
