@@ -75,8 +75,8 @@ These examples show typical usage patterns.
 Copy entire graph from Neo4j to Trovares xGT
 --------------------------------------------
 
-This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationshp types (edge types) in the neo4j data.
-All of these data frames are created in Trovares xGT and then all of the data is copied from neo4j to xGT.
+This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
+All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.
 
 .. code-block:: python
 
