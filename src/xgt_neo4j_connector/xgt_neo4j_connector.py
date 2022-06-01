@@ -537,6 +537,8 @@ class Neo4jConnector(object):
         self.copy_data_from_neo4j_to_xgt(xgt_schema)
         return None
 
+    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None,
+                                       edge_keys = False, vertex_keys = False):
         """
         Copies data from Trovares xGT to Neo4j.
 
@@ -563,8 +565,6 @@ class Neo4jConnector(object):
         -------
             None
         """
-    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None,
-                                       edge_keys = False, vertex_keys = False):
         import time
         xgt_server = self._xgt_server
         if vertices == None and edges == None:
