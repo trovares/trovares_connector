@@ -36,7 +36,7 @@ Optional
    Automatically used if installed as a plugin for Neo4j.
 * `Py2neo Python package <https://pypi.org/project/py2neo/>`_
    Alternative Neo4j driver that provides http or bolt connections.
-   Transfers are 2X as fast, but the memory requirements can be excessive for large transfers.
+   Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
    This can be selected via the driver parameter in the connector.
 * `Neo4j-arrow plugin and Python package <https://github.com/neo4j-field/neo4j-arrow>`_
    Alternative driver for transfers that is very experimental.
@@ -64,7 +64,6 @@ From any Python environment, simply importing both `xgt` and `xgt_neo4j_connecto
 
    import xgt
    from xgt_neo4j_connector import Neo4jConnector
-
 
 
 Examples
