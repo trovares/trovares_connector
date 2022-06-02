@@ -86,8 +86,8 @@ All of these data frames are created in Trovares xGT and then all of the data is
    xgt_server.set_default_namespace('neo4j')
    conn = Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
 
-   conn.transfer_from_neo4j_to_xgt_for(vertices = conn.neo4j_node_labels,
-                                       edges = conn.neo4j_relationship_types)
+   conn.transfer_from_neo4j_to_xgt_for(vertices=conn.neo4j_node_labels,
+                                       edges=conn.neo4j_relationship_types)
 
 
 Copy a portion of a graph based on node labels and/or relationship types
@@ -107,8 +107,8 @@ Using this idiom requires knowing some schema information about the graph data s
 
    nodes_to_copy = ['Person']
    edges_to_copy = ['KNOWS']
-   conn.transfer_from_neo4j_to_xgt_for(vertices = nodes_to_copy,
-                                       edges = edges_to_copy)
+   conn.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy,
+                                       edges=edges_to_copy)
 
 Limitations
 ===========
