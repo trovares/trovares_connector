@@ -41,7 +41,7 @@ xgt_server.create_vertex_frame(name='Person', schema=[['id', xgt.INT]], key='id'
 e_frame = xgt_server.create_edge_frame(name='Knows', schema=[['src', xgt.INT], ['trg', xgt.INT]],
                                        source_key='src', target_key='trg', source="Person", target="Person")
 end = 10
-# Create a chain with with a loop in Neo4j
+# Create a chain with with a loop in xGT
 for i in range(0, end):
     e_frame.insert([[i, i+1]])
 e_frame.insert([[2, 0]])
