@@ -748,7 +748,6 @@ class Neo4jConnector(object):
 
         def __exit__(self, exc_type,exc_value, exc_traceback):
             print("", flush=True)
-            pass
 
         def __format_time(self, seconds, digits=1):
             isec, fsec = divmod(round(seconds*10**digits), 10**digits)
@@ -756,6 +755,9 @@ class Neo4jConnector(object):
 
         def show_progress(self, count_to_add = 0):
             self._count += count_to_add
+            # Counts are no longer accurate
+            while (self._count > self._total_count):
+                self._total_count *= 2
             progress = int(self._count * self._bar_size / self._total_count)
             current_elapsed = time.time() - self._start_time
             remaining = 0 if self._count == 0 else ((self._total_count - self._count) *
