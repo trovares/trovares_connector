@@ -4,6 +4,7 @@ import pyarrow.flight as pf
 
 import neo4j
 import xgt
+import time
 
 class BasicClientAuthHandler(pf.ClientAuthHandler):
     def __init__(self, username, password):
@@ -457,36 +458,50 @@ class Neo4jConnector(object):
             if self._arrow_driver is not None and (attr_type == 'datetime' or attr_type == 'date' or attr_type == 'time'):
                 return f", toString(v.{a}) as {a}"
             return f", v.{a} AS {a}"
-        for vertex, schema in xgt_schemas['vertices'].items():
-            if self.__verbose or True:
-                print(f'Copy data for vertex {vertex} into schema: {schema}')
-            table_schema = schema['schema']
-            attributes = {_:t for _, t in table_schema}
-            key = schema['key']
-            query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
-            for a in attributes:
-                if a != key:
-                    query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
-            self.__copy_data(query, vertex, schema['neo4j_schema'])
-        for edge, schema_list in xgt_schemas['edges'].items():
-            if self.__verbose or True:
-                print(f'Copy data for node {edge} into schema: {schema_list}')
-            transform = True if len(schema_list) > 1 else False
-            for schema in schema_list:
-                name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
+        # Use the count store to get totals.
+        estimated_counts = 0
+        for vertex in xgt_schemas['vertices']:
+            q = f"MATCH (v:{vertex}) RETURN count(v)"
+            with self.__query(q) as query:
+                for record in query.result():
+                    estimated_counts += record[0]
+        for edge in xgt_schemas['edges']:
+            q = f"MATCH ()-[e:{edge}]->() RETURN count(e)"
+            with self.__query(q) as query:
+                for record in query.result():
+                    estimated_counts += record[0]
+
+        with  self.progress_display(estimated_counts) as progress_bar:
+            for vertex, schema in xgt_schemas['vertices'].items():
+                if self.__verbose:
+                    print(f'Copy data for vertex {vertex} into schema: {schema}')
                 table_schema = schema['schema']
                 attributes = {_:t for _, t in table_schema}
-                source = schema['source']
-                source_key = schema['source_key']
-                target = schema['target']
-                target_key = schema['target_key']
-                query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
-                query += f" id(u) AS {source_key}"
-                query += f", id(v) AS {target_key}"
+                key = schema['key']
+                query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
                 for a in attributes:
-                    if a != source_key and a != target_key:
-                        query += f", e.{a} AS {a}"
-                self.__copy_data(query, name, schema['neo4j_schema'])
+                    if a != key:
+                        query += xlate_result_property(a, attributes[a]) # f", v.{a} AS {a}"
+                self.__copy_data(query, vertex, schema['neo4j_schema'], progress_bar)
+            for edge, schema_list in xgt_schemas['edges'].items():
+                if self.__verbose:
+                    print(f'Copy data for node {edge} into schema: {schema_list}')
+                transform = True if len(schema_list) > 1 else False
+                for schema in schema_list:
+                    name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
+                    table_schema = schema['schema']
+                    attributes = {_:t for _, t in table_schema}
+                    source = schema['source']
+                    source_key = schema['source_key']
+                    target = schema['target']
+                    target_key = schema['target_key']
+                    query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
+                    query += f" id(u) AS {source_key}"
+                    query += f", id(v) AS {target_key}"
+                    for a in attributes:
+                        if a != source_key and a != target_key:
+                            query += f", e.{a} AS {a}"
+                    self.__copy_data(query, name, schema['neo4j_schema'], progress_bar)
         return  None
 
     def transfer_from_neo4j_to_xgt_for(self,
@@ -565,7 +580,6 @@ class Neo4jConnector(object):
         -------
             None
         """
-        import time
         xgt_server = self._xgt_server
         if vertices == None and edges == None:
             vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
@@ -601,95 +615,96 @@ class Neo4jConnector(object):
                 return 'time({{hour:{0},minute:{1},second:{2},microsecond:{3}}})'.format(value.hour, value.minute, value.second, value.microsecond)
             else:
                 return str(value)
-
+        estimated_counts = 0
         for vertex in vertices:
-            if vertex in id_neo4j_map:
-                continue
-            t0 = time.time()
-            id_neo4j_map[vertex] = { }
-            vertex_frame = xgt_server.get_vertex_frame(vertex)
-            create_string = 'create (a:' + vertex + '{{{0}}}) return ID(a)'
-
-            schema = vertex_frame.schema
-            reader = self.__arrow_reader(vertex)
-
-            labels = [val[0] for val in schema]
-
-            for i, value in enumerate(schema):
-                if value[0] == vertex_frame.key:
-                    key_pos = i
-                    break
-
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.WRITE_ACCESS) as session:
-                while (True):
-                    try:
-                        chunk = reader.read_chunk().data
-                        rows = [None] * chunk.num_rows
-                        for i in range(chunk.num_rows):
-                            rows[i] = []
-                        for i, x in enumerate(chunk):
-                            for j, y in enumerate(x):
-                                rows[j].append(y.as_py())
-                        tx = session.begin_transaction()
-                        for row in rows:
-                            elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if vertex_keys or i != key_pos)
-                            result = tx.run(create_string.format(elements))
-                            for val in result:
-                                id_neo4j_map[vertex][row[key_pos]] = val[0]
-                        tx.commit()
-                        tx.close()
-                    except StopIteration:
-                        break
-            duration = time.time() - t0
-            print(f"Time to transfer: {duration:,.2f}", flush=True)
-
+            estimated_counts += xgt_server.get_vertex_frame(vertex).num_rows
         for edge in edges:
-            t0 = time.time()
-            edge_frame = xgt_server.get_edge_frame(edge)
-            source = edge_frame.source_name
-            target = edge_frame.target_name
-            source_frame = xgt_server.get_vertex_frame(source)
-            target_frame = xgt_server.get_vertex_frame(target)
-            source_map = id_neo4j_map[source]
-            target_map = id_neo4j_map[target]
-            create_string = 'match (a:' + source + '), (b:' + target + ') where ID(a) = {0} and ID(b) = {1} create (a)-[:' + edge + '{{{2}}}]->(b)'
+            estimated_counts += xgt_server.get_edge_frame(edge).num_rows
+        with  self.progress_display(estimated_counts) as progress_bar:
+            for vertex in vertices:
+                if vertex in id_neo4j_map:
+                    continue
+                id_neo4j_map[vertex] = { }
+                vertex_frame = xgt_server.get_vertex_frame(vertex)
+                create_string = 'create (a:' + vertex + '{{{0}}}) return ID(a)'
 
-            schema = edge_frame.schema
-            reader = self.__arrow_reader(edge)
-            labels = [val[0] for val in schema]
+                schema = vertex_frame.schema
+                reader = self.__arrow_reader(vertex)
 
-            for i, value in enumerate(schema):
-                if value[0] == edge_frame.source_key:
-                    src_key_pos = i
-                    break
+                labels = [val[0] for val in schema]
 
-            for i, value in enumerate(schema):
-                if value[0] == edge_frame.target_key:
-                    trg_key_pos = i
-                    break
-
-            with self._neo4j_driver.session(database=self._neo4j_database,
-                                            default_access_mode=neo4j.WRITE_ACCESS) as session:
-                while (True):
-                    try:
-                        chunk = reader.read_chunk().data
-                        rows = [None] * chunk.num_rows
-                        for i in range(chunk.num_rows):
-                            rows[i] = []
-                        for i, x in enumerate(chunk):
-                            for j, y in enumerate(x):
-                                rows[j].append(y.as_py())
-                        tx = session.begin_transaction()
-                        for row in rows:
-                            elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if edge_keys or (i != src_key_pos and i != trg_key_pos))
-                            tx.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
-                        tx.commit()
-                        tx.close()
-                    except StopIteration:
+                for i, value in enumerate(schema):
+                    if value[0] == vertex_frame.key:
+                        key_pos = i
                         break
-            duration = time.time() - t0
-            print(f"Time to transfer: {duration:,.2f}", flush=True)
+
+                with self._neo4j_driver.session(database=self._neo4j_database,
+                                                default_access_mode=neo4j.WRITE_ACCESS) as session:
+                    while (True):
+                        try:
+                            chunk = reader.read_chunk().data
+                            rows = [None] * chunk.num_rows
+                            for i in range(chunk.num_rows):
+                                rows[i] = []
+                            for i, x in enumerate(chunk):
+                                for j, y in enumerate(x):
+                                    rows[j].append(y.as_py())
+                            tx = session.begin_transaction()
+                            for row in rows:
+                                elements = ",".join(labels[i] + ':' + convert(row[i], ) for i in range(len(row)) if vertex_keys or i != key_pos)
+                                result = tx.run(create_string.format(elements))
+                                for val in result:
+                                    id_neo4j_map[vertex][row[key_pos]] = val[0]
+                                progress_bar.show_progress(1)
+                            tx.commit()
+                            tx.close()
+                        except StopIteration:
+                            break
+
+            for edge in edges:
+                edge_frame = xgt_server.get_edge_frame(edge)
+                source = edge_frame.source_name
+                target = edge_frame.target_name
+                source_frame = xgt_server.get_vertex_frame(source)
+                target_frame = xgt_server.get_vertex_frame(target)
+                source_map = id_neo4j_map[source]
+                target_map = id_neo4j_map[target]
+                create_string = 'match (a:' + source + '), (b:' + target + ') where ID(a) = {0} and ID(b) = {1} create (a)-[:' + edge + '{{{2}}}]->(b)'
+
+                schema = edge_frame.schema
+                reader = self.__arrow_reader(edge)
+                labels = [val[0] for val in schema]
+
+                for i, value in enumerate(schema):
+                    if value[0] == edge_frame.source_key:
+                        src_key_pos = i
+                        break
+
+                for i, value in enumerate(schema):
+                    if value[0] == edge_frame.target_key:
+                        trg_key_pos = i
+                        break
+
+                with self._neo4j_driver.session(database=self._neo4j_database,
+                                                default_access_mode=neo4j.WRITE_ACCESS) as session:
+                    while (True):
+                        try:
+                            chunk = reader.read_chunk().data
+                            rows = [None] * chunk.num_rows
+                            for i in range(chunk.num_rows):
+                                rows[i] = []
+                            for i, x in enumerate(chunk):
+                                for j, y in enumerate(x):
+                                    rows[j].append(y.as_py())
+                            tx = session.begin_transaction()
+                            for row in rows:
+                                elements = ",".join(labels[i] + ':' + convert(row[i]) for i in range(len(row)) if edge_keys or (i != src_key_pos and i != trg_key_pos))
+                                tx.run(create_string.format(source_map[row[src_key_pos]], target_map[row[trg_key_pos]], elements))
+                                progress_bar.show_progress(1)
+                            tx.commit()
+                            tx.close()
+                        except StopIteration:
+                            break
 
     class py2neo_run_closure():
         def __init__(self, connector, query):
@@ -718,6 +733,39 @@ class Neo4jConnector(object):
 
         def result(self):
             return self._session.run(self._query)
+
+    class progress_display():
+        def __init__(self, total_count, bar_size = 60, prefix = "Tranferring: "):
+            self._total_count = total_count
+            self._count = 0
+            self._bar_size = bar_size
+            self._prefix = prefix
+            self._start_time = time.time()
+
+        def __enter__(self):
+            self.show_progress()
+            return self
+
+        def __exit__(self, exc_type,exc_value, exc_traceback):
+            print("", flush=True)
+            pass
+
+        def __format_time(self, seconds, digits=1):
+            isec, fsec = divmod(round(seconds*10**digits), 10**digits)
+            return f'{datetime.timedelta(seconds=isec)}.{fsec:0{digits}.0f}'
+
+        def show_progress(self, count_to_add = 0):
+            self._count += count_to_add
+            progress = int(self._count * self._bar_size / self._total_count)
+            current_elapsed = time.time() - self._start_time
+            remaining = 0 if self._count == 0 else ((self._total_count - self._count) *
+                                                   (current_elapsed)) / self._count
+            rate = 0 if self._count == 0 else round(self._count / (current_elapsed), 1)
+            remaining = self.__format_time(remaining)
+            duration = self.__format_time(current_elapsed)
+            print("{}[{}{}] {}/{} in {}s ({}/s, eta: {}s)".format(self._prefix,
+                  u"#"*progress, "."*(self._bar_size-progress), self._count,
+                  self._total_count, duration, rate, remaining), end='\r', flush=True)
 
     def __query(self, query, use_neo4j_always = False):
         if not use_neo4j_always and self._py2neo_driver is not None:
@@ -961,20 +1009,15 @@ class Neo4jConnector(object):
         arrow_conn.authenticate(BasicClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
-    def __copy_data(self, cypher_for_extract, frame, neo4j_schema):
-        import time
-        t0 = time.time()
+    def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):
         if self._py2neo_driver is not None:
-            self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame)
+            self.__py2neo_copy_data(cypher_for_extract, neo4j_schema, frame, progress_bar)
         elif self._arrow_driver is not None:
-            self.__arrow_copy_data(cypher_for_extract, frame)
+            self.__arrow_copy_data(cypher_for_extract, frame, progress_bar)
         else:
-            self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame)
-        duration = time.time() - t0
-        print(f"Time to transfer: {duration:,.2f}", flush=True)
-        return duration
+            self.__bolt_copy_data(cypher_for_extract, neo4j_schema, frame, progress_bar)
 
-    def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame):
+    def __bolt_copy_data(self, cypher_for_extract, neo4j_schema, frame, progress_bar):
         with self._neo4j_driver.session(database=self._neo4j_database,
                                         default_access_mode=neo4j.READ_ACCESS) as session:
             schema = pa.schema([])
@@ -1008,19 +1051,21 @@ class Neo4jConnector(object):
                         data[i][chunk_count] = val
                 chunk_count = chunk_count + 1
                 if chunk_count == block_size:
-                    chunk_count = 0
                     batch = pa.RecordBatch.from_arrays(data, schema=schema)
                     xgt_writer.write(batch)
+                    progress_bar.show_progress(chunk_count)
+                    chunk_count = 0
 
             if chunk_count > 0:
                 for j in range(len(data)):
                     data[j] = data[j][:-(block_size - chunk_count)]
                 batch = pa.RecordBatch.from_arrays(data, schema=schema)
                 xgt_writer.write(batch)
+                progress_bar.show_progress(chunk_count)
 
             xgt_writer.close()
 
-    def __py2neo_copy_data(self, cypher_for_extract, neo4j_schema, frame):
+    def __py2neo_copy_data(self, cypher_for_extract, neo4j_schema, frame, progress_bar):
         schema = pa.schema([])
         # With xGT 10.1 we need to change double to float
         # so we infer the schema manually.
@@ -1052,19 +1097,21 @@ class Neo4jConnector(object):
                     data[i][chunk_count] = val
             chunk_count = chunk_count + 1
             if chunk_count == block_size:
-                chunk_count = 0
                 batch = pa.RecordBatch.from_arrays(data, schema=schema)
                 xgt_writer.write(batch)
+                progress_bar.show_progress(chunk_count)
+                chunk_count = 0
 
         if chunk_count > 0:
             for j in range(len(data)):
                 data[j] = data[j][:-(block_size - chunk_count)]
             batch = pa.RecordBatch.from_arrays(data, schema=schema)
             xgt_writer.write(batch)
+            progress_bar.show_progress(chunk_count)
 
         xgt_writer.close()
 
-    def __arrow_copy_data(self, cypher_for_extract, frame):
+    def __arrow_copy_data(self, cypher_for_extract, frame, progress_bar):
         ticket = self._arrow_driver.cypher(cypher_for_extract,
                                            self._neo4j_database_arrow)
         ready = self._arrow_driver.wait_for_job(ticket, timeout=60)
@@ -1073,12 +1120,11 @@ class Neo4jConnector(object):
         neo4j_reader = self._arrow_driver.stream(ticket).to_reader()
         xgt_writer = self.__arrow_writer(frame, neo4j_reader.schema)
         # move data from Neo4j to xGT in chunks
-        count = 0
         while (True):
             try:
                 batch = neo4j_reader.read_next_batch()
                 xgt_writer.write(batch)
-                count += 1
+                progress_bar.show_progress(batch.num_rows)
             except StopIteration:
                 break
         xgt_writer.close()
