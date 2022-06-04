@@ -735,7 +735,7 @@ class Neo4jConnector(object):
             return self._session.run(self._query)
 
     class progress_display():
-        def __init__(self, total_count, bar_size = 60, prefix = "Tranferring: "):
+        def __init__(self, total_count, bar_size = 60, prefix = "Transferring: "):
             self._total_count = total_count
             self._count = 0
             self._bar_size = bar_size
