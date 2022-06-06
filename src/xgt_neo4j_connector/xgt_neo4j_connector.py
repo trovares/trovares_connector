@@ -4,6 +4,7 @@ import pyarrow.flight as pf
 
 import neo4j
 import xgt
+import os
 import time
 
 class BasicClientAuthHandler(pf.ClientAuthHandler):
@@ -736,6 +737,26 @@ class Neo4jConnector(object):
 
     class progress_display():
         def __init__(self, total_count, bar_size = 60, prefix = "Transferring: "):
+            self._bar_end = '\r'
+            # When drawing the bar, we can only use 1 line so we need to shrink
+            # the bar elements for cases where the terminal is too tiny.
+            try:
+                terminal_size = os.get_terminal_size().columns
+            except:
+                # Can't get terminal_size
+                terminal_size = 0
+            static_element_size = 80
+            current_space_requirement = static_element_size + bar_size
+            # Can't get terminal_size
+            if terminal_size == 0:
+                pass
+            # Terminal is too tiny for a bar: just print the results.
+            elif terminal_size < static_element_size:
+                bar_size = 0
+                self._bar_end = '\n'
+            # Shrink bar to fit the print within the terminal.
+            elif terminal_size < current_space_requirement:
+                bar_size = terminal_size - static_element_size
             self._total_count = total_count
             self._count = 0
             self._bar_size = bar_size
@@ -765,9 +786,9 @@ class Neo4jConnector(object):
             rate = 0 if self._count == 0 else round(self._count / (current_elapsed), 1)
             remaining = self.__format_time(remaining)
             duration = self.__format_time(current_elapsed)
-            print("{}[{}{}] {}/{} in {}s ({}/s, eta: {}s)".format(self._prefix,
+            print("{}[{}{}] {}/{} in {}s ({}/s, eta: {}s)     ".format(self._prefix,
                   u"#"*progress, "."*(self._bar_size-progress), self._count,
-                  self._total_count, duration, rate, remaining), end='\r', flush=True)
+                  self._total_count, duration, rate, remaining), end=self._bar_end, flush=True)
 
     def __query(self, query, use_neo4j_always = False):
         if not use_neo4j_always and self._py2neo_driver is not None:
