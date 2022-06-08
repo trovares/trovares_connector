@@ -283,7 +283,7 @@ class Neo4jConnector(object):
         """
         return self.__neo4j_edges()
 
-    def get_xgt_schema_for(self, vertices = None, edges = None,
+    def get_xgt_schemas(self, vertices = None, edges = None,
                                  neo4j_id_name = 'neo4j_id',
                                  neo4j_source_node_name = 'neo4j_source',
                                  neo4j_target_node_name = 'neo4j_target',
@@ -360,7 +360,7 @@ class Neo4jConnector(object):
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
             This dictionary can be the value returned from the
-            :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
+            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
@@ -435,7 +435,7 @@ class Neo4jConnector(object):
 
         return None
 
-    def copy_data_from_neo4j_to_xgt(self, xgt_schemas) -> None:
+    def copy_data_to_xgt(self, xgt_schemas) -> None:
         """
         Copies data from Neo4j to the requested vertex and/or edge frames
         in Trovares xGT.
@@ -449,7 +449,7 @@ class Neo4jConnector(object):
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
             This dictionary can be the value returned from the
-            :py:meth:`~Neo4jConnector.get_xgt_schema_for` method.
+            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
 
         Returns
         -------
@@ -505,7 +505,7 @@ class Neo4jConnector(object):
                     self.__copy_data(query, name, schema['neo4j_schema'], progress_bar)
         return  None
 
-    def transfer_from_neo4j_to_xgt_for(self,
+    def transfer_to_xgt(self,
                             vertices = None, edges = None,
                             neo4j_id_name = 'neo4j_id',
                             neo4j_source_node_name = 'neo4j_source',
@@ -547,13 +547,13 @@ class Neo4jConnector(object):
         -------
             None
         """
-        xgt_schema = self.get_xgt_schema_for(vertices, edges,
+        xgt_schema = self.get_xgt_schemas(vertices, edges,
                 neo4j_id_name, neo4j_source_node_name, neo4j_target_node_name)
         self.create_xgt_schemas(xgt_schema, append, force)
-        self.copy_data_from_neo4j_to_xgt(xgt_schema)
+        self.copy_data_to_xgt(xgt_schema)
         return None
 
-    def transfer_from_xgt_to_neo4j_for(self, vertices = None, edges = None, namespace = None,
+    def transfer_to_neo4j(self, vertices = None, edges = None, namespace = None,
                                        edge_keys = False, vertex_keys = False):
         """
         Copies data from Trovares xGT to Neo4j.

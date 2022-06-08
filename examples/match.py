@@ -44,7 +44,7 @@ with c.neo4j_driver.session(database=database) as session:
     session.run('match(a:Person), (b:Person) where a.id = 2 and b.id = 0 create (a)-[:Knows]->(b)')
 
 # Transfer graph from Neo4j to xGT
-c.transfer_from_neo4j_to_xgt_for(edges=["Knows"])
+c.transfer_to_xgt(edges=["Knows"])
 
 # Look for the loop
 query = "match(a)-->()-->()-->(a) return a.id"

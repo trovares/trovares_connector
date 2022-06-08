@@ -76,7 +76,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_node_attributes(self):
     self._populate_node()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     print(xgt_schema)
     vertices = xgt_schema['vertices']['Node']
     schema = dict(vertices['schema'])
@@ -173,7 +173,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_graph_update_after_connector_created(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
     self._populate_node()
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     vertices = xgt_schema['vertices']['Node']
     schema = dict(vertices['schema'])
     assert len(schema) == 11
@@ -194,32 +194,32 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.neo4j_driver.session() as session:
       result = session.run("MATCH (n) DETACH DELETE n")
     with self.assertRaises(ValueError):
-      xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+      xgt_schema = c.get_xgt_schemas(vertices=['Node'])
 
   def disable_test_transfer_node(self):
     self._populate_node()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=True)
-    #c.transfer_from_neo4j_to_xgt_for(['Node'])
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    #c.transfer_to_xgt(['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
       table_schema = schema['schema']
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 1
 
   def test_transfer_node_working_types_bolt(self):
     self._populate_node_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
       table_schema = schema['schema']
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 3
     print(node_frame.get_data())
@@ -227,15 +227,15 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_transfer_nodes_to_neo4j(self):
     self._populate_node_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    c.transfer_from_neo4j_to_xgt_for(vertices=['Node'])
+    c.transfer_to_xgt(vertices=['Node'])
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 3
     expected = [row[1:] for row in node_frame.get_data()]
     with self.neo4j_driver.session() as session:
       session.run("MATCH (n) DETACH DELETE n")
-    c.transfer_from_xgt_to_neo4j_for(vertices=['Node'])
+    c.transfer_to_neo4j(vertices=['Node'])
     self.xgt.drop_frame("Node")
-    c.transfer_from_neo4j_to_xgt_for(vertices=['Node'])
+    c.transfer_to_xgt(vertices=['Node'])
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 3
     result = [row[1:] for row in node_frame.get_data()]
@@ -244,7 +244,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_transfer_edges_to_neo4j(self):
     self._populate_relationship_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    c.transfer_from_neo4j_to_xgt_for(edges=['Relationship'])
+    c.transfer_to_xgt(edges=['Relationship'])
     node_frame = self.xgt.get_vertex_frame('Node')
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 3
@@ -252,10 +252,10 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     edge_expected = [row[2:] for row in edge_frame.get_data()]
     with self.neo4j_driver.session() as session:
       session.run("MATCH (n) DETACH DELETE n")
-    c.transfer_from_xgt_to_neo4j_for(edges=['Relationship'])
+    c.transfer_to_neo4j(edges=['Relationship'])
     self.xgt.drop_frame("Relationship")
     self.xgt.drop_frame("Node")
-    c.transfer_from_neo4j_to_xgt_for(edges=['Relationship'])
+    c.transfer_to_xgt(edges=['Relationship'])
     node_frame = self.xgt.get_vertex_frame('Node')
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 3
@@ -267,9 +267,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_transfer_relationship_working_types_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 3
     print(edge_frame.get_data())
@@ -278,9 +278,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_transfer_relationship_without_vertex_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    xgt_schema = c.get_xgt_schema_for(edges=['Relationship'])
+    xgt_schema = c.get_xgt_schemas(edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert node_frame.num_rows == 6
@@ -291,9 +291,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_transfer_everything_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    xgt_schema = c.get_xgt_schema_for()
+    xgt_schema = c.get_xgt_schemas()
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert node_frame.num_rows == 6
@@ -304,13 +304,13 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self._populate_node_working_types_arrow()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
                        driver="neo4j-arrow")
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
       table_schema = schema['schema']
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 1
     print(node_frame.get_data())
@@ -319,17 +319,17 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with c.neo4j_driver.session() as session:
       session.run('CREATE (:Node{int: 343, str: "string"})')
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
 
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     c.create_xgt_schemas(xgt_schema, append=True)
 
     with c.neo4j_driver.session() as session:
       result = session.run("MATCH (n) DETACH DELETE n")
     with c.neo4j_driver.session() as session:
       session.run('CREATE (:Node{int: 344, str: "string"})')
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 2
 
@@ -341,8 +341,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with c.neo4j_driver.session() as session:
       session.run('CREATE (:Node{})-[:Relationship]->(:Node{})')
-    xgt_schema1 = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
-    xgt_schema2 = c.get_xgt_schema_for(vertices=['Node'])
+    xgt_schema1 = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
+    xgt_schema2 = c.get_xgt_schemas(vertices=['Node'])
 
     c.create_xgt_schemas(xgt_schema1)
     self.xgt.get_vertex_frame('Node')
@@ -363,9 +363,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self._populate_relationship_working_types_arrow()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
                        driver="neo4j-arrow")
-    xgt_schema = c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+    xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 1
     print(edge_frame.get_data())
@@ -376,9 +376,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.neo4j_driver.session() as session:
       session.run(
           'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
-    schema = c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    schema = c.get_xgt_schemas(vertices=['Node1', 'Node2'], edges=['Relationship'])
     c.create_xgt_schemas(schema)
-    c.copy_data_from_neo4j_to_xgt(schema)
+    c.copy_data_to_xgt(schema)
 
     node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
     assert node_frame.num_rows == 1
@@ -392,9 +392,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.neo4j_driver.session() as session:
       session.run(
           'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
-    schema = c.get_xgt_schema_for(vertices=['Node1', 'Node2'], edges=['Relationship'])
+    schema = c.get_xgt_schemas(vertices=['Node1', 'Node2'], edges=['Relationship'])
     c.create_xgt_schemas(schema)
-    c.copy_data_from_neo4j_to_xgt(schema)
+    c.copy_data_to_xgt(schema)
 
     node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
     assert node_frame.num_rows == 1
@@ -408,7 +408,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.neo4j_driver.session() as session:
       session.run('CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})')
     with self.assertRaises(ValueError):
-      c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+      c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
 
   def test_multiple_property_types_edge_negative(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
@@ -416,14 +416,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       session.run(
           'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})')
     with self.assertRaises(ValueError):
-      c.get_xgt_schema_for(vertices=['Node'], edges=['Relationship'])
+      c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
 
   def test_different_properties_combine_into_single_schema(self):
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
     with self.neo4j_driver.session() as session:
       session.run(
           'CREATE (:Node{x: 1}), (:Node{y: "hello"})')
-    schema = c.get_xgt_schema_for(vertices=['Node'])
+    schema = c.get_xgt_schemas(vertices=['Node'])
     node_schema = schema['vertices']['Node']['schema']
     assert len(node_schema) == 3
 
