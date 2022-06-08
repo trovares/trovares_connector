@@ -117,6 +117,7 @@ Doesn't support the following:
 
 * Multiple types for a single property.
 * Point data type.
+* Simple lists not supported.
 
 Other limitations:
 
