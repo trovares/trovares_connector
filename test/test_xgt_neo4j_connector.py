@@ -217,7 +217,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
       table_schema = schema['schema']
-      attributes = {_:t for _, t in table_schema}
+      attributes = {_:t for _, *t  in table_schema}
       print(f"\nAttributes: {attributes}")
     c.copy_data_from_neo4j_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
@@ -446,14 +446,18 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _populate_node_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
-      # DateTime, and LocalDateTime.
+      # DateTime, LocalDateTime, and various Points.
       result = session.run(
         'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
         'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration({days: 14, hours:16, minutes: 12})}), ' +
+        'duration_attr: duration({days: 14, hours:16, minutes: 12}), ' +
+        'point_attr2: point({x:0.5, y:1.2}), ' +
+        'point_attr3: point({x:0.23, y:1.5, z:1.2}), ' +
+        'geo_attr2: point({latitude:7.23, longitude:3.5}), ' +
+        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2})}), ' +
         '(:Node{})')
 
   def _populate_node_working_types_arrow(self):
@@ -469,7 +473,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _populate_relationship_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
-      # DateTime, and LocalDateTime.
+      # DateTime, LocalDateTime, and various Points.
       result = session.run(
         'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
         '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
@@ -477,7 +481,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
         'localtime_attr: localtime("12:50:35.556"), ' +
         'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration({days: 14, hours:16, minutes: 12})}]' +
+        'duration_attr: duration({days: 14, hours:16, minutes: 12}),' +
+        'point_attr2: point({x:0.5, y:1.2}), ' +
+        'point_attr3: point({x:0.23, y:1.5, z:1.2}), ' +
+        'geo_attr2: point({latitude:7.23, longitude:3.5}), ' +
+        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2})}]' +
         '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})')
 
   def _populate_relationship_working_types_arrow(self):

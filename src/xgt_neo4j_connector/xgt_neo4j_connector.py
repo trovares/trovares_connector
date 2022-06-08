@@ -25,19 +25,20 @@ class BasicClientAuthHandler(pf.ClientAuthHandler):
 
 class Neo4jConnector(object):
     _NEO4J_TYPE_TO_XGT_TYPE = {
-        'INTEGER': xgt.INT,
-        'Long': xgt.INT,
-        'FLOAT': xgt.FLOAT,
-        'Double': xgt.FLOAT,
-        'STRING': xgt.TEXT,
-        'String': xgt.TEXT,
-        'Boolean': xgt.BOOLEAN,
-        'Date': xgt.DATE,
-        'Time': xgt.TIME,
-        'DateTime': xgt.DATETIME,
-        'LocalTime': xgt.TIME,
-        'LocalDateTime': xgt.DATETIME,
-        'Duration': xgt.INT,
+        'INTEGER': (xgt.INT,),
+        'Long': (xgt.INT,),
+        'FLOAT': (xgt.FLOAT,),
+        'Double': (xgt.FLOAT,),
+        'STRING': (xgt.TEXT,),
+        'String': (xgt.TEXT,),
+        'Boolean': (xgt.BOOLEAN,),
+        'Date': (xgt.DATE,),
+        'Time': (xgt.TIME,),
+        'DateTime': (xgt.DATETIME,),
+        'LocalTime': (xgt.TIME,),
+        'LocalDateTime': (xgt.DATETIME,),
+        'Duration': (xgt.INT,),
+        'Point': (xgt.LIST, xgt.FLOAT, 1),
     }
 
     _NEO4J_TYPE_TO_ARROW_TYPE = {
@@ -54,6 +55,7 @@ class Neo4jConnector(object):
         'LocalTime': pa.time64('us'),
         'LocalDateTime': pa.timestamp('us'),
         'Duration': pa.int64(),
+        'Point': pa.list_(pa.float32()),
     }
 
     def __init__(self, xgt_server,
@@ -472,12 +474,13 @@ class Neo4jConnector(object):
                 for record in query.result():
                     estimated_counts += record[0]
 
-        with  self.progress_display(estimated_counts) as progress_bar:
+        with self.progress_display(estimated_counts) as progress_bar:
             for vertex, schema in xgt_schemas['vertices'].items():
                 if self.__verbose:
                     print(f'Copy data for vertex {vertex} into schema: {schema}')
                 table_schema = schema['schema']
-                attributes = {_:t for _, t in table_schema}
+                attributes = {_:t for _, t, *_unused_ in table_schema}
+                print(attributes)
                 key = schema['key']
                 query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
                 for a in attributes:
@@ -491,7 +494,7 @@ class Neo4jConnector(object):
                 for schema in schema_list:
                     name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
                     table_schema = schema['schema']
-                    attributes = {_:t for _, t in table_schema}
+                    attributes = {_:t for _, t, *_unused_ in table_schema}
                     source = schema['source']
                     source_key = schema['source_key']
                     target = schema['target']
@@ -950,7 +953,7 @@ class Neo4jConnector(object):
             if neo4j_id_name in neo4j_node:
                 raise ValueError(
                         f"Neo4j ID name {neo4j_id_name} is an attribute of node {neo4j_node}")
-        schema = [[key, self.__neo4j_type_to_xgt_type(type)]
+        schema = [[key, *self.__neo4j_type_to_xgt_type(type)]
                   for key, type in neo4j_node.items()]
         neo4j_schema = [[key, type] for key, type in neo4j_node.items()]
         schema.insert(0, [neo4j_id_name, xgt.INT])
@@ -979,7 +982,7 @@ class Neo4jConnector(object):
             else:
                 return
 
-        schema = [[key, self.__neo4j_type_to_xgt_type(type)]
+        schema = [[key, *self.__neo4j_type_to_xgt_type(type)]
                   for key, type in info_schema.items()]
         neo4j_schema = [[key, type] for key, type in info_schema.items()]
         schema.insert(0, [neo4j_target_node_name, xgt.INT])
