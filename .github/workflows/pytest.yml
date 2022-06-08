@@ -40,6 +40,7 @@ jobs:
         pip install -r requirements.txt
         pip install pytest
         pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+        wget https://github.com/neo4j-field/neo4j-arrow/blob/main/python/neo4j_arrow.py -P ./test
 
     - name: Launch neo4j
       run: |
