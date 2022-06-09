@@ -18,7 +18,11 @@
 
 name: Test PyPI Deployment
 
-on: push
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   pypi-test:
@@ -28,6 +32,7 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
+      # We need the history to append the dev revision to the package.
       with:
         fetch-depth: 0
 
@@ -39,7 +44,6 @@ jobs:
         pip install -r requirements.txt
         # TODO(landwehrj) Extract these from the toml somehow?
         pip install setuptools>=42 wheel setuptools_scm build
-        git log
 
         python -m build
 
