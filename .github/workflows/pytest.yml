@@ -56,7 +56,7 @@ jobs:
         pip install 'protobuf>=3.12.0,<=3.20.1'
         pip install -r requirements.txt
         pip install pytest
-        pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+        pip install ./
         wget https://raw.githubusercontent.com/neo4j-field/neo4j-arrow/main/python/neo4j_arrow.py -P ./test
 
     - name: Launch neo4j
