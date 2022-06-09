@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*- --------------------------------------------------===#
+#
+#  Copyright 2022 Trovares Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#===----------------------------------------------------------------------===#
+
+name: PyPI Deployment
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  pypi-test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # TODO(landwehrj) Workaround for backwards compatibility issues with protobuf
+        pip install 'protobuf>=3.12.0,<=3.20.1'
+        pip install -r requirements.txt
+        # TODO(landwehrj) Extract these from the toml somehow?
+        pip install setuptools>=42 wheel setuptools_scm build
+        python -m build
+
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+        user: __token__
