@@ -218,7 +218,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def disable_test_transfer_node(self):
     self._populate_node()
     c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=True)
-    #c.transfer_to_xgt(['Node'])
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
