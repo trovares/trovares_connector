@@ -505,7 +505,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'CREATE (:Node{})-' +
         '[:Relationship{int: 343, str: "string"}]' +
         '->(:Node{})')
-        # TODO(someone) : we float64 in xGT 10.1 aren't supported in arrow.
+        # TODO(someone) : float64 in xGT 10.1 aren't supported in arrow.
         #'[:Relationship{int: 343, real: 3.14, str: "string"}]' +
         # TODO(someone) : none values don't work in arrow.
         #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
