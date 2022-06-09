@@ -15,7 +15,7 @@ Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_
 You can install this python package by executing this command:
 
 ```bash
-python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+python -m pip install trovares_neo4j_connector
 ```
 
 ## Using xgt_neo4j_connector
