@@ -14,11 +14,11 @@
    .. autosummary::
    
       ~Neo4jConnector.__init__
-      ~Neo4jConnector.copy_data_from_neo4j_to_xgt
+      ~Neo4jConnector.copy_data_to_xgt
       ~Neo4jConnector.create_xgt_schemas
-      ~Neo4jConnector.get_xgt_schema_for
-      ~Neo4jConnector.transfer_from_neo4j_to_xgt_for
-      ~Neo4jConnector.transfer_from_xgt_to_neo4j_for
+      ~Neo4jConnector.get_xgt_schemas
+      ~Neo4jConnector.transfer_to_neo4j
+      ~Neo4jConnector.transfer_to_xgt
    
    
 
