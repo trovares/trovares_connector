@@ -18,7 +18,7 @@ You can install this python package by executing this command:
 python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 ```
 
-## Using xgt_neo4j_connector
+## Using the xgt_neo4j_connector
 
 From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
 
@@ -41,8 +41,15 @@ The available properties are:
 
 The available methods are:
 
-  - get_xgt_schema_for
+  - get_xgt_schemas
   - create_xgt_schemas
-  - copy_data_from_neo4j_to_xgt
-  - transfer_from_neo4j_to_xgt_for
-  - transfer_from_xgt_to_neo4j_for
+  - copy_data_to_xgt
+  - transfer_to_xgt
+  - transfer_to_neo4j
+
+## Examples
+
+Some examples can be found here:
+
+  - [Python examples](https://github.com/trovares/xgt_neo4j_connector/tree/main/examples)
+  - [Jupyter notebooks](https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter)

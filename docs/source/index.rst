@@ -1,3 +1,22 @@
+..
+   # -*- coding: utf-8 -*- --------------------------------------------------===#
+   #
+   #  Copyright 2022 Trovares Inc.
+   #
+   #  Licensed under the Apache License, Version 2.0 (the "License");
+   #  you may not use this file except in compliance with the License.
+   #  You may obtain a copy of the License at
+   #
+   #      http://www.apache.org/licenses/LICENSE-2.0
+   #
+   #  Unless required by applicable law or agreed to in writing, software
+   #  distributed under the License is distributed on an "AS IS" BASIS,
+   #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   #  See the License for the specific language governing permissions and
+   #  limitations under the License.
+   #
+   #===----------------------------------------------------------------------===#
+
 .. xgt_neo4j_connector documentation master file, created by
    sphinx-quickstart on Fri Apr 29 15:54:24 2022.
    You can adapt this file completely to your liking, but it should at least
@@ -55,8 +74,8 @@ You can install this python package by executing this command:
    python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 
 
-Using xgt_neo4j_connector
--------------------------
+Using the xgt_neo4j_connector
+-----------------------------
 
 From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
 
@@ -86,8 +105,8 @@ All of these data frames are created in Trovares xGT and then all of the data is
    xgt_server.set_default_namespace('neo4j')
    conn = Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
 
-   conn.transfer_from_neo4j_to_xgt_for(vertices=conn.neo4j_node_labels,
-                                       edges=conn.neo4j_relationship_types)
+   conn.transfer_to_xgt(vertices=conn.neo4j_node_labels,
+                        edges=conn.neo4j_relationship_types)
 
 
 Copy a portion of a graph based on node labels and/or relationship types
@@ -107,8 +126,15 @@ Using this idiom requires knowing some schema information about the graph data s
 
    nodes_to_copy = ['Person']
    edges_to_copy = ['KNOWS']
-   conn.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy,
-                                       edges=edges_to_copy)
+   conn.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
+
+Additional Examples
+-------------------
+
+More detailed examples can be found here:
+
+* `Python Examples <https://github.com/trovares/xgt_neo4j_connector/tree/main/examples>`_
+* `Jupyter Notebooks <https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter>`_
 
 Limitations
 ===========
@@ -117,6 +143,7 @@ Doesn't support the following:
 
 * Multiple types for a single property.
 * Point data type.
+* Simple lists as properties.
 
 Other limitations:
 
