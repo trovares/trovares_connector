@@ -47,7 +47,7 @@ for i in range(0, end):
 e_frame.insert([[2, 0]])
 
 # Transfer graph from Neo4j to xGT
-c.transfer_from_xgt_to_neo4j_for(edges=["Knows"], vertex_keys=True)
+c.transfer_to_neo4j(edges=["Knows"], vertex_keys=True)
 
 # Look for the loop
 query = "match(a)-->()-->()-->(a) return a.id"
