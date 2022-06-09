@@ -1,3 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- --------------------------------------------------===#
+#
+#  Copyright 2022 Trovares Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#===----------------------------------------------------------------------===#
+
 import datetime
 import pyarrow as pa
 import pyarrow.flight as pf
@@ -6,22 +25,6 @@ import neo4j
 import xgt
 import os
 import time
-
-class BasicClientAuthHandler(pf.ClientAuthHandler):
-    def __init__(self, username, password):
-        super().__init__()
-        self.basic_auth = pf.BasicAuth(username, password)
-        self.token = None
-    def __init__(self):
-        super().__init__()
-        self.basic_auth = pf.BasicAuth()
-        self.token = None
-    def authenticate(self, outgoing, incoming):
-        auth = self.basic_auth.serialize()
-        outgoing.write(auth)
-        self.token = incoming.read()
-    def get_token(self):
-        return self.token
 
 class Neo4jConnector(object):
     _NEO4J_TYPE_TO_XGT_TYPE = {
@@ -790,6 +793,22 @@ class Neo4jConnector(object):
                   u"#"*progress, "."*(self._bar_size-progress), self._count,
                   self._total_count, duration, rate, remaining), end=self._bar_end, flush=True)
 
+    class BasicArrowClientAuthHandler(pf.ClientAuthHandler):
+        def __init__(self, username, password):
+            super().__init__()
+            self.basic_auth = pf.BasicAuth(username, password)
+            self.token = None
+        def __init__(self):
+            super().__init__()
+            self.basic_auth = pf.BasicAuth()
+            self.token = None
+        def authenticate(self, outgoing, incoming):
+            auth = self.basic_auth.serialize()
+            outgoing.write(auth)
+            self.token = incoming.read()
+        def get_token(self):
+            return self.token
+
     def __query(self, query, use_neo4j_always = False):
         if not use_neo4j_always and self._py2neo_driver is not None:
             return self.py2neo_run_closure(self, query)
@@ -1021,7 +1040,7 @@ class Neo4jConnector(object):
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicClientAuthHandler())
+        arrow_conn.authenticate(self.BasicArrowClientAuthHandler())
         writer, _ = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
@@ -1029,7 +1048,7 @@ class Neo4jConnector(object):
 
     def __arrow_reader(self, frame_name):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicClientAuthHandler())
+        arrow_conn.authenticate(self.BasicArrowClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):
