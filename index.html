@@ -97,8 +97,8 @@ This can be selected via the driver parameter in the connector.</p>
 </pre></div>
 </div>
 </section>
-<section id="using-xgt-neo4j-connector">
-<h2>Using xgt_neo4j_connector<a class="headerlink" href="#using-xgt-neo4j-connector" title="Permalink to this heading">¶</a></h2>
+<section id="using-the-xgt-neo4j-connector">
+<h2>Using the xgt_neo4j_connector<a class="headerlink" href="#using-the-xgt-neo4j-connector" title="Permalink to this heading">¶</a></h2>
 <p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>xgt_neo4j_connector</cite> is all that is needed to operate this connector.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
@@ -142,6 +142,14 @@ Using this idiom requires knowing some schema information about the graph data s
                                     <span class="n">edges</span><span class="o">=</span><span class="n">edges_to_copy</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="additional-examples">
+<h2>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this heading">¶</a></h2>
+<p>More detailed examples can be found here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/trovares/xgt_neo4j_connector/tree/main/examples">Python Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter">Jupyter Notebooks</a></p></li>
+</ul>
 </section>
 </section>
 <section id="limitations">
@@ -209,12 +217,13 @@ This only occurs for these cases.</p>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#optional">Optional</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#using-xgt-neo4j-connector">Using xgt_neo4j_connector</a></li>
+<li><a class="reference internal" href="#using-the-xgt-neo4j-connector">Using the xgt_neo4j_connector</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
 <li><a class="reference internal" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
 <li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
+<li><a class="reference internal" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#limitations">Limitations</a><ul>

@@ -74,8 +74,8 @@ You can install this python package by executing this command:
    python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
 
 
-Using xgt_neo4j_connector
--------------------------
+Using the xgt_neo4j_connector
+-----------------------------
 
 From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
 
@@ -128,6 +128,14 @@ Using this idiom requires knowing some schema information about the graph data s
    edges_to_copy = ['KNOWS']
    conn.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy,
                                        edges=edges_to_copy)
+
+Additional Examples
+-------------------
+
+More detailed examples can be found here:
+
+* `Python Examples <https://github.com/trovares/xgt_neo4j_connector/tree/main/examples>`_
+* `Jupyter Notebooks <https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter>`_
 
 Limitations
 ===========
