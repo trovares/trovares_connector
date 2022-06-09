@@ -28,6 +28,8 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Install dependencies
       run: |
@@ -38,7 +40,7 @@ jobs:
         # TODO(landwehrj) Extract these from the toml somehow?
         pip install setuptools>=42 wheel setuptools_scm build
         git log
-        git describe
+
         python -m build
 
     - name: Publish package to TestPyPI
