@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>xgt_neo4j_connector Package &#8212; xgt_neo4j_connector 0.1.0 documentation</title>
+    <title>trovares_connector Package &#8212; trovares_connector 0.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
@@ -20,7 +20,7 @@
     <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="xgt_neo4j_connector.Neo4jConnector" href="xgt_neo4j_connector.Neo4jConnector.html" />
+    <link rel="next" title="trovares_connector.Neo4jConnector" href="trovares_connector.Neo4jConnector.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!--[if lt IE 9]>
     <script src="_static/css3-mediaqueries.js"></script>
@@ -33,10 +33,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="xgt_neo4j_connector.Neo4jConnector.html" title="xgt_neo4j_connector.Neo4jConnector"
+          <a href="trovares_connector.Neo4jConnector.html" title="trovares_connector.Neo4jConnector"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector Package</a></li> 
+        <li class="nav-item nav-item-0"><a href="#">trovares_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">trovares_connector Package</a></li> 
       </ul>
     </div>  
 
@@ -47,10 +47,10 @@
             
   <div class="toctree-wrapper compound">
 </div>
-<section id="xgt-neo4j-connector-package">
-<h1>xgt_neo4j_connector Package<a class="headerlink" href="#xgt-neo4j-connector-package" title="Permalink to this heading">¶</a></h1>
+<section id="trovares-connector-package">
+<h1>trovares_connector Package<a class="headerlink" href="#trovares-connector-package" title="Permalink to this heading">¶</a></h1>
 <p>This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.</p>
-<p>The <a class="reference external" href="http://github.com/trovares/xgt_neo4j_connector/">source code</a> is available on github.</p>
+<p>The <a class="reference external" href="http://github.com/trovares/trovares_connector/">source code</a> is available on github.</p>
 <section id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
@@ -93,15 +93,15 @@ This can be selected via the driver parameter in the connector.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p>You can install this python package by executing this command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg<span class="o">=</span>xgt_neo4j_connector
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install -e git+https://github.com/trovares/trovares_connector.git#egg<span class="o">=</span>trovares_connector
 </pre></div>
 </div>
 </section>
-<section id="using-the-xgt-neo4j-connector">
-<h2>Using the xgt_neo4j_connector<a class="headerlink" href="#using-the-xgt-neo4j-connector" title="Permalink to this heading">¶</a></h2>
-<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>xgt_neo4j_connector</cite> is all that is needed to operate this connector.</p>
+<section id="using-the-trovares-connector">
+<h2>Using the trovares_connector<a class="headerlink" href="#using-the-trovares-connector" title="Permalink to this heading">¶</a></h2>
+<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>trovares_connector</cite> is all that is needed to operate this connector.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
 </pre></div>
 </div>
 </section>
@@ -114,7 +114,7 @@ This can be selected via the driver parameter in the connector.</p>
 <p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
 All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
@@ -130,7 +130,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
 <p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">xgt_neo4j_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
@@ -146,8 +146,8 @@ Using this idiom requires knowing some schema information about the graph data s
 <h2>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this heading">¶</a></h2>
 <p>More detailed examples can be found here:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/trovares/xgt_neo4j_connector/tree/main/examples">Python Examples</a></p></li>
-<li><p><a class="reference external" href="https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter">Jupyter Notebooks</a></p></li>
+<li><p><a class="reference external" href="https://github.com/trovares/trovares_connector/tree/main/examples">Python Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/trovares/trovares_connector/tree/main/jupyter">Jupyter Notebooks</a></p></li>
 </ul>
 </section>
 </section>
@@ -195,7 +195,7 @@ This only occurs for these cases.</p>
 <h1>API Details<a class="headerlink" href="#api-details" title="Permalink to this heading">¶</a></h1>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="xgt_neo4j_connector.Neo4jConnector.html#xgt_neo4j_connector.Neo4jConnector" title="xgt_neo4j_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -212,11 +212,11 @@ This only occurs for these cases.</p>
   <div>
     <h3><a href="#">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">xgt_neo4j_connector Package</a><ul>
+<li><a class="reference internal" href="#">trovares_connector Package</a><ul>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#optional">Optional</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#using-the-xgt-neo4j-connector">Using the xgt_neo4j_connector</a></li>
+<li><a class="reference internal" href="#using-the-trovares-connector">Using the trovares_connector</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
@@ -235,8 +235,8 @@ This only occurs for these cases.</p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="xgt_neo4j_connector.Neo4jConnector.html"
-                          title="next chapter">xgt_neo4j_connector.Neo4jConnector</a></p>
+    <p class="topless"><a href="trovares_connector.Neo4jConnector.html"
+                          title="next chapter">trovares_connector.Neo4jConnector</a></p>
   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -259,10 +259,10 @@ This only occurs for these cases.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="xgt_neo4j_connector.Neo4jConnector.html" title="xgt_neo4j_connector.Neo4jConnector"
+          <a href="trovares_connector.Neo4jConnector.html" title="trovares_connector.Neo4jConnector"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">xgt_neo4j_connector 0.1.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">xgt_neo4j_connector Package</a></li> 
+        <li class="nav-item nav-item-0"><a href="#">trovares_connector 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">trovares_connector Package</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

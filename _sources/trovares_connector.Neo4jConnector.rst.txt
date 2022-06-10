@@ -1,7 +1,7 @@
-﻿xgt\_neo4j\_connector.Neo4jConnector
-====================================
+﻿trovares\_connector.Neo4jConnector
+==================================
 
-.. currentmodule:: xgt_neo4j_connector
+.. currentmodule:: trovares_connector
 
 .. autoclass:: Neo4jConnector
 
