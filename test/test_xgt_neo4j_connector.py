@@ -22,7 +22,7 @@ import time
 
 import neo4j
 import xgt
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector
 
 class TestXgtNeo4jConnector(unittest.TestCase):
   @classmethod
