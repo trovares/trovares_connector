@@ -17,7 +17,7 @@
    #
    #===----------------------------------------------------------------------===#
 
-.. xgt_neo4j_connector documentation master file, created by
+.. trovares_connector documentation master file, created by
    sphinx-quickstart on Fri Apr 29 15:54:24 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -27,12 +27,12 @@
    :numbered:
 
 
-xgt_neo4j_connector Package
+trovares_connector Package
 ===========================
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 
-The `source code <http://github.com/trovares/xgt_neo4j_connector/>`_ is available on github.
+The `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
 Requirements
 ------------
@@ -71,18 +71,18 @@ You can install this python package by executing this command:
 
 .. code-block:: bash
 
-   python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+   python -m pip install -e git+https://github.com/trovares/trovares_connector.git#egg=trovares_connector
 
 
-Using the xgt_neo4j_connector
+Using the trovares_connector
 -----------------------------
 
-From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
+From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
 
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector
 
 
 Examples
@@ -99,7 +99,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector
 
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('neo4j')
@@ -118,7 +118,7 @@ Using this idiom requires knowing some schema information about the graph data s
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector
 
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('neo4j')
@@ -133,8 +133,8 @@ Additional Examples
 
 More detailed examples can be found here:
 
-* `Python Examples <https://github.com/trovares/xgt_neo4j_connector/tree/main/examples>`_
-* `Jupyter Notebooks <https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter>`_
+* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples>`_
+* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter>`_
 
 Limitations
 ===========
@@ -188,9 +188,9 @@ Would get converted to the following when transferring to xGT:
 API Details
 ===========
 
-.. currentmodule:: xgt_neo4j_connector
+.. currentmodule:: trovares_connector
 
-.. automodule:: xgt_neo4j_connector
+.. automodule:: trovares_connector
   :no-members:
   :no-inherited-members:
   :noindex:

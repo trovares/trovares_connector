@@ -20,4 +20,4 @@ __ALL__ = [
   'Neo4jConnector',
 ]
 
-from .xgt_neo4j_connector import Neo4jConnector
+from .trovares_connector import Neo4jConnector
