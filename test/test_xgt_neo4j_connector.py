@@ -257,7 +257,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 3
     result = [row[1:] for row in node_frame.get_data()]
-    self.assertCountEqual(expected, result)
+    # The column ordering can change when uploading to neo4j
+    # So we just need to verify the None rows are correct
+    # and the same elements are in the row with data, but with a different order.
+    expected_pos = 0
+    result_pos = 0
+    for i in range(0,3):
+        if result[i] != None:
+            result_pos = i
+        else:
+            assert result[i].count(None) == len(result[i])
+        if expected[i] != None:
+            expected_pos = i
+        else:
+            assert expected[i].count(None) == len(expected[i])
+    self.assertCountEqual(expected[expected_pos], result[result_pos])
 
   def test_transfer_edges_to_neo4j(self):
     self._populate_relationship_working_types_bolt()
@@ -280,7 +294,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     node_result = [row[1:] for row in node_frame.get_data()]
     edge_result = [row[2:] for row in edge_frame.get_data()]
     self.assertCountEqual(node_expected, node_result)
-    self.assertCountEqual(edge_expected, edge_result)
+    # The column ordering can change when uploading to neo4j
+    # So we just need to verify the None rows are correct
+    # and the same elements are in the row with data, but with a different order.
+    expected_pos = 0
+    result_pos = 0
+    for i in range(0,3):
+        if edge_result[i] != None:
+            result_pos = i
+        else:
+            assert edge_result[i].count(None) == len(edge_result[i])
+        if edge_expected[i] != None:
+            expected_pos = i
+        else:
+            assert edge_expected[i].count(None) == len(edge_expected[i])
+    self.assertCountEqual(edge_expected[expected_pos], edge_result[result_pos])
 
   def test_transfer_relationship_working_types_bolt(self):
     self._populate_relationship_working_types_bolt()
@@ -464,7 +492,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _populate_node_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
-      # DateTime, LocalDateTime, and various Points.
+      # DateTime, LocalDateTime, various Points, and Lists.
+      # TODO(landwehrj) : support datetime/point lists.
       result = session.run(
         'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
         'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
@@ -475,7 +504,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'point_attr2: point({x:0.5, y:1.2}), ' +
         'point_attr3: point({x:0.23, y:1.5, z:1.2}), ' +
         'geo_attr2: point({latitude:7.23, longitude:3.5}), ' +
-        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2})}), ' +
+        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2}), ' +
+        'bool_array: [true, false, false], ' +
+        'long_array: [7, 1, 5], ' +
+        'string_array: ["ad", "bc", "de"], ' +
+        'double_array: [0.7, 1.9, 5.2]}), ' +
         '(:Node{})')
 
   def _populate_node_working_types_arrow(self):
@@ -491,7 +524,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _populate_relationship_working_types_bolt(self):
     with self.neo4j_driver.session() as session:
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
-      # DateTime, LocalDateTime, and various Points.
+      # DateTime, LocalDateTime, various Points, and Lists.
+      # TODO(landwehrj) : support datetime/point lists.
       result = session.run(
         'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
         '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
@@ -503,7 +537,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'point_attr2: point({x:0.5, y:1.2}), ' +
         'point_attr3: point({x:0.23, y:1.5, z:1.2}), ' +
         'geo_attr2: point({latitude:7.23, longitude:3.5}), ' +
-        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2})}]' +
+        'geo_attr3: point({latitude:0.23, longitude:1.5, height:10.2}),' +
+        'bool_array: [true, false, false], ' +
+        'long_array: [7, 1, 5], ' +
+        'string_array: ["ad", "bc", "de"], ' +
+        'double_array: [0.7, 1.9, 5.2]}]' +
         '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})')
 
   def _populate_relationship_working_types_arrow(self):

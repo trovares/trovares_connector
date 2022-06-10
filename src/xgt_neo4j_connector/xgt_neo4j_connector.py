@@ -42,6 +42,10 @@ class Neo4jConnector(object):
         'LocalDateTime': (xgt.DATETIME,),
         'Duration': (xgt.INT,),
         'Point': (xgt.LIST, xgt.FLOAT, 1),
+        'BooleanArray': (xgt.LIST, xgt.BOOLEAN, 1),
+        'LongArray': (xgt.LIST, xgt.INT, 1),
+        'DoubleArray': (xgt.LIST, xgt.FLOAT, 1),
+        'StringArray': (xgt.LIST, xgt.TEXT, 1),
     }
 
     _NEO4J_TYPE_TO_ARROW_TYPE = {
@@ -59,6 +63,10 @@ class Neo4jConnector(object):
         'LocalDateTime': pa.timestamp('us'),
         'Duration': pa.int64(),
         'Point': pa.list_(pa.float32()),
+        'BooleanArray': pa.list_(pa.bool_()),
+        'LongArray': pa.list_(pa.int64()),
+        'DoubleArray': pa.list_(pa.float32()),
+        'StringArray': pa.list_(pa.utf8()),
     }
 
     def __init__(self, xgt_server,
@@ -482,7 +490,6 @@ class Neo4jConnector(object):
                     print(f'Copy data for vertex {vertex} into schema: {schema}')
                 table_schema = schema['schema']
                 attributes = {_:t for _, t, *_unused_ in table_schema}
-                print(attributes)
                 key = schema['key']
                 query = f"MATCH (v:{vertex}) RETURN id(v) AS {key}"  # , {', '.join(attributes)}"
                 for a in attributes:
