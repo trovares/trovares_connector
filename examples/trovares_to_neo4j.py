@@ -20,18 +20,19 @@
 # This example just creates a graph in xGT, transfers it to Neo4j, and
 # runs the same query in xGT in Neo4j.
 
-from trovares_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 database = "test"
 
-c=Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'), neo4j_database=database)
+neo4j_driver=Neo4jDriver(auth=('neo4j', 'foo'), database=database)
+c=Neo4jConnector(xgt_server, neo4j_driver)
 
 # Uncomment to delete the database
 """
-with c.neo4j_driver.session(database=database) as session:
+with neo4j_driver.bolt.session(database=database) as session:
     session.run("MATCH (n) DETACH DELETE n")
 """
 
@@ -53,7 +54,7 @@ c.transfer_to_neo4j(edges=["Knows"], vertex_keys=True)
 query = "match(a)-->()-->()-->(a) return a.id"
 
 # Get results with Neo4j
-with c.neo4j_driver.session(database=database) as session:
+with neo4j_driver.bolt.session(database=database) as session:
     job = session.run(query)
     print("Neo4j found the following nodes in a triangle: " + ','.join(str(row[0]) for row in job))
 
