@@ -84,7 +84,6 @@ From any Python environment, simply importing both `xgt` and `trovares_connector
    import xgt
    from trovares_connector import Neo4jConnector
 
-
 Examples
 ========
 
@@ -130,20 +129,45 @@ Using this idiom requires knowing some schema information about the graph data s
    edges_to_copy = ['KNOWS']
    conn.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
 
-Using with the neo4j.Neo4jDriver
---------------------------------
+Using various Neo4j drivers
+---------------------------
+
+The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components explained above.
+
+Some examples of connecting:
 
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector, Neo4jDriver
    from neo4j import GraphDatabase
 
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('neo4j')
+
    neo4j_driver = GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+
+   # Using Neo4j's Python driver.
    conn = Neo4jConnector(xgt_server, neo4j_driver)
-   different_database_conn = Neo4jConnector(xgt_server, (neo4j_driver, "my_database"))
+
+   # Using Neo4j's Python driver with a specific database.
+   conn = Neo4jConnector(xgt_server, (neo4j_driver, 'my_database'))
+
+   # Using the Trovares Neo4j driver with bolt.
+   neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
+   conn = Neo4jConnector(xgt_server, neo4j_driver, database='my_database')
+
+   # Using the Trovares Neo4j driver with py2neo http.
+   neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver='py2neo-http')
+   conn = Neo4jConnector(xgt_server, neo4j_driver)
+
+   # Using the Trovares Neo4j driver with arrow.
+   neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver='neo4j-arrow')
+   conn = Neo4jConnector(xgt_server, neo4j_driver)
+
+These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.
 
 Additional Examples
 -------------------
