@@ -18,6 +18,8 @@
 
 __ALL__ = [
   'Neo4jConnector',
+  'Neo4jDriver',
 ]
 
 from .trovares_connector import Neo4jConnector
+from .trovares_connector import Neo4jDriver

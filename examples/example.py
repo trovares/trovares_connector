@@ -18,13 +18,14 @@
 #===----------------------------------------------------------------------===#
 
 from pprint import pprint
-from trovares_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 
-c=Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
+neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 nodes_to_copy = [
     'Forum',
