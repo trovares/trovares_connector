@@ -144,19 +144,41 @@ Using this idiom requires knowing some schema information about the graph data s
 </pre></div>
 </div>
 </section>
-<section id="using-with-the-neo4j-neo4jdriver">
-<h2>Using with the neo4j.Neo4jDriver<a class="headerlink" href="#using-with-the-neo4j-neo4jdriver" title="Permalink to this heading">¶</a></h2>
+<section id="using-various-neo4j-drivers">
+<h2>Using various Neo4j drivers<a class="headerlink" href="#using-various-neo4j-drivers" title="Permalink to this heading">¶</a></h2>
+<p>The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components explained above.</p>
+<p>Some examples of connecting:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 <span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
+
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="o">.</span><span class="n">driver</span><span class="p">(</span><span class="s2">&quot;bolt://localhost&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+<span class="c1"># Using Neo4j&#39;s Python driver.</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
-<span class="n">different_database_conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s2">&quot;my_database&quot;</span><span class="p">))</span>
+
+<span class="c1"># Using Neo4j&#39;s Python driver with a specific database.</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s1">&#39;my_database&#39;</span><span class="p">))</span>
+
+<span class="c1"># Using the Trovares Neo4j driver with bolt.</span>
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;my_database&#39;</span><span class="p">)</span>
+
+<span class="c1"># Using the Trovares Neo4j driver with py2neo http.</span>
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;py2neo-http&#39;</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
+
+<span class="c1"># Using the Trovares Neo4j driver with arrow.</span>
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;neo4j-arrow&#39;</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.</p>
 </section>
 <section id="additional-examples">
 <h2>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this heading">¶</a></h2>
@@ -238,7 +260,7 @@ This only occurs for these cases.</p>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
 <li><a class="reference internal" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
 <li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
-<li><a class="reference internal" href="#using-with-the-neo4j-neo4jdriver">Using with the neo4j.Neo4jDriver</a></li>
+<li><a class="reference internal" href="#using-various-neo4j-drivers">Using various Neo4j drivers</a></li>
 <li><a class="reference internal" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>
