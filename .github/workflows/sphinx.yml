@@ -24,6 +24,7 @@ on:
       - '.github/**'
       - 'src/**'
       - 'docs/**'
+      - 'setup.cfg'
 
 jobs:
   build:
