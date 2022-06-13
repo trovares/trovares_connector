@@ -127,7 +127,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_neo4j_node_labels(self):
     c = self.conn
-    self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})', True)
+    self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     self.assertCountEqual(c.neo4j_node_labels, ['Node1', 'Node2'])
 
   def test_neo4j_property_keys(self):
@@ -457,7 +457,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       'localtime_attr: localtime("12:50:35.556"), ' +
       'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
       'duration_attr: duration({days: 14, hours:16, minutes: 12})}), ' +
-      '(:Node{})', True).finalize()
+      '(:Node{})').finalize()
 
   def _populate_node_working_types_arrow(self):
     self.neo4j_driver.query(

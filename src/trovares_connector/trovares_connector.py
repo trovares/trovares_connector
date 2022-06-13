@@ -725,8 +725,12 @@ class Neo4jConnector(object):
             else:
                 return str(value)
 
+        count_map = { }
         estimated_counts = 0
-        for vertex in id_neo4j_map:
+        for vertex in vertices:
+            if vertex in count_map:
+                continue
+            count_map[vertex] = True
             estimated_counts += xgt_server.get_vertex_frame(vertex).num_rows
         for edge in edges:
             estimated_counts += xgt_server.get_edge_frame(edge).num_rows
