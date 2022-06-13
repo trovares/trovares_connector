@@ -17,7 +17,7 @@
    #
    #===----------------------------------------------------------------------===#
 
-.. xgt_neo4j_connector documentation master file, created by
+.. trovares_connector documentation master file, created by
    sphinx-quickstart on Fri Apr 29 15:54:24 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -27,12 +27,12 @@
    :numbered:
 
 
-xgt_neo4j_connector Package
+trovares_connector Package
 ===========================
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 
-The `source code <http://github.com/trovares/xgt_neo4j_connector/>`_ is available on github.
+The `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
 Requirements
 ------------
@@ -56,13 +56,13 @@ Optional
 * `Py2neo Python package <https://pypi.org/project/py2neo/>`_
    Alternative Neo4j driver that provides http or bolt connections.
    Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
-   This can be selected via the driver parameter in the connector.
+   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 * `Neo4j-arrow plugin and Python package <https://github.com/neo4j-field/neo4j-arrow>`_
    Alternative driver for transfers that is very experimental.
    This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
    In addition it requires the neo4j-arrow python package found in the above link.
    At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
-   This can be selected via the driver parameter in the connector.
+   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 
 Installation
 ------------
@@ -71,18 +71,18 @@ You can install this python package by executing this command:
 
 .. code-block:: bash
 
-   python -m pip install trovares_neo4j_connector
+   python -m pip install trovares_connector
 
 
-Using xgt_neo4j_connector
--------------------------
+Using the trovares_connector
+-----------------------------
 
-From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
+From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
 
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector
 
 
 Examples
@@ -99,14 +99,15 @@ All of these data frames are created in Trovares xGT and then all of the data is
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('neo4j')
-   conn = Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
+   neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
+   conn = Neo4jConnector(xgt_server, neo4j_server)
 
-   conn.transfer_from_neo4j_to_xgt_for(vertices=conn.neo4j_node_labels,
-                                       edges=conn.neo4j_relationship_types)
+   conn.transfer_to_xgt(vertices=conn.neo4j_node_labels,
+                        edges=conn.neo4j_relationship_types)
 
 
 Copy a portion of a graph based on node labels and/or relationship types
@@ -118,16 +119,39 @@ Using this idiom requires knowing some schema information about the graph data s
 .. code-block:: python
 
    import xgt
-   from xgt_neo4j_connector import Neo4jConnector
+   from trovares_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('neo4j')
-   conn = Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
+   neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
+   conn = Neo4jConnector(xgt_server, neo4j_server)
 
    nodes_to_copy = ['Person']
    edges_to_copy = ['KNOWS']
-   conn.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy,
-                                       edges=edges_to_copy)
+   conn.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
+
+Using with the neo4j.Neo4jDriver
+--------------------------------
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import Neo4jConnector
+   from neo4j import GraphDatabase
+
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('neo4j')
+   neo4j_driver = GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+   conn = Neo4jConnector(xgt_server, neo4j_driver)
+   different_database_conn = Neo4jConnector(xgt_server, (neo4j_driver, "my_database"))
+
+Additional Examples
+-------------------
+
+More detailed examples can be found here:
+
+* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples>`_
+* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter>`_
 
 Limitations
 ===========
@@ -181,9 +205,9 @@ Would get converted to the following when transferring to xGT:
 API Details
 ===========
 
-.. currentmodule:: xgt_neo4j_connector
+.. currentmodule:: trovares_connector
 
-.. automodule:: xgt_neo4j_connector
+.. automodule:: trovares_connector
   :no-members:
   :no-inherited-members:
   :noindex:

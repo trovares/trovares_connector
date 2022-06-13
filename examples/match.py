@@ -20,39 +20,36 @@
 # This example creates a graph in Neo4j, transfers it to xGT, and
 # runs the same query in xGT in Neo4j.
 
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 database = "test"
 
-c=Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'), neo4j_database=database)
+neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), database=database)
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 # Uncomment to delete the database
 """
-with c.neo4j_driver.session(database=database) as session:
-    session.run("MATCH (n) DETACH DELETE n")
+neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
 """
 
 # Create a chain with with a loop in Neo4j
-with c.neo4j_driver.session(database=database) as session:
-    end = 10
-    session.run('create (a:Person{id:0})')
-    for i in range(0, end):
-        session.run(f'match(a:Person) where a.id = {i} create (a)-[:Knows]->(:Person{{id:{i + 1}}})')
-    session.run('match(a:Person), (b:Person) where a.id = 2 and b.id = 0 create (a)-[:Knows]->(b)')
+neo4j_driver.query('create (a:Person{id:0})').finalize()
+for i in range(0, 10):
+    neo4j_driver.query(f'match(a:Person) where a.id = {i} create (a)-[:Knows]->(:Person{{id:{i + 1}}})').finalize()
+neo4j_driver.query('match(a:Person), (b:Person) where a.id = 2 and b.id = 0 create (a)-[:Knows]->(b)').finalize()
 
 # Transfer graph from Neo4j to xGT
-c.transfer_from_neo4j_to_xgt_for(edges=["Knows"])
+c.transfer_to_xgt(edges=["Knows"])
 
 # Look for the loop
 query = "match(a)-->()-->()-->(a) return a.id"
 
 # Get results with Neo4j
-with c.neo4j_driver.session(database=database) as session:
-    job = session.run(query)
-    print("Neo4j found the following nodes in a triangle: " + ','.join(str(row[0]) for row in job))
+with neo4j_driver.query(query, write=False) as job:
+    print("Neo4j found the following nodes in a triangle: " + ','.join(str(row[0]) for row in job.result()))
 
 # Get results with xGT
 job = xgt_server.run_job(query)

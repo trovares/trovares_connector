@@ -31,13 +31,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../src'))
-sys.path.insert(0, os.path.abspath('../../src/xgt_neo4j_connector'))
+sys.path.insert(0, os.path.abspath('../../src/trovares_connector'))
 print(f"Sys.path: {sys.path}")
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'xgt_neo4j_connector'
+project = 'trovares_connector'
 copyright = '2022, Trovares, Inc.'
 author = 'trovares.com'
 

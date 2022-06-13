@@ -18,13 +18,14 @@
 #===----------------------------------------------------------------------===#
 
 from pprint import pprint
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 
-c=Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
+neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 nodes_to_copy = [
     'Forum',
@@ -42,15 +43,15 @@ edges_to_copy = {
 def individual_steps(nodes_to_copy, edges_to_copy):
     """
     This function shows the individual steps that are invoked for a call to
-    `c.transfer_from_neo4j_to_xgt_for(nodes_to_copy, edges_to_copy)`.
+    `c.transfer_to_xgt(nodes_to_copy, edges_to_copy)`.
 
     Note that the individual steps would allow a user to update/modify the
     xGT schema prior to creating the frames in xGT.
     """
-    xgt_schema = c.get_xgt_schema_for(vertices=nodes_to_copy, edges=edges_to_copy)
+    xgt_schema = c.get_xgt_schemas(vertices=nodes_to_copy, edges=edges_to_copy)
     # Can update/modify schema parts (e.g., xgt.DATETIME instead of xgt.TEXT)
     c.create_xgt_schemas(xgt_schema)
-    c.copy_data_from_neo4j_to_xgt(xgt_schemas)
+    c.copy_data_to_xgt(xgt_schemas)
 
 
-c.transfer_from_neo4j_to_xgt_for(vertices=nodes_to_copy, edges=edges_to_copy)
+c.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
