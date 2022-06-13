@@ -75,7 +75,7 @@ Automatically used if installed as a plugin for Neo4j.</p>
 <li><dl class="simple">
 <dt><a class="reference external" href="https://pypi.org/project/py2neo/">Py2neo Python package</a></dt><dd><p>Alternative Neo4j driver that provides http or bolt connections.
 Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
-This can be selected via the driver parameter in the connector.</p>
+This can be selected via the driver parameter in the Trovares Neo4jDriver class.</p>
 </dd>
 </dl>
 </li>
@@ -84,7 +84,7 @@ This can be selected via the driver parameter in the connector.</p>
 This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
 In addition it requires the neo4j-arrow python package found in the above link.
 At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
-This can be selected via the driver parameter in the connector.</p>
+This can be selected via the driver parameter in the Trovares Neo4jDriver class.</p>
 </dd>
 </dl>
 </li>
@@ -114,11 +114,12 @@ This can be selected via the driver parameter in the connector.</p>
 <p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
 All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
-<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">neo4j_node_labels</span><span class="p">,</span>
                      <span class="n">edges</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">neo4j_relationship_types</span><span class="p">)</span>
@@ -130,15 +131,30 @@ All of these data frames are created in Trovares xGT and then all of the data is
 <p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
-<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
 
 <span class="n">nodes_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">]</span>
 <span class="n">edges_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KNOWS&#39;</span><span class="p">]</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">nodes_to_copy</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges_to_copy</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-with-the-neo4j-neo4jdriver">
+<h2>Using with the neo4j.Neo4jDriver<a class="headerlink" href="#using-with-the-neo4j-neo4jdriver" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="o">.</span><span class="n">driver</span><span class="p">(</span><span class="s2">&quot;bolt://localhost&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
+<span class="n">different_database_conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s2">&quot;my_database&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
@@ -195,7 +211,7 @@ This only occurs for these cases.</p>
 <h1>API Details<a class="headerlink" href="#api-details" title="Permalink to this heading">¶</a></h1>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server[, neo4j_host, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -222,6 +238,7 @@ This only occurs for these cases.</p>
 <li><a class="reference internal" href="#examples">Examples</a><ul>
 <li><a class="reference internal" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
 <li><a class="reference internal" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
+<li><a class="reference internal" href="#using-with-the-neo4j-neo4jdriver">Using with the neo4j.Neo4jDriver</a></li>
 <li><a class="reference internal" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>

@@ -28,7 +28,6 @@
 
    .. autosummary::
    
-      ~Neo4jConnector.neo4j_driver
       ~Neo4jConnector.neo4j_edges
       ~Neo4jConnector.neo4j_node_labels
       ~Neo4jConnector.neo4j_node_type_properties
