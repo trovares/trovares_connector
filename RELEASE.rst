@@ -1,5 +1,5 @@
-Trovares Neo4j Connector Release Notes
-======================================
+Trovares Connector Release Notes
+================================
 
 1.0.0 (06-13-2022)
 -----------
