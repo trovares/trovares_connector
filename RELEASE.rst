@@ -1,7 +1,7 @@
 Trovares Neo4j Connector Release Notes
 ======================================
 
-1.0.0 (TBD)
+1.0.0 (06-13-2022)
 -----------
 
 New Features
