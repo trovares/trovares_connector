@@ -105,13 +105,13 @@ class Neo4jDriver(object):
         elif driver == 'py2neo-bolt':
             from py2neo import Graph
             self._py2neo_driver = Graph(
-                self._protocol + "://" + self._host + ":" +str(neo4j_bolt_port),
-                auth=auth, name=neo4j_database)
+                self._protocol + "://" + self._host + ":" +str(bolt_port),
+                auth=auth, name=database)
         elif driver == 'py2neo-http':
             from py2neo import Graph
             self._py2neo_driver = Graph(
-                self._http_protocol + "://" + self._host + ":" +str(neo4j_http_port),
-                auth=auth, name=neo4j_database)
+                self._http_protocol + "://" + self._host + ":" +str(http_port),
+                auth=auth, name=database)
         elif driver == 'neo4j-arrow':
             import neo4j_arrow as na
             self._arrow_driver = na.Neo4jArrow(self._auth[0],
@@ -136,15 +136,37 @@ class Neo4jDriver(object):
         """
         return self._neo4j_driver
 
-    def query(self, query, use_neo4j_always = False):
+    def query(self, query, write=True, use_neo4j_always=False):
+        """
+        Runs the query on Neo4j as returns the results.
+
+        Parameters
+        ----------
+        write : write
+          If true, the query can write to the database.
+          By default this is True.
+
+        use_neo4j_always : bool
+          If true uses the neo4j.Neo4jDriver to run the query.
+          Otherwise will attempt to use a faster driver if set such as py2neo.
+          By default this is False.
+
+        Returns
+        -------
+        object
+          Closure object with results.
+        """
         if not use_neo4j_always and self._py2neo_driver is not None:
-            return self.py2neo_run_closure(self, query)
+            return self.py2neo_run_closure(self, query, write)
         else:
-            return self.neo4j_run_closure(self, query)
+            return self.neo4j_run_closure(self, query, write)
 
     class py2neo_run_closure():
-        def __init__(self, connector, query):
-            self._result = connector._py2neo_driver.query(query)
+        def __init__(self, connector, query, write):
+            if write:
+                self._result = connector._py2neo_driver.run(query)
+            else:
+                self._result = connector._py2neo_driver.query(query)
 
         def __enter__(self):
             return self
@@ -155,20 +177,35 @@ class Neo4jDriver(object):
         def result(self):
             return self._result
 
+        def finalize(self):
+            pass
+
     class neo4j_run_closure():
-        def __init__(self, connector, query):
+        def __init__(self, connector, query, write):
             self._query = query
             self._connector = connector
-
+            self._closed = False
+            if write:
+                self._session = self._connector._neo4j_driver.session(database=self._connector._database,
+                                                                      default_access_mode=neo4j.WRITE_ACCESS)
+            else:
+                self._session = self._connector._neo4j_driver.session(database=self._connector._database,
+                                                                      default_access_mode=neo4j.READ_ACCESS)
         def __enter__(self):
-            self._session = self._connector._neo4j_driver.session(database=self._connector._database,
-                                                                  default_access_mode=neo4j.READ_ACCESS)
             return self
+
         def __exit__(self, exc_type,exc_value, exc_traceback):
-            self._session.close()
+            self.finalize()
 
         def result(self):
             return self._session.run(self._query)
+
+        def finalize(self):
+            for result in self.result():
+                pass
+            if not self._closed:
+                self._session.close()
+                self._close = True
 
 class Neo4jConnector(object):
     _NEO4J_TYPE_TO_XGT_TYPE = {
@@ -227,6 +264,8 @@ class Neo4jConnector(object):
         if isinstance(neo4j_driver, (neo4j.Neo4jDriver, neo4j.BoltDriver)):
             self._neo4j_driver = Neo4jDriver.from_Neo4jDriver(neo4j_driver)
         elif isinstance(neo4j_driver, tuple):
+            if not isinstance(neo4j_driver[0], (neo4j.Neo4jDriver, neo4j.BoltDriver)):
+                raise TypeError("Tuple expected to contain Neo4jDriver or BoltDriver")
             self._neo4j_driver = Neo4jDriver.from_Neo4jDriver(neo4j_driver[0], neo4j_driver[1])
         else:
             self._neo4j_driver = neo4j_driver
@@ -534,12 +573,12 @@ class Neo4jConnector(object):
         estimated_counts = 0
         for vertex in xgt_schemas['vertices']:
             q = f"MATCH (v:{vertex}) RETURN count(v)"
-            with self._neo4j_driver.query(q) as query:
+            with self._neo4j_driver.query(q, False) as query:
                 for record in query.result():
                     estimated_counts += record[0]
         for edge in xgt_schemas['edges']:
             q = f"MATCH ()-[e:{edge}]->() RETURN count(e)"
-            with self._neo4j_driver.query(q) as query:
+            with self._neo4j_driver.query(q, False) as query:
                 for record in query.result():
                     estimated_counts += record[0]
 
@@ -685,12 +724,14 @@ class Neo4jConnector(object):
                 return 'time({{hour:{0},minute:{1},second:{2},microsecond:{3}}})'.format(value.hour, value.minute, value.second, value.microsecond)
             else:
                 return str(value)
+
         estimated_counts = 0
-        for vertex in vertices:
+        for vertex in id_neo4j_map:
             estimated_counts += xgt_server.get_vertex_frame(vertex).num_rows
         for edge in edges:
             estimated_counts += xgt_server.get_edge_frame(edge).num_rows
-        with  self.progress_display(estimated_counts) as progress_bar:
+
+        with self.progress_display(estimated_counts) as progress_bar:
             for vertex in vertices:
                 if vertex in id_neo4j_map:
                     continue
@@ -850,7 +891,7 @@ class Neo4jConnector(object):
 
     def __neo4j_check_for_apoc(self):
         try:
-            with self._neo4j_driver.query("RETURN apoc.version()") as query:
+            with self._neo4j_driver.query("RETURN apoc.version()", False) as query:
                 query.result()
                 return True
         except Exception as e:
@@ -859,7 +900,7 @@ class Neo4jConnector(object):
 
     def __neo4j_property_keys(self, flush_cache = True):
         if flush_cache:
-            with self._neo4j_driver.query("CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey") as query:
+            with self._neo4j_driver.query("CALL db.propertyKeys() YIELD propertyKey RETURN propertyKey", False) as query:
                 self._neo4j_property_keys = list([record["propertyKey"] for record in query.result()])
                 self._neo4j_property_keys.sort()
         return self._neo4j_property_keys
@@ -871,7 +912,7 @@ class Neo4jConnector(object):
                 q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
             else:
                 q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.query(q) as query:
+            with self._neo4j_driver.query(q, False) as query:
                 self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_node_type_properties
 
@@ -882,7 +923,7 @@ class Neo4jConnector(object):
                 q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
             else:
                 q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.query(q) as query:
+            with self._neo4j_driver.query(q, False) as query:
                 self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_rel_type_properties
 
@@ -897,7 +938,7 @@ class Neo4jConnector(object):
         else:
             q="CALL db.schema.visualization() YIELD nodes, relationships RETURN *"
         # TODO(landwehrj) Can schema be done with py2neo?
-        with self._neo4j_driver.query(q, True) as query:
+        with self._neo4j_driver.query(q, False, True) as query:
             for record in query.result():
                 has_multiple_relations = len(record['relationships']) > 1
                 for e in record['relationships']:
@@ -915,7 +956,7 @@ class Neo4jConnector(object):
                         # See https://github.com/neo4j/neo4j/issues/9726
                         schema_exists = False
                         q = f"MATCH (:{source_name})-[e:{e_type}]->(:{target_name}) return count(e) > 0"
-                        with self._neo4j_driver.query(q) as query:
+                        with self._neo4j_driver.query(q, False) as query:
                             for result in query.result():
                                 schema_exists = result[0]
 

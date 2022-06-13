@@ -27,13 +27,12 @@ xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 database = "test"
 
-neo4j_driver=Neo4jDriver(auth=('neo4j', 'foo'), database=database)
-c=Neo4jConnector(xgt_server, neo4j_driver)
+neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), database=database, driver="py2neo-bolt")
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 # Uncomment to delete the database
 """
-with neo4j_driver.bolt.session(database=database) as session:
-    session.run("MATCH (n) DETACH DELETE n")
+neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
 """
 
 xgt_server.drop_frame("Knows")
@@ -54,9 +53,8 @@ c.transfer_to_neo4j(edges=["Knows"], vertex_keys=True)
 query = "match(a)-->()-->()-->(a) return a.id"
 
 # Get results with Neo4j
-with neo4j_driver.bolt.session(database=database) as session:
-    job = session.run(query)
-    print("Neo4j found the following nodes in a triangle: " + ','.join(str(row[0]) for row in job))
+with neo4j_driver.query(query, write=False) as job:
+    print("Neo4j found the following nodes in a triangle: " + ','.join(str(row[0]) for row in job.result()))
 
 # Get results with xGT
 job = xgt_server.run_job(query)

@@ -25,8 +25,8 @@ import xgt
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 
-neo4j_driver=GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
-c=Neo4jConnector(xgt_server, neo4j_driver)
+neo4j_driver = GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 def show(label, values):
     print("\n========> " + label)
