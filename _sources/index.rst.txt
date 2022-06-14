@@ -240,4 +240,5 @@ API Details
   :toctree:
 
   Neo4jConnector
+  Neo4jDriver
 
