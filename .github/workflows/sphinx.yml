@@ -24,6 +24,8 @@ on:
       - '.github/**'
       - 'src/**'
       - 'docs/**'
+      - 'setup.cfg'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -40,9 +42,22 @@ jobs:
       with:
         name: html-docs
         path: docs/build/html/
-    - name: Deploy
+    - name: Test Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html
+        destination_dir: testing
+    - name: Manual Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'workflow_dispatch'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'release'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: docs/build/html
