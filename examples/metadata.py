@@ -18,13 +18,15 @@
 #===----------------------------------------------------------------------===#
 
 from pprint import pprint
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector
+from neo4j import GraphDatabase
 import xgt
 
 xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 
-c=Neo4jConnector(xgt_server, neo4j_auth=('neo4j', 'foo'))
+neo4j_driver = GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+c = Neo4jConnector(xgt_server, neo4j_driver)
 
 def show(label, values):
     print("\n========> " + label)

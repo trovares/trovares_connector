@@ -17,4 +17,4 @@
 #
 #===----------------------------------------------------------------------===#
 
-python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+python -m pip install -e git+https://github.com/trovares/trovares_connector.git#egg=trovares_connector

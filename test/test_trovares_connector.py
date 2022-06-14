@@ -22,7 +22,7 @@ import time
 
 import neo4j
 import xgt
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector, Neo4jDriver
 
 class TestXgtNeo4jConnector(unittest.TestCase):
   @classmethod
@@ -31,31 +31,37 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.xgt = xgt.Connection()
     cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
-    cls.neo4j = cls._setup_connector()
-    cls.neo4j_driver = cls.neo4j.neo4j_driver
+    cls.neo4j_driver, cls.conn, cls.conn_arrow = cls._setup_connector()
     return
 
   @classmethod
   def teardown_class(cls):
-    del cls.neo4j
+    del cls.conn
+    del cls.conn_arrow
     cls.xgt.drop_namespace('test', force_drop = True)
     del cls.xgt
 
   @classmethod
   def _setup_connector(cls, retries = 20):
     try:
-      conn = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
+      driver = Neo4jDriver(auth=('neo4j', 'foo'))
+      arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
+      conn = Neo4jConnector(cls.xgt, driver)
+      conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
       # Validate the db can run queries.
-      with conn.neo4j_driver.session() as session:
+      with driver.bolt.session() as session:
         session.run("call db.info()")
-      return conn
+      return (driver, conn, conn_arrow)
     except (neo4j.exceptions.ServiceUnavailable):
       print(f"Neo4j Unavailable, retries = {retries}")
       if retries > 0:
         time.sleep(3)
         return cls._setup_connector(retries - 1)
-    conn = Neo4jConnector(cls.xgt, neo4j_auth=('neo4j', 'foo'))
-    return conn
+    driver = Neo4jDriver(auth=('neo4j', 'foo'))
+    arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
+    conn = Neo4jConnector(cls.xgt, driver)
+    conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
+    return (driver, conn, conn_arrow)
 
   def setup_method(self, method):
     self._erase_neo4j_database()
@@ -69,32 +75,32 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       c = Neo4jConnector()
 
   def test_neo4j_properties(self):
-    assert isinstance(self.neo4j_driver, neo4j.Neo4jDriver)
-    rel = self.neo4j.neo4j_relationship_types
+    assert isinstance(self.neo4j_driver, Neo4jDriver)
+    rel = self.conn.neo4j_relationship_types
     assert isinstance(rel, list)
     assert len(rel) == 0
-    labels = self.neo4j.neo4j_node_labels
+    labels = self.conn.neo4j_node_labels
     assert isinstance(labels, list)
     assert len(labels) == 0
-    props = self.neo4j.neo4j_property_keys
+    props = self.conn.neo4j_property_keys
     assert isinstance(props, list)
     assert len(props) >= 0
-    props = self.neo4j.neo4j_node_type_properties
+    props = self.conn.neo4j_node_type_properties
     assert isinstance(props, list)
     assert len(props) == 0
-    props = self.neo4j.neo4j_rel_type_properties
+    props = self.conn.neo4j_rel_type_properties
     assert isinstance(props, list)
     assert len(props) == 0
-    nodes = self.neo4j.neo4j_nodes
+    nodes = self.conn.neo4j_nodes
     assert isinstance(nodes, dict)
     assert len(nodes) == 0
-    edges = self.neo4j.neo4j_edges
+    edges = self.conn.neo4j_edges
     assert isinstance(edges, dict)
     assert len(edges) == 0
 
   def test_node_attributes(self):
     self._populate_node()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
+    c = self.conn
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     print(xgt_schema)
     vertices = xgt_schema['vertices']['Node']
@@ -114,31 +120,28 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(c.neo4j_node_type_properties)
 
   def test_neo4j_relationship_types(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})').finalize()
     self.assertCountEqual(c.neo4j_relationship_types, ['Relationship1', 'Relationship2'])
 
   def test_neo4j_node_labels(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run('CREATE (:Node1{}), (:Node2{int : 1})')
+    c = self.conn
+    self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     self.assertCountEqual(c.neo4j_node_labels, ['Node1', 'Node2'])
 
   def test_neo4j_property_keys(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     self.assertCountEqual(
         c.neo4j_property_keys,
         ['bool', 'date_attr', 'datetime_attr', 'duration_attr', 'int', 'localdatetime_attr',
          'localtime_attr', 'real', 'str', 'time_attr', 'x', 'y'])
 
   def test_neo4j_rel_type_properties(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1, str: "hello"}]->(:Node2{}),'
-          '(:Node1{})-[:Relationship2{str: "goodbye"}]->(:Node2{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1, str: "hello"}]->(:Node2{}),'
+        '(:Node1{})-[:Relationship2{str: "goodbye"}]->(:Node2{})').finalize()
     self.assertCountEqual(
         c.neo4j_rel_type_properties,
         [{'relType': ':`Relationship1`', 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
@@ -146,9 +149,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
          {'relType': ':`Relationship2`', 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
 
   def test_neo4j_node_type_properties(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-        session.run('CREATE (:Node1{}), (:Node2{int : 1, str : "hello"}), (:Node2{str : "goodbye"})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node1{}), (:Node2{int : 1, str : "hello"}), (:Node2{str : "goodbye"})').finalize()
     self.assertCountEqual(
         c.neo4j_node_type_properties,
         [{'nodeType': ':`Node1`', 'nodeLabels': ['Node1'], 'propertyName': None, 'propertyTypes': None, 'mandatory': False},
@@ -156,10 +159,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
          {'nodeType': ':`Node2`', 'nodeLabels': ['Node2'], 'propertyName': 'str', 'propertyTypes': ['String'], 'mandatory': True}])
 
   def test_neo4j_edges(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})').finalize()
     assert len(c.neo4j_edges) == 2
     assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node2->Node1'}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node2'}
@@ -171,10 +173,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship2']['schema'] == {'int' : 'Long'}
 
   def test_neo4j_edges_multi(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node2{})-[:Relationship1{int: 2}]->(:Node1{}), (:Node1{})-[:Relationship1{int: 1}]->(:Node2{})')
+    c = self.conn
+    self.neo4j_driver.query(
+          'CREATE (:Node2{})-[:Relationship1{int: 2}]->(:Node1{}), (:Node1{})-[:Relationship1{int: 1}]->(:Node2{})').finalize()
     assert len(c.neo4j_edges) == 1
     assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node1->Node2', 'Node2->Node1'}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node1', 'Node2'}
@@ -182,15 +183,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert c.neo4j_edges['Relationship1']['schema'] == {'int' : 'Long'}
 
   def test_neo4j_nodes(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run('CREATE (:Node1{}), (:Node2{int : 1})')
+    c = self.conn
+    self.neo4j_driver.query('CREATE (:Node1{}), (:Node2{int : 1})').finalize()
     assert len(c.neo4j_nodes) == 2
     assert c.neo4j_nodes['Node1'] == {}
     assert c.neo4j_nodes['Node2'] == {'int' : 'Long'}
 
   def test_graph_update_after_connector_created(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
+    c = self.conn
     self._populate_node()
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     vertices = xgt_schema['vertices']['Node']
@@ -209,15 +209,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_graph_delete_after_connector_created(self):
     self._populate_node()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'))
-    with self.neo4j_driver.session() as session:
-      result = session.run("MATCH (n) DETACH DELETE n")
+    c = self.conn
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     with self.assertRaises(ValueError):
       xgt_schema = c.get_xgt_schemas(vertices=['Node'])
 
   def disable_test_transfer_node(self):
     self._populate_node()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=True)
+    c = self.conn
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
@@ -230,7 +229,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_node_working_types_bolt(self):
     self._populate_node_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
@@ -244,13 +243,12 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_nodes_to_neo4j(self):
     self._populate_node_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     c.transfer_to_xgt(vertices=['Node'])
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 3
     expected = [row[1:] for row in node_frame.get_data()]
-    with self.neo4j_driver.session() as session:
-      session.run("MATCH (n) DETACH DELETE n")
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     c.transfer_to_neo4j(vertices=['Node'])
     self.xgt.drop_frame("Node")
     c.transfer_to_xgt(vertices=['Node'])
@@ -261,15 +259,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_edges_to_neo4j(self):
     self._populate_relationship_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     c.transfer_to_xgt(edges=['Relationship'])
     node_frame = self.xgt.get_vertex_frame('Node')
     edge_frame = self.xgt.get_edge_frame('Relationship')
     assert edge_frame.num_rows == 3
     node_expected = [row[1:] for row in node_frame.get_data()]
     edge_expected = [row[2:] for row in edge_frame.get_data()]
-    with self.neo4j_driver.session() as session:
-      session.run("MATCH (n) DETACH DELETE n")
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     c.transfer_to_neo4j(edges=['Relationship'])
     self.xgt.drop_frame("Relationship")
     self.xgt.drop_frame("Node")
@@ -284,7 +281,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_relationship_working_types_bolt(self):
     self._populate_relationship_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
@@ -295,7 +292,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_relationship_without_vertex_bolt(self):
     self._populate_relationship_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     xgt_schema = c.get_xgt_schemas(edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
@@ -308,7 +305,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_everything_bolt(self):
     self._populate_relationship_working_types_bolt()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
+    c = self.conn
     xgt_schema = c.get_xgt_schemas()
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
@@ -320,8 +317,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_node_working_types_arrow(self):
     self._populate_node_working_types_arrow()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
-                       driver="neo4j-arrow")
+    c = self.conn_arrow
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
     for vertex, schema in xgt_schema['vertices'].items():
@@ -334,19 +330,18 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(node_frame.get_data())
 
   def test_append(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with c.neo4j_driver.session() as session:
-      session.run('CREATE (:Node{int: 343, str: "string"})')
+    c = self.conn
+    self.neo4j_driver.query(
+      'CREATE (:Node{int: 343, str: "string"})').finalize()
     xgt_schema = c.get_xgt_schemas(vertices=['Node'])
     c.create_xgt_schemas(xgt_schema)
 
     c.copy_data_to_xgt(xgt_schema)
     c.create_xgt_schemas(xgt_schema, append=True)
 
-    with c.neo4j_driver.session() as session:
-      result = session.run("MATCH (n) DETACH DELETE n")
-    with c.neo4j_driver.session() as session:
-      session.run('CREATE (:Node{int: 344, str: "string"})')
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
+    self.neo4j_driver.query(
+        'CREATE (:Node{int: 344, str: "string"})').finalize()
     c.copy_data_to_xgt(xgt_schema)
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 2
@@ -356,9 +351,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 0
 
   def test_dropping(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with c.neo4j_driver.session() as session:
-      session.run('CREATE (:Node{})-[:Relationship]->(:Node{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node{})-[:Relationship]->(:Node{})').finalize()
     xgt_schema1 = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     xgt_schema2 = c.get_xgt_schemas(vertices=['Node'])
 
@@ -371,16 +366,15 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.get_edge_frame('Relationship')
 
     with self.assertRaises(xgt.XgtFrameDependencyError):
-      c.create_xgt_schemas(xgt_schema2)
+        c.create_xgt_schemas(xgt_schema2)
     c.create_xgt_schemas(xgt_schema2, force=True)
     self.xgt.get_vertex_frame('Node')
     with self.assertRaises(xgt.XgtNameError):
-      self.xgt.get_edge_frame('Relationship')
+        self.xgt.get_edge_frame('Relationship')
 
   def test_transfer_relationship_working_types_arrow(self):
     self._populate_relationship_working_types_arrow()
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False,
-                       driver="neo4j-arrow")
+    c = self.conn_arrow
     xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
@@ -390,10 +384,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame("Relationship")
 
   def test_multiple_node_labels_to(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node1{})-[:Relationship{}]->(:Node2{})').finalize()
     schema = c.get_xgt_schemas(vertices=['Node1', 'Node2'], edges=['Relationship'])
     c.create_xgt_schemas(schema)
     c.copy_data_to_xgt(schema)
@@ -406,10 +399,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame("Node1_Relationship_Node2")
 
   def test_multiple_node_labels_from(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node1{})-[:Relationship{}]->(:Node1{}), (:Node2{})-[:Relationship{}]->(:Node1{})').finalize()
     schema = c.get_xgt_schemas(vertices=['Node1', 'Node2'], edges=['Relationship'])
     c.create_xgt_schemas(schema)
     c.copy_data_to_xgt(schema)
@@ -422,94 +414,82 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame("Node2_Relationship_Node1")
 
   def test_multiple_property_types_vertex_negative(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run('CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node{x: 1})-[:Relationship{}]->(:Node{x: "hello"})').finalize()
     with self.assertRaises(ValueError):
-      c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
+        c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
 
   def test_multiple_property_types_edge_negative(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})')
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE (:Node{})-[:Relationship{x: 1}]->(:Node{}), (:Node{})-[:Relationship{x: "hello"}]->(:Node{})').finalize()
     with self.assertRaises(ValueError):
       c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
 
   def test_different_properties_combine_into_single_schema(self):
-    c = Neo4jConnector(self.xgt, neo4j_auth=('neo4j', 'foo'), verbose=False)
-    with self.neo4j_driver.session() as session:
-      session.run(
-          'CREATE (:Node{x: 1}), (:Node{y: "hello"})')
+    c = self.conn
+    self.neo4j_driver.query('CREATE (:Node{x: 1}), (:Node{y: "hello"})').finalize()
     schema = c.get_xgt_schemas(vertices=['Node'])
     node_schema = schema['vertices']['Node']['schema']
     assert len(node_schema) == 3
 
   def _populate_node(self):
-    with self.neo4j_driver.session() as session:
+    self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
       # DateTime, LocalDateTime, and Duration.
       # FIXME: Point listed in comment above, but not in the list
-      result = session.run(
-        'CREATE (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
-        'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
-        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
-        'localtime_attr: localtime("12:50:35.556"), ' +
-        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration("P14DT16H12M")})')
-      return result
-    return None
+      'CREATE (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+      'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+      'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+      'localtime_attr: localtime("12:50:35.556"), ' +
+      'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+      'duration_attr: duration("P14DT16H12M")})').finalize()
 
   # Point not working for bolt.
   def _populate_node_working_types_bolt(self):
-    with self.neo4j_driver.session() as session:
+    self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
-      result = session.run(
-        'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
-        'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
-        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
-        'localtime_attr: localtime("12:50:35.556"), ' +
-        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration({days: 14, hours:16, minutes: 12})}), ' +
-        '(:Node{})')
+      'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+      'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+      'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+      'localtime_attr: localtime("12:50:35.556"), ' +
+      'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+      'duration_attr: duration({days: 14, hours:16, minutes: 12})}), ' +
+      '(:Node{})').finalize()
 
   def _populate_node_working_types_arrow(self):
-    with self.neo4j_driver.session() as session:
+    self.neo4j_driver.query(
       # Integer, Float, String.
-      result = session.run(
-        'CREATE (:Node{int: 343, str: "string"})')
-        # TODO(someone) : none values don't work in arrow and float64 don't work in xGT 10.1.
-        #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
-      return result
+      'CREATE (:Node{int: 343, str: "string"})').finalize()
+      # TODO(someone) : none values don't work in arrow and float64 don't work in xGT 10.1.
+      #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
 
   # Point not working for bolt.
   def _populate_relationship_working_types_bolt(self):
-    with self.neo4j_driver.session() as session:
+    self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, and LocalDateTime.
-      result = session.run(
-        'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
-        '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
-        'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
-        'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
-        'localtime_attr: localtime("12:50:35.556"), ' +
-        'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
-        'duration_attr: duration({days: 14, hours:16, minutes: 12})}]' +
-        '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})')
+      'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
+      '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
+      'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+      'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+      'localtime_attr: localtime("12:50:35.556"), ' +
+      'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+      'duration_attr: duration({days: 14, hours:16, minutes: 12})}]' +
+      '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})').finalize()
 
   def _populate_relationship_working_types_arrow(self):
-    with self.neo4j_driver.session() as session:
+    self.neo4j_driver.query(
       # Integer, String.
-      result = session.run(
-        'CREATE (:Node{})-' +
-        '[:Relationship{int: 343, str: "string"}]' +
-        '->(:Node{})')
-        # TODO(someone) : float64 in xGT 10.1 aren't supported in arrow.
-        #'[:Relationship{int: 343, real: 3.14, str: "string"}]' +
-        # TODO(someone) : none values don't work in arrow.
-        #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
+      'CREATE (:Node{})-' +
+      '[:Relationship{int: 343, str: "string"}]' +
+      '->(:Node{})', True).finalize()
+      # TODO(someone) : float64 in xGT 10.1 aren't supported in arrow.
+      #'[:Relationship{int: 343, real: 3.14, str: "string"}]' +
+      # TODO(someone) : none values don't work in arrow.
+      #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
   def _erase_neo4j_database(self):
-    with self.neo4j_driver.session() as session:
-      session.run("MATCH (n) DETACH DELETE n")
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()

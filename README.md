@@ -1,8 +1,8 @@
-# xgt_neo4j_connector Package
+# trovares_connector Package
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 
-Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_connector/).
+Detailed documentation is available [here](https://trovares.github.io/trovares_connector/).
 
 ## Requirements
 
@@ -15,16 +15,16 @@ Detailed documentation is available [here](https://trovares.github.io/xgt_neo4j_
 You can install this python package by executing this command:
 
 ```bash
-python -m pip install -e git+https://github.com/trovares/xgt_neo4j_connector.git#egg=xgt_neo4j_connector
+python -m pip install trovares_connector
 ```
 
-## Using the xgt_neo4j_connector
+## Using the trovares_connector
 
-From any Python environment, simply importing both `xgt` and `xgt_neo4j_connector` is all that is needed to operate this connector.
+From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
 
 ```python
 import xgt
-from xgt_neo4j_connector import Neo4jConnector
+from trovares_connector import Neo4jConnector
 ```
 
 ## API
@@ -51,5 +51,5 @@ The available methods are:
 
 Some examples can be found here:
 
-  - [Python examples](https://github.com/trovares/xgt_neo4j_connector/tree/main/examples)
-  - [Jupyter notebooks](https://github.com/trovares/xgt_neo4j_connector/tree/main/jupyter)
+  - [Python examples](https://github.com/trovares/trovares_connector/tree/main/examples)
+  - [Jupyter notebooks](https://github.com/trovares/trovares_connector/tree/main/jupyter)
