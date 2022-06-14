@@ -41,9 +41,16 @@ jobs:
       with:
         name: html-docs
         path: docs/build/html/
-    - name: Deploy
+    - name: Test Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/build/html
+        destination_dir: testing
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.event_name == 'release'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: docs/build/html
