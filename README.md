@@ -16,6 +16,7 @@ You can install this python package by executing this command:
 
 ```bash
 python -m pip install trovares_connector
+```
 
 ## Using the trovares_connector
 
