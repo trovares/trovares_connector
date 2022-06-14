@@ -41,9 +41,10 @@ project = 'trovares_connector'
 copyright = '2022, Trovares, Inc.'
 author = 'trovares.com'
 
+from importlib.metadata import version
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
-
+release = version('trovares_connector')
+version = '.'.join(release.split('.')[:2])
 
 # -- General configuration ---------------------------------------------------
 
