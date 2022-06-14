@@ -65,7 +65,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       print(f"Neo4j Unavailable, retries = {retries}")
       if retries > 0:
         time.sleep(3)
-        return cls._setup_connector(retries - 1)
+        return cls._setup_connector(connector_type, retries - 1)
     if connector_type == "neo4j":
         driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
     else:
