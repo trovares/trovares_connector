@@ -227,6 +227,13 @@ class Neo4jConnector(object):
         'LongArray': (xgt.LIST, xgt.INT, 1),
         'DoubleArray': (xgt.LIST, xgt.FLOAT, 1),
         'StringArray': (xgt.LIST, xgt.TEXT, 1),
+        'DateArray': (xgt.LIST, xgt.DATE, 1),
+        'TimeArray': (xgt.LIST, xgt.TIME, 1),
+        'DateTimeArray': (xgt.LIST, xgt.DATETIME, 1),
+        'LocalTimeArray': (xgt.LIST, xgt.TIME, 1),
+        'LocalDateTimeArray': (xgt.LIST, xgt.DATETIME, 1),
+        'DurationArray': (xgt.LIST, xgt.INT, 1),
+        'PointArray': (xgt.LIST, xgt.FLOAT, 2),
     }
 
     _NEO4J_TYPE_TO_ARROW_TYPE = {
@@ -248,6 +255,13 @@ class Neo4jConnector(object):
         'LongArray': pa.list_(pa.int64()),
         'DoubleArray': pa.list_(pa.float32()),
         'StringArray': pa.list_(pa.utf8()),
+        'DateArray': pa.list_(pa.date32()),
+        'TimeArray': pa.list_(pa.time64('us')),
+        'DateTimeArray': pa.list_(pa.timestamp('us')),
+        'LocalTimeArray': pa.list_(pa.time64('us')),
+        'LocalDateTimeArray': pa.list_(pa.timestamp('us')),
+        'DurationArray': pa.list_(pa.int64()),
+        'PointArray': pa.list_(pa.list_(pa.float32())),
     }
 
     def __init__(self, xgt_server,
@@ -1169,6 +1183,9 @@ class Neo4jConnector(object):
 
             xgt_writer = self.__arrow_writer(frame, schema)
             chunk_count = 0
+            def convert_duration(val):
+                return (val.months * 2628288 + val.days * 86400 +
+                        val.seconds) * 10**9 + val.nanoseconds
             for record in result:
                 for i, val in enumerate(record):
                     if isinstance(val, (neo4j.time.Date, neo4j.time.Time,
@@ -1176,9 +1193,15 @@ class Neo4jConnector(object):
                         data[i][chunk_count] = val.to_native()
                     elif isinstance(val, neo4j.time.Duration):
                         # For months this average seconds in a month.
-                        val = (val.months * 2628288 + val.days * 86400 +
-                               val.seconds) * 10**9 + val.nanoseconds
-                        data[i][chunk_count] = val
+                        data[i][chunk_count] = convert_duration(val)
+                    elif isinstance(val, list):
+                        if isinstance(val[0], (neo4j.time.Date, neo4j.time.Time,
+                                               neo4j.time.DateTime)):
+                            data[i][chunk_count] = [x.to_native() for x in val]
+                        elif isinstance(val[0], neo4j.time.Duration):
+                            data[i][chunk_count] = [convert_duration(x) for x in val]
+                        else:
+                            data[i][chunk_count] = val
                     else:
                         data[i][chunk_count] = val
                 chunk_count = chunk_count + 1
@@ -1216,15 +1239,23 @@ class Neo4jConnector(object):
         chunk_count = 0
         # Types Used by py2neo
         from interchange.time import Date, Time, DateTime, Duration
+        def convert_duration(val):
+            return (val.months * 2628288 + val.days * 86400 +
+                    val.seconds) * 10**9 + int(val.subseconds * 10**9)
         for record in result:
             for i, val in enumerate(record):
                 if isinstance(val, (Date, Time, DateTime)):
                     data[i][chunk_count] = val.to_native()
                 elif isinstance(val, Duration):
                     # For months this average seconds in a month.
-                    val = (val.months * 2628288 + val.days * 86400 +
-                           val.seconds) * 10**9 + int(val.subseconds * 10**9)
-                    data[i][chunk_count] = val
+                    data[i][chunk_count] = convert_duration(val)
+                elif isinstance(val, list):
+                    if isinstance(val[0], (Date, Time, DateTime)):
+                        data[i][chunk_count] = [x.to_native() for x in val]
+                    elif isinstance(val[0], Duration):
+                        data[i][chunk_count] = [convert_duration(x) for x in val]
+                    else:
+                        data[i][chunk_count] = val
                 else:
                     data[i][chunk_count] = val
             chunk_count = chunk_count + 1

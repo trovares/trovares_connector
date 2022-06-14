@@ -28,7 +28,7 @@ from trovares_connector import Neo4jConnector, Neo4jDriver
 @parameterized_class([
    { "driver": "neo4j" },
    { "driver": "neo4j-bolt" },
-   { "driver": "py2neo-bolt" }
+   { "driver": "py2neo-bolt" },
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
   @classmethod
@@ -496,7 +496,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, LocalDateTime, various Points, and Lists.
-      # TODO(landwehrj) : support datetime/point lists.
       'CREATE (:Node{}), (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
       'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
       'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
@@ -510,7 +509,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       'bool_array: [true, false, false], ' +
       'long_array: [7, 1, 5], ' +
       'string_array: ["ad", "bc", "de"], ' +
-      'double_array: [0.7, 1.9, 5.2]}), ' +
+      'double_array: [0.7, 1.9, 5.2], ' +
+      'date_array: [date("+2015-W13-4"), date("+2000-W1-2"), date("+2011-W4-6")], ' +
+      'time_array: [time("125035.556+0100"), time("110535.7+0500"), time("100000.0+0700")], ' +
+      'datetime_array: [datetime("2015-06-24T12:50:35.556+0100"), datetime("2000-01-1T1:1:1+0400"), datetime("1904-02-1T10:40:12.34+0300")], ' +
+      'localtime_array: [localtime("125035.556"), localtime("110535.7"), localtime("100000.0")], ' +
+      'localdatetime_array: [localdatetime("2015-06-24T12:50:35.556"), localdatetime("2000-01-1T1:1:1"), localdatetime("1904-02-1T10:40:12.34")], ' +
+      'duration_array: [duration({days: 14, hours:16, minutes: 12}), duration({days: 5, hours:5, minutes: 5}), duration({days: 0, hours:6, minutes: 1})], ' +
+      'point_array: [point({x:0.5, y:1.2}), point({x:0.5, y:1.2}), point({x:0.5, y:1.2})]}), ' +
       '(:Node{})').finalize()
 
   def _populate_node_working_types_arrow(self):
@@ -525,7 +531,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Date, Time, LocalTime,
       # DateTime, LocalDateTime, various Points, and Lists.
-      # TODO(landwehrj) : support datetime/point lists.
       'CREATE (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1}), (:Node{int: 1})-' +
       '[:Relationship{int: 343, real: 3.14, str: "string", bool: true, ' +
       'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
@@ -540,7 +545,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       'bool_array: [true, false, false], ' +
       'long_array: [7, 1, 5], ' +
       'string_array: ["ad", "bc", "de"], ' +
-      'double_array: [0.7, 1.9, 5.2]}]' +
+      'double_array: [0.7, 1.9, 5.2], ' +
+      'date_array: [date("+2015-W13-4"), date("+2000-W1-2"), date("+2011-W4-6")], ' +
+      'time_array: [time("125035.556+0100"), time("110535.7+0500"), time("100000.0+0700")], ' +
+      'datetime_array: [datetime("2015-06-24T12:50:35.556+0100"), datetime("2000-01-1T1:1:1+0400"), datetime("1904-02-1T10:40:12.34+0300")], ' +
+      'localtime_array: [localtime("125035.556"), localtime("110535.7"), localtime("100000.0")], ' +
+      'localdatetime_array: [localdatetime("2015-06-24T12:50:35.556"), localdatetime("2000-01-1T1:1:1"), localdatetime("1904-02-1T10:40:12.34")], ' +
+      'duration_array: [duration({days: 14, hours:16, minutes: 12}), duration({days: 5, hours:5, minutes: 5}), duration({days: 0, hours:6, minutes: 1})], ' +
+      'point_array: [point({x:0.5, y:1.2}), point({x:0.5, y:1.2}), point({x:0.5, y:1.2})]}]' +
       '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})').finalize()
 
   def _populate_relationship_working_types_arrow(self):
