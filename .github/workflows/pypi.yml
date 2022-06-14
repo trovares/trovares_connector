@@ -19,9 +19,7 @@
 name: PyPI Deployment
 
 on:
-  push:
-    tags:
-      - '*'
+  release
 
 jobs:
   pypi-test:
@@ -39,7 +37,7 @@ jobs:
         pip install 'protobuf>=3.12.0,<=3.20.1'
         pip install -r requirements.txt
         # TODO(landwehrj) Extract these from the toml somehow?
-        pip install setuptools>=42 wheel setuptools_scm build
+        pip install setuptools>=42 wheel setuptools_scm build metadata
         python -m build
 
     - name: Publish package
