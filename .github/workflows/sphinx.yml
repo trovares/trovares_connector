@@ -19,6 +19,7 @@
 name: Sphinx build
 
 on:
+  workflow_dispatch
   push:
     paths:
       - '.github/**'
