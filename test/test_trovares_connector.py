@@ -51,7 +51,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _setup_connector(cls, connector_type, retries = 20):
     try:
       if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
       else:
         driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
       arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
@@ -67,7 +67,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         time.sleep(3)
         return cls._setup_connector(retries - 1)
     if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
     else:
         driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
     arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
