@@ -19,13 +19,13 @@
 name: Sphinx build
 
 on:
-  workflow_dispatch
   push:
     paths:
       - '.github/**'
       - 'src/**'
       - 'docs/**'
       - 'setup.cfg'
+  workflow_dispatch:
 
 jobs:
   build:
