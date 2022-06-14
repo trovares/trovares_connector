@@ -18,12 +18,18 @@
 #===----------------------------------------------------------------------===#
 
 import unittest
+from parameterized import parameterized_class
 import time
 
 import neo4j
 import xgt
 from trovares_connector import Neo4jConnector, Neo4jDriver
 
+@parameterized_class([
+   { "driver": "neo4j" },
+   { "driver": "neo4j-bolt" },
+   { "driver": "py2neo-bolt" }
+])
 class TestXgtNeo4jConnector(unittest.TestCase):
   @classmethod
   def setup_class(cls):
@@ -31,7 +37,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     cls.xgt = xgt.Connection()
     cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
-    cls.neo4j_driver, cls.conn, cls.conn_arrow = cls._setup_connector()
+    cls.neo4j_driver, cls.conn, cls.conn_arrow = cls._setup_connector(cls.driver)
     return
 
   @classmethod
@@ -42,26 +48,31 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     del cls.xgt
 
   @classmethod
-  def _setup_connector(cls, retries = 20):
+  def _setup_connector(cls, connector_type, retries = 20):
     try:
-      driver = Neo4jDriver(auth=('neo4j', 'foo'))
+      if connector_type == "neo4j":
+        driver = neo4j.GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+      else:
+        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
       arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
       conn = Neo4jConnector(cls.xgt, driver)
       conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
       # Validate the db can run queries.
-      with driver.bolt.session() as session:
-        session.run("call db.info()")
-      return (driver, conn, conn_arrow)
+      conn._neo4j_driver.query("call db.info()").finalize()
+      return (conn._neo4j_driver, conn, conn_arrow)
     except (neo4j.exceptions.ServiceUnavailable):
       print(f"Neo4j Unavailable, retries = {retries}")
       if retries > 0:
         time.sleep(3)
         return cls._setup_connector(retries - 1)
-    driver = Neo4jDriver(auth=('neo4j', 'foo'))
+    if connector_type == "neo4j":
+        driver = neo4j.GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
+    else:
+        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
     arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
     conn = Neo4jConnector(cls.xgt, driver)
     conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
-    return (driver, conn, conn_arrow)
+    return (conn._neo4j_driver, conn, conn_arrow)
 
   def setup_method(self, method):
     self._erase_neo4j_database()
@@ -433,6 +444,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     schema = c.get_xgt_schemas(vertices=['Node'])
     node_schema = schema['vertices']['Node']['schema']
     assert len(node_schema) == 3
+
+  def test_transfer_no_data(self):
+    c = self.conn
+    c.transfer_to_xgt()
+    c.transfer_to_neo4j()
 
   def _populate_node(self):
     self.neo4j_driver.query(

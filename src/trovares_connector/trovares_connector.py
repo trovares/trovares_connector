@@ -862,6 +862,8 @@ class Neo4jConnector(object):
             return f'{datetime.timedelta(seconds=isec)}.{fsec:0{digits}.0f}'
 
         def show_progress(self, count_to_add = 0):
+            if self._total_count == 0:
+                return
             self._count += count_to_add
             # Counts are no longer accurate
             while (self._count > self._total_count):
