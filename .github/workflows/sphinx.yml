@@ -34,6 +34,8 @@ jobs:
     - name: Build HTML
       uses: ammaraskar/sphinx-action@0.4
       with:
+        fetch-depth: 0
+      with:
         # TODO(landwehrj) Workaround for backwards compatibility issues with protobuf
          pre-build-command: "pip install importlib_metadata 'protobuf>=3.12.0,<=3.20.1'"
     - name: Upload artifacts
