@@ -689,6 +689,8 @@ class Neo4jConnector(object):
         -------
             None
         """
+        if namespace == None:
+            namespace = self._default_namespace
         xgt_server = self._xgt_server
         if vertices == None and edges == None:
             vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
@@ -698,10 +700,6 @@ class Neo4jConnector(object):
             vertices = []
         elif edges == None:
             edges = []
-
-        if namespace is not None:
-            vertices = [namespace + "__" + vertex for vertex in vertices]
-            edges = [namespace + "__" + edge for edge in vertices]
 
         id_neo4j_map = { }
 

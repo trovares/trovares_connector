@@ -11,6 +11,7 @@ Changed
 Fixed
 ^^^^^
   - Transferring empty frame/graph causes divide by 0.
+  - When transferring to Neo4j from xGT use the default namespace when all values are None.
 
 1.0.0 (06-13-2022)
 ------------------
