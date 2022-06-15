@@ -1,8 +1,19 @@
 Trovares Connector Release Notes
 ================================
 
+1.0.1 (06-17-2022)
+------------------
+
+Changed
+^^^^^^^
+  - Documentation improvements.
+
+Fixed
+^^^^^
+  - Transferring empty frame/graph causes divide by 0.
+
 1.0.0 (06-13-2022)
------------
+------------------
 
 New Features
 ^^^^^^^^^^^^
