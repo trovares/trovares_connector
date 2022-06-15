@@ -277,11 +277,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     expected_pos = 0
     result_pos = 0
     for i in range(0,3):
-        if result[i] != None:
+        if result[i][0] != None:
             result_pos = i
         else:
             assert result[i].count(None) == len(result[i])
-        if expected[i] != None:
+        if expected[i][0] != None:
             expected_pos = i
         else:
             assert expected[i].count(None) == len(expected[i])
@@ -313,11 +313,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     expected_pos = 0
     result_pos = 0
     for i in range(0,3):
-        if edge_result[i] != None:
+        if edge_result[i][0] != None:
             result_pos = i
         else:
             assert edge_result[i].count(None) == len(edge_result[i])
-        if edge_expected[i] != None:
+        if edge_expected[i][0] != None:
             expected_pos = i
         else:
             assert edge_expected[i].count(None) == len(edge_expected[i])
