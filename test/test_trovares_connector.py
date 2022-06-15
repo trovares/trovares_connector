@@ -144,6 +144,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_neo4j_property_keys(self):
     c = self.conn
+    self._populate_node_working_types_bolt()
     self.assertCountEqual(
         c.neo4j_property_keys,
         ['bool', 'bool_array', 'date_array', 'date_attr', 'datetime_array', 'datetime_attr', 'double_array', 'duration_array', 'duration_attr',
