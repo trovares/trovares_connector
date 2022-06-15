@@ -31,6 +31,8 @@ from trovares_connector import Neo4jConnector, Neo4jDriver
    { "driver": "py2neo-bolt" },
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
+  # Print all diffs on failure.
+  maxdiff=None
   @classmethod
   def setup_class(cls):
     # Create a connection to Trovares xGT
