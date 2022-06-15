@@ -714,6 +714,8 @@ class Neo4jConnector(object):
             None
         """
         xgt_server = self._xgt_server
+        if namespace == None:
+            namespace = self._default_namespace
         if vertices == None and edges == None:
             vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
             edges = [frame.name for frame in xgt_server.get_edge_frames(namespace=namespace)]
@@ -722,10 +724,6 @@ class Neo4jConnector(object):
             vertices = []
         elif edges == None:
             edges = []
-
-        if namespace is not None:
-            vertices = [namespace + "__" + vertex for vertex in vertices]
-            edges = [namespace + "__" + edge for edge in vertices]
 
         id_neo4j_map = { }
 
@@ -746,6 +744,28 @@ class Neo4jConnector(object):
                 return 'date({{year:{0},month:{1},day:{2}}})'.format(value.year, value.month, value.day)
             elif isinstance(value, datetime.time):
                 return 'time({{hour:{0},minute:{1},second:{2},microsecond:{3}}})'.format(value.hour, value.minute, value.second, value.microsecond)
+            elif isinstance(value, list):
+                if len(value) > 0:
+                    if isinstance(value[0], datetime.datetime):
+                        format_string = 'datetime({{year:{0},month:{1},day:{2},hour:{3},minute:{4},second:{5},microsecond:{6}}})'
+                        return str([format_string.format(x.year, x.month, x.day, x.hour, x.minute, x.second, x.microsecond) for x in value])
+                    elif isinstance(value[0], datetime.date):
+                        format_string = 'date({{year:{0},month:{1},day:{2}}})'
+                        return str([format_string.format(x.year, x.month, x.day) for x in value])
+                    elif isinstance(value[0], datetime.time):
+                        format_string = 'time({{hour:{0},minute:{1},second:{2},microsecond:{3}}})'
+                        return str([format_string.format(x.hour, x.minute, x.second, x.microsecond) for x in value])
+                    elif isinstance(value[0], list):
+                        if len(value[0]) == 2:
+                            format_string = 'point({{x:{0},y:{1}}})'
+                            return str([format_string.format(x[0], x[1]) for x in value])
+                        elif len(value[0]) == 3:
+                            format_string = 'point({{x:{0},y:{1},z:{2}}})'
+                            return str([format_string.format(x[0], x[1], x[2]) for x in value])
+                        else:
+                            raise ValueError("List of list not supported in Neo4j.")
+
+                return str(value)
             else:
                 return str(value)
 
