@@ -146,8 +146,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c = self.conn
     self.assertCountEqual(
         c.neo4j_property_keys,
-        ['bool', 'date_attr', 'datetime_attr', 'duration_attr', 'int', 'localdatetime_attr',
-         'localtime_attr', 'real', 'str', 'time_attr', 'x', 'y'])
+        ['bool', 'bool_array', 'date_array', 'date_attr', 'datetime_array', 'datetime_attr', 'double_array', 'duration_array', 'duration_attr',
+         'geo_attr2', 'geo_attr3', 'int', 'int_array', 'localdatetime_array', 'localdatetime_attr', 'localtime_array', 'localtime_attr', 'long_array',
+         'point_array', 'point_attr', 'point_attr2', 'point_attr3', 'real', 'str', 'string_array', 'time_array', 'time_attr', 'x', 'y'])
 
   def test_neo4j_rel_type_properties(self):
     c = self.conn
