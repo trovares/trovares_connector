@@ -32,7 +32,7 @@ from trovares_connector import Neo4jConnector, Neo4jDriver
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
   # Print all diffs on failure.
-  maxdiff=None
+  maxDiff=None
   @classmethod
   def setup_class(cls):
     # Create a connection to Trovares xGT
