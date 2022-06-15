@@ -30,6 +30,7 @@ on:
       - '.github/**'
       - 'src/**'
       - 'test/**'
+  workflow_dispatch:
 
 jobs:
   test:

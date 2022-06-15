@@ -476,8 +476,25 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def test_transfer_no_data(self):
     c = self.conn
+    # Transfer all graphs:
     c.transfer_to_xgt()
+    # Transfer all graphs in namespace:
     c.transfer_to_neo4j()
+
+  def test_transfer_missing_graphs(self):
+    c = self.conn
+    with self.assertRaises(ValueError):
+        c.transfer_to_xgt(vertices=['cars'])
+    with self.assertRaises(ValueError):
+        c.transfer_to_xgt(edges=['cars'])
+    with self.assertRaises(ValueError):
+        c.get_xgt_schemas(vertices=['cars'])
+    with self.assertRaises(ValueError):
+        c.get_xgt_schemas(edges=['cars'])
+    with self.assertRaises(xgt.XgtNameError):
+        c.transfer_to_neo4j(vertices=['cars'])
+    with self.assertRaises(xgt.XgtNameError):
+        c.transfer_to_neo4j(edges=['cars'])
 
   def _populate_node(self):
     self.neo4j_driver.query(
