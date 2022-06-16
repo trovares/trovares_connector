@@ -1,8 +1,12 @@
 Trovares Connector Release Notes
 ================================
 
-1.0.1 (06-17-2022)
+1.1.0 (06-17-2022)
 ------------------
+
+New Features
+^^^^^^^^^^^^
+  - Add support for point and list data types.
 
 Changed
 ^^^^^^^
