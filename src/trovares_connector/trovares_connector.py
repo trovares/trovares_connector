@@ -713,6 +713,8 @@ class Neo4jConnector(object):
         -------
             None
         """
+        if namespace == None:
+            namespace = self._default_namespace
         xgt_server = self._xgt_server
         if namespace == None:
             namespace = self._default_namespace
