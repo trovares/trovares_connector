@@ -183,8 +183,7 @@ Limitations
 Doesn't support the following:
 
 * Multiple types for a single property.
-* Point data type.
-* Simple lists as properties.
+* Untyped vertices.
 
 Other limitations:
 
@@ -192,6 +191,7 @@ Other limitations:
 * Multiple labels on a single node will translate into multiple nodes in xGT.
 * Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
   See below for more details.
+* Point data type is converted into a list.
 
 Single relationship with multiple node conversion
 -------------------------------------------------
