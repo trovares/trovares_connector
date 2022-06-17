@@ -1029,6 +1029,7 @@ class Neo4jConnector(object):
                         f"{extract_node_info(source)}->{extract_node_info(target)}")
                     self._neo4j_edges[e_type]['sources'].add(extract_node_info(source))
                     self._neo4j_edges[e_type]['targets'].add(extract_node_info(target))
+
         return None
 
     def __neo4j_nodes(self, flush_cache = True):
@@ -1143,6 +1144,8 @@ class Neo4jConnector(object):
           self.__update_cache_state()
         schemas = []
         neo4j_edge = self.__neo4j_edges(False)[edge]
+        if not 'sources' in neo4j_edge or not 'targets' in neo4j_edge:
+            raise ValueError(f"Untyped vertices not supported in {edge}")
         for source in neo4j_edge['sources']:
             if source not in vertices:
                 vertices[source] = None
