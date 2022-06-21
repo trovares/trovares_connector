@@ -515,10 +515,10 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 2
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
-    self.neo4j_driver.query('CREATE ({string:"bbb"})').finalize()
+    self.neo4j_driver.query('CREATE ({str:"bbb"})').finalize()
     c.transfer_to_xgt(vertices=[''])
     node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
-    res = self.xgt.run_job('match (v) return v.string')
+    res = self.xgt.run_job('match (v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "bbb"
 
@@ -537,14 +537,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_edge_empty_labels_schema(self):
     c = self.conn
     self.neo4j_driver.query(
-        'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({string:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
+        'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({str:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
     c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
     node_frame = self.xgt.get_edge_frame('e1')
     res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 1
     node_frame = self.xgt.get_edge_frame('e2')
-    res = self.xgt.run_job('match ()-[:e2]->(v) return v.string')
+    res = self.xgt.run_job('match ()-[:e2]->(v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "aaa"
     node_frame = self.xgt.get_edge_frame('e3')
