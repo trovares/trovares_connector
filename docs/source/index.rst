@@ -183,6 +183,7 @@ Limitations
 Doesn't support the following:
 
 * Multiple types for a single property.
+* Untyped vertices.
 
 Other limitations:
 
