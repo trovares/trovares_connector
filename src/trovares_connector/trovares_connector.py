@@ -474,8 +474,8 @@ class Neo4jConnector(object):
         self.__update_cache_state()
 
         if vertices is None and edges is None:
-           vertices = {vertex : False for vertex in self.__neo4j_node_labels(False)}
-           edges = {edge : False for edge in self.__neo4j_relationship_types(False)}
+           vertices = {vertex : None for vertex in self.__neo4j_node_labels(False)}
+           edges = {edge : None for edge in self.__neo4j_relationship_types(False)}
         elif edges is None:
             edges = { }
         elif vertices is None:
@@ -1213,7 +1213,6 @@ class Neo4jConnector(object):
             print(f"xGT graph schema for edge {edge}: {edge_info}")
         info_schema = edge_info['schema']
         edge_endpoints = edge_info['endpoints']
-        #endpoints = f"{source}->{target}"
         endpoints = (source, target)
         print(edge_endpoints)
         if source != None and target != None and endpoints not in edge_endpoints:
@@ -1251,11 +1250,11 @@ class Neo4jConnector(object):
         for source, target in neo4j_edge['endpoints']:
             if import_edge_nodes:
                 if source != None and source not in vertices:
-                    vertices[source] = False
+                    vertices[source] = None
                 if target != None and target not in vertices:
-                    vertices[target] = False
+                    vertices[target] = None
                 if source == None or target == None:
-                    vertices[self.__neo4j_unlabeled_vertex_name()] = True
+                    vertices[self.__neo4j_unlabeled_vertex_name()] = None
             result = self.__extract_xgt_edge_schema(edge,
                 source, target, neo4j_source_node_name,
                 neo4j_target_node_name, flush_cache)
