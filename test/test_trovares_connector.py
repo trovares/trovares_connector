@@ -37,7 +37,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def setup_class(cls):
     # Create a connection to Trovares xGT
     cls.xgt = xgt.Connection()
-    cls.xgt.drop_namespace('test', force_drop = True)
     cls.xgt.set_default_namespace('test')
     cls.neo4j_driver, cls.conn, cls.conn_arrow = cls._setup_connector(cls.driver)
     return
@@ -179,11 +178,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
         'CREATE (:Node2{})-[:Relationship1{}]->(:Node1{}), (:Node1{})-[:Relationship2{int: 1}]->(:Node2{})').finalize()
     assert len(c.neo4j_edges) == 2
-    assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node2->Node1'}
+    assert c.neo4j_edges['Relationship1']['endpoints'] == {('Node2', 'Node1')}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node2'}
     assert c.neo4j_edges['Relationship1']['targets'] == {'Node1'}
     assert c.neo4j_edges['Relationship1']['schema'] == {}
-    assert c.neo4j_edges['Relationship2']['endpoints'] == {'Node1->Node2'}
+    assert c.neo4j_edges['Relationship2']['endpoints'] == {('Node1', 'Node2')}
     assert c.neo4j_edges['Relationship2']['sources'] == {'Node1'}
     assert c.neo4j_edges['Relationship2']['targets'] == {'Node2'}
     assert c.neo4j_edges['Relationship2']['schema'] == {'int' : 'Long'}
@@ -193,7 +192,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
           'CREATE (:Node2{})-[:Relationship1{int: 2}]->(:Node1{}), (:Node1{})-[:Relationship1{int: 1}]->(:Node2{})').finalize()
     assert len(c.neo4j_edges) == 1
-    assert c.neo4j_edges['Relationship1']['endpoints'] == {'Node1->Node2', 'Node2->Node1'}
+    assert c.neo4j_edges['Relationship1']['endpoints'] == {('Node1', 'Node2'), ('Node2', 'Node1')}
     assert c.neo4j_edges['Relationship1']['sources'] == {'Node1', 'Node2'}
     assert c.neo4j_edges['Relationship1']['targets'] == {'Node1', 'Node2'}
     assert c.neo4j_edges['Relationship1']['schema'] == {'int' : 'Long'}
@@ -500,6 +499,59 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.assertRaises(xgt.XgtNameError):
         c.transfer_to_neo4j(edges=['cars'])
 
+  def test_empty_labels(self):
+    c = self.conn
+    self.neo4j_driver.query('CREATE ()').finalize()
+    c.transfer_to_xgt(vertices=[''])
+    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    assert node_frame.num_rows == 1
+
+  def test_empty_labels_schema(self):
+    c = self.conn
+    self.neo4j_driver.query('CREATE ({int:2})').finalize()
+    c.transfer_to_xgt(vertices=[''])
+    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    res = self.xgt.run_job('match (v) return v.int')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == 2
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
+    self.neo4j_driver.query('CREATE ({string:"bbb"})').finalize()
+    c.transfer_to_xgt(vertices=[''])
+    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    res = self.xgt.run_job('match (v) return v.string')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == "bbb"
+
+  def test_edge_empty_labels(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->(), (:Node)-[:e2]->(), ()-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
+    node_frame = self.xgt.get_edge_frame('e1')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('e2')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('e3')
+    assert node_frame.num_rows == 1
+
+  def test_edge_empty_labels_schema(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({string:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
+    node_frame = self.xgt.get_edge_frame('e1')
+    res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == 1
+    node_frame = self.xgt.get_edge_frame('e2')
+    res = self.xgt.run_job('match ()-[:e2]->(v) return v.string')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == "aaa"
+    node_frame = self.xgt.get_edge_frame('e3')
+    res = self.xgt.run_job('match (v)-[:e3]->() return v.bool')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == True
+
   def _populate_node(self):
     self.neo4j_driver.query(
       # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
@@ -589,3 +641,4 @@ class TestXgtNeo4jConnector(unittest.TestCase):
 
   def _erase_neo4j_database(self):
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
+    self.xgt.drop_namespace('test', force_drop = True)
