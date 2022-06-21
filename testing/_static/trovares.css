@@ -1,0 +1,144 @@
+/*
+ * Copyright 2022 Trovares Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/*
+ * Trovares Custom css
+ * ~~~~~~~~~~~~~~~~~~~
+ *
+ * Stylesheet settings overriding the agogo theme specific for Trovares.
+ *
+ */
+
+/* -- override bizstyle.css ------------------------------------------------- */
+
+html {
+  background-color: rgba(35, 44, 57, 0.75);
+}
+
+div.related ul {
+  background-color: rgba(35, 44, 57, 0.75);
+}
+
+div.sphinxsidebar h3, div.sphinxsidebar h4 {
+  border: 1px solid rgba(35, 44, 57, 0.75);
+  background-color: rgba(35, 44, 57, 0.75);
+}
+
+div.section h4 {
+  color: #336699;
+}
+
+div.body p {
+  color: #647585;
+}
+
+/* -- jupyter output cell --------------------------------------------------- */
+
+div.jupyter-output-cell div {
+  background-color: white;
+  border: 1px solid #dddddd;
+}
+
+/* -- table styles ---------------------------------------------------------- */
+
+table {
+    border-collapse: collapse;
+    margin: 0 -0.5em 0 -0.5em;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+table td,
+table th {
+    padding: 0.2em 0.5em 0.2em 0.5em;
+}
+
+table.docutils {
+    margin: 1em 0;
+    padding: 0;
+    border: 1px solid #dddddd;
+    background-color: #eeeeec;
+    width: 100%;
+}
+
+table.docutils td,
+table.docutils th {
+    padding: 1px 8px 1px 5px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 1px solid white;
+    border-bottom: 1px solid white;
+}
+
+table.docutils td p {
+    margin-top: 0;
+    margin-bottom: 0.3em;
+    width: 100%;
+}
+
+table.field-list td.field-body {
+  width: 100%;
+}
+
+table.field-list th.field-name {
+  min-width: 110px;
+}
+
+table.field-list td,
+table.field-list th {
+    border: 0 !important;
+    word-break: break-word;
+}
+
+table.footnote td,
+table.footnote th {
+    border: 0 !important;
+}
+
+th {
+    color: white;
+    text-align: left;
+    padding-right: 5px;
+    background-color: #82A0BE;
+}
+
+div.literal-block-wrapper div.code-block-caption {
+    background-color: #EEE;
+    border-style: solid;
+    border-color: #CCC;
+    border-width: 1px 5px;
+}
+
+
+/* TABLET STYLE */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    body {
+        margin: 0 40px 0 40px;
+    }
+}
+
+/* For Python API Docs members add spacing */
+dl.field-list > dt {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+dl.field-list > dd {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
