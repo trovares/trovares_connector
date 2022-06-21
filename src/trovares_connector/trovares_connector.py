@@ -25,6 +25,7 @@ import neo4j
 import xgt
 import os
 import time
+from enum import Enum
 
 class Neo4jDriver(object):
     def __init__(self, host = 'localhost',
@@ -263,6 +264,23 @@ class Neo4jConnector(object):
         'DurationArray': pa.list_(pa.int64()),
         'PointArray': pa.list_(pa.list_(pa.float32())),
     }
+
+    class Labels(Enum):
+        HAS_BOTH = 0,
+        BOTH_EMPTY = 1,
+        SOURCE_EMPTY = 2,
+        TARGET_EMPTY = 3
+
+        @classmethod
+        def get_label_type(cls, has_source, has_target):
+            if has_source and has_target:
+                return cls.HAS_BOTH
+            elif has_source:
+                return cls.TARGET_EMPTY
+            elif has_target:
+                return cls.SOURCE_EMPTY
+            else:
+                return cls.BOTH_EMPTY
 
     def __init__(self, xgt_server,
                        neo4j_driver,
@@ -515,7 +533,6 @@ class Neo4jConnector(object):
             for edge in xgt_schemas['edges']:
                 self._xgt_server.drop_frame(edge)
                 schemas = xgt_schemas['edges'][edge]
-                print(schemas)
                 # Frame name refers to multiple edges:
                 if (len(schemas) > 1):
                     for schema in schemas:
@@ -535,7 +552,6 @@ class Neo4jConnector(object):
                     else:
                         raise e
 
-        print(xgt_schemas['vertices'])
         for vertex, schema in xgt_schemas['vertices'].items():
             table_schema = schema['schema']
             key = schema['key']
@@ -606,7 +622,7 @@ class Neo4jConnector(object):
             with self._neo4j_driver.query(q, False) as query:
                 for record in query.result():
                     estimated_counts += record[0]
-        for edge in xgt_schemas['edges']:
+        for edge, schema_list in xgt_schemas['edges'].items():
             q = f"MATCH ()-[e:{edge}]->() RETURN count(e)"
             with self._neo4j_driver.query(q, False) as query:
                 for record in query.result():
@@ -631,7 +647,6 @@ class Neo4jConnector(object):
                     print(f'Copy data for node {edge} into schema: {schema_list}')
                 transform = True if len(schema_list) > 1 else False
                 for schema in schema_list:
-                    print(schema)
                     name = self.__edge_name_transform(edge, schema['source'], schema['target'], transform)
                     table_schema = schema['schema']
                     attributes = {_:t for _, t, *_unused_ in table_schema}
@@ -639,17 +654,17 @@ class Neo4jConnector(object):
                     source_key = schema['source_key']
                     target = schema['target']
                     target_key = schema['target_key']
-                    if 'empty_vertices' not in schema:
+                    match_type = schema['empty_labels']
+                    if match_type == self.Labels.HAS_BOTH:
                         query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
-                    elif schema['empty_vertices'] == 0:
-                        query = f"MATCH (u)-[e:{edge}]->(v) RETURN"
-                    elif schema['empty_vertices'] == 1:
-                        query = f"MATCH (u{source})-[e:{edge}]->(v) RETURN"
-                    elif schema['empty_vertices'] == 2:
-                        query = f"MATCH (u)-[e:{edge}]->(v{target}) RETURN"
+                    elif match_type == self.Labels.BOTH_EMPTY:
+                        query = f"MATCH (u)-[e:{edge}]->(v) where size(labels(u)) = 0 and size(labels(v)) = 0 RETURN"
+                    elif match_type == self.Labels.SOURCE_EMPTY:
+                        query = f"MATCH (u)-[e:{edge}]->(v:{target}) where size(labels(u)) = 0 RETURN"
+                    elif match_type == self.Labels.TARGET_EMPTY:
+                        query = f"MATCH (u:{source})-[e:{edge}]->(v) where size(labels(v)) = 0 RETURN"
                     query += f" id(u) AS {source_key}"
                     query += f", id(v) AS {target_key}"
-                    print(attributes)
                     query += ','.join([f"e.{a} AS {a}" for a in attributes if a != source_key and a != target_key])
                     self.__copy_data(query, name, schema['neo4j_schema'], progress_bar)
         return  None
@@ -1027,26 +1042,56 @@ class Neo4jConnector(object):
 
                         if (not schema_exists):
                             continue
-
-                    print(f"Edge Connectivity: {e}")
-                    print(f" -> type => {e_type}")
-                    print(f" -> source nodes => {source}")
-                    print(f" -> target nodes => {nodes[1]}")
-                    print(f"  -> Edge {e_type}: {self._neo4j_edges[e_type]}\n")
+                    if self.__verbose:
+                        print(f"Edge Connectivity: {e}")
+                        print(f" -> type => {e_type}")
+                        print(f" -> source nodes => {source}")
+                        print(f" -> target nodes => {nodes[1]}")
+                        print(f"  -> Edge {e_type}: {self._neo4j_edges[e_type]}\n")
                     if 'endpoints' not in self._neo4j_edges[e_type]:
                         self._neo4j_edges[e_type]['endpoints'] = set()
                         self._neo4j_edges[e_type]['sources'] = set()
                         self._neo4j_edges[e_type]['targets'] = set()
                     self._neo4j_edges[e_type]['endpoints'].add(
-                        f"{extract_node_info(source)}->{extract_node_info(target)}")
+                        (extract_node_info(source), extract_node_info(target)))
                     self._neo4j_edges[e_type]['sources'].add(extract_node_info(source))
                     self._neo4j_edges[e_type]['targets'].add(extract_node_info(target))
 
+        vertices = [vertex for vertex in self.__neo4j_node_labels(False)]
         for e_type in self._neo4j_edges:
             if 'endpoints' not in self._neo4j_edges[e_type]:
+                # We have an edge with one or more non-typed vertex.
+                # These aren't picked up be Neo4j or APOC with the above methods.
+
                 self._neo4j_edges[e_type]['endpoints'] = set()
                 self._neo4j_edges[e_type]['sources'] = set()
                 self._neo4j_edges[e_type]['targets'] = set()
+
+                for v in vertices:
+                    schema_exists = False
+                    any_schema = False
+                    q = f"MATCH (:{v})-[e:{e_type}]->() return count(e) > 0"
+                    with self._neo4j_driver.query(q, False) as query:
+                        for result in query.result():
+                            schema_exists = result[0]
+
+                    if (schema_exists):
+                        self._neo4j_edges[e_type]['sources'].add(v)
+                        self._neo4j_edges[e_type]['endpoints'].add((v, None))
+                        any_schema = True
+
+                    q = f"MATCH ()-[e:{e_type}]->(:{v}) return count(e) > 0"
+                    with self._neo4j_driver.query(q, False) as query:
+                        for result in query.result():
+                            schema_exists = result[0]
+
+                    if (schema_exists):
+                        self._neo4j_edges[e_type]['targets'].add(v)
+                        self._neo4j_edges[e_type]['endpoints'].add((None, v))
+                        any_schema = True
+
+                    if not any_schema:
+                        self._neo4j_edges[e_type]['endpoints'].add((None, None))
 
         return None
 
@@ -1138,10 +1183,15 @@ class Neo4jConnector(object):
         edge_endpoints = edge_info['endpoints']
         endpoints = f"{source}->{target}"
         if source != None and target != None and endpoints not in edge_endpoints:
-            if len(edge_endpoints) == 1:
-                raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
-            else:
-                return
+            raise ValueError(f"Edge Type {edge} with endpoints: {endpoints} not found.")
+        has_source = True
+        has_target = True
+        if source == None:
+            source = self.__untyped_vertex_name(edge)
+            has_source = False
+        if target == None:
+            target = self.__untyped_vertex_name(edge)
+            has_target = False
 
         schema = [[key, *self.__neo4j_type_to_xgt_type(type)]
                   for key, type in info_schema.items()]
@@ -1153,7 +1203,9 @@ class Neo4jConnector(object):
         return {'schema' : schema, 'neo4j_schema' : neo4j_schema,
                 'source' : source, 'target' : target,
                 'source_key' : neo4j_source_node_name,
-                'target_key' : neo4j_target_node_name}
+                'target_key' : neo4j_target_node_name,
+                'empty_labels' : self.Labels.get_label_type(has_source, has_target)}
+
 
     def __extract_xgt_edge_schemas(self, edge, vertices,
                                    neo4j_source_node_name,
@@ -1162,41 +1214,19 @@ class Neo4jConnector(object):
           self.__update_cache_state()
         schemas = []
         neo4j_edge = self.__neo4j_edges(False)[edge]
-        if not 'sources' in neo4j_edge or not 'targets' in neo4j_edge:
-            raise ValueError(f"Untyped vertices not supported in {edge}")
-        for source in neo4j_edge['sources']:
-            if source not in vertices:
+        for source, target in neo4j_edge['endpoints']:
+            if source != None and source not in vertices:
                 vertices[source] = False
-            for target in neo4j_edge['targets']:
-                if target not in vertices:
-                    vertices[target] = False
-                result = self.__extract_xgt_edge_schema(edge,
-                    source, target, neo4j_source_node_name,
-                    neo4j_target_node_name, flush_cache)
-                if result is not None:
-                    schemas.append(result)
-            if len(neo4j_edge['targets']) == 0:
-                print("Here2")
-        print(neo4j_edge['targets'])
-        if len(neo4j_edge['sources']) == 0:
-            print("Here1")
-            for target in neo4j_edge['targets']:
-                if target not in vertices:
-                    vertices[target] = False
-                result = self.__extract_xgt_edge_schema(edge,
-                    None, target, None,
-                    neo4j_target_node_name, flush_cache)
-                if result is not None:
-                    schemas.append(result)
-        if schemas == []:
-            vertices[edge + '_vertex'] = True
-            schemas.append(
-                {'schema' : [['src', xgt.INT], ['trg', xgt.INT]],
-                 'neo4j_schema' : [['neo4j_source', 'INTEGER'], ['neo4j_target', 'INTEGER']],
-                 'source' : edge + '_vertex', 'target' : edge + '_vertex',
-                 'source_key' : 'src', 'target_key' : 'trg', 'empty_vertices' : 2})
+            if target != None and target not in vertices:
+                vertices[target] = False
+            if source == None or target == None:
+                vertices[self.__untyped_vertex_name(edge)] = True
+            result = self.__extract_xgt_edge_schema(edge,
+                source, target, neo4j_source_node_name,
+                neo4j_target_node_name, flush_cache)
+            if result is not None:
+                schemas.append(result)
 
-        print(schemas)
         return schemas
 
     def __neo4j_type_to_xgt_type(self, prop_type):
@@ -1378,6 +1408,9 @@ class Neo4jConnector(object):
             return source + '_' + edge + '_' + target
         else:
             return edge
+
+    def __untyped_vertex_name(self, edge):
+        return 'vertex_' + edge
 
     # TODO(landwehrj) : Is there a way to detect the cache is stale
     # One option is to use the Neo4j count store of relationship/nodes
