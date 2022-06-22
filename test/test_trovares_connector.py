@@ -333,6 +333,19 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     print(edge_frame.get_data())
     self.xgt.drop_frame("Relationship")
 
+  def test_transfer_relationship_working_types_bolt_map(self):
+    self._populate_relationship_working_types_bolt()
+    c = self.conn
+    xgt_schema = c.get_xgt_schemas(vertices=[('Node', 'n')], edges=[('Relationship', 'r')])
+    c.create_xgt_schemas(xgt_schema)
+    c.copy_data_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('n')
+    edge_frame = self.xgt.get_edge_frame('r')
+    assert node_frame.num_rows == 6
+    assert edge_frame.num_rows == 3
+    print(edge_frame.get_data())
+    self.xgt.drop_frame('r')
+
   def test_transfer_relationship_without_vertex_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = self.conn
@@ -505,6 +518,101 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.transfer_to_xgt(vertices=[''])
     node_frame = self.xgt.get_vertex_frame('unlabeled')
     assert node_frame.num_rows == 1
+
+  def test_map_empty_labels(self):
+    c = self.conn
+    self.neo4j_driver.query('CREATE ()').finalize()
+    c.transfer_to_xgt(vertices=[('', 'custom_name')])
+    node_frame = self.xgt.get_vertex_frame('custom_name')
+    assert node_frame.num_rows == 1
+
+  def test_empty_labels_schema(self):
+    c = self.conn
+    self.neo4j_driver.query('CREATE ({int:2})').finalize()
+    c.transfer_to_xgt(vertices=[''])
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    res = self.xgt.run_job('match (v) return v.int')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == 2
+    self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
+    self.neo4j_driver.query('CREATE ({str:"bbb"})').finalize()
+    c.transfer_to_xgt(vertices=[''])
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    res = self.xgt.run_job('match (v) return v.str')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == "bbb"
+
+  def test_edge_empty_labels(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->(), (:Node)-[:e2]->(), ()-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
+    node_frame = self.xgt.get_edge_frame('e1')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('e2')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('e3')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    assert node_frame.num_rows == 4
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 2
+
+  def test_map_edge_empty_labels(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->(), (:Node)-[:e2]->(), ()-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(vertices=[('', 'custom_empty'), ('Node', 'custom_Node')], edges=[('e1', 'edge1'), ('e2', 'edge2'), 'e3'])
+    node_frame = self.xgt.get_edge_frame('edge1')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('edge2')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_edge_frame('e3')
+    assert node_frame.num_rows == 1
+    node_frame = self.xgt.get_vertex_frame('custom_empty')
+    assert node_frame.num_rows == 4
+    node_frame = self.xgt.get_vertex_frame('custom_Node')
+    assert node_frame.num_rows == 2
+    with self.assertRaises(xgt.XgtNameError):
+        node_frame = self.xgt.get_vertex_frame('unlabeled')
+    with self.assertRaises(xgt.XgtNameError):
+        node_frame = self.xgt.get_vertex_frame('Node')
+
+  def test_edge_empty_labels_schema(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({str:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
+    node_frame = self.xgt.get_edge_frame('e1')
+    res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == 1
+    node_frame = self.xgt.get_edge_frame('e2')
+    res = self.xgt.run_job('match ()-[:e2]->(v) return v.str')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == "aaa"
+    node_frame = self.xgt.get_edge_frame('e3')
+    res = self.xgt.run_job('match (v)-[:e3]->() return v.bool')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == True
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    assert node_frame.num_rows == 4
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 2
+
+  def _populate_node(self):
+    self.neo4j_driver.query(
+      # Integer, Float, String, Boolean, Point, Date, Time, LocalTime,
+      # DateTime, LocalDateTime, and Duration.
+      # FIXME: Point listed in comment above, but not in the list
+      'CREATE (:Node{int: 343, real: 3.14, str: "string", bool: true, ' +
+      'date_attr: date("+2015-W13-4"), time_attr: time("125035.556+0100"), ' +
+      'datetime_attr: datetime("2015-06-24T12:50:35.556+0100"), ' +
+      'localtime_attr: localtime("12:50:35.556"), ' +
+      'localdatetime_attr: localdatetime("2015185T19:32:24"), ' +
+      'duration_attr: duration("P14DT16H12M")})').finalize()
+
+  # Point not working for bolt.
 
   def test_empty_labels_schema(self):
     c = self.conn
