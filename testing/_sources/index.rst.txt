@@ -183,7 +183,6 @@ Limitations
 Doesn't support the following:
 
 * Multiple types for a single property.
-* Untyped vertices.
 
 Other limitations:
 
@@ -192,6 +191,7 @@ Other limitations:
 * Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
   See below for more details.
 * Point data type is converted into a list.
+* Unlabeled vertices are supported, but will be typed with the name "unlabeled" by default.
 
 Single relationship with multiple node conversion
 -------------------------------------------------

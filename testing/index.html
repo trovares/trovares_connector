@@ -194,7 +194,6 @@ These additional drivers can provide much faster performance than the default ne
 <p>Doesn’t support the following:</p>
 <ul class="simple">
 <li><p>Multiple types for a single property.</p></li>
-<li><p>Untyped vertices.</p></li>
 </ul>
 <p>Other limitations:</p>
 <ul class="simple">
@@ -203,6 +202,7 @@ These additional drivers can provide much faster performance than the default ne
 <li><p>Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
 See below for more details.</p></li>
 <li><p>Point data type is converted into a list.</p></li>
+<li><p>Unlabeled vertices are supported, but will be typed with the name “unlabeled” by default.</p></li>
 </ul>
 <section id="single-relationship-with-multiple-node-conversion">
 <h2>Single relationship with multiple node conversion<a class="headerlink" href="#single-relationship-with-multiple-node-conversion" title="Permalink to this heading">¶</a></h2>
