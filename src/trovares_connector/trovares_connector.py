@@ -265,7 +265,7 @@ class Neo4jConnector(object):
         'PointArray': pa.list_(pa.list_(pa.float32())),
     }
 
-    class Labels(Enum):
+    class _Labels(Enum):
         HAS_BOTH = 0,
         BOTH_EMPTY = 1,
         SOURCE_EMPTY = 2,
@@ -667,13 +667,13 @@ class Neo4jConnector(object):
                     target = schema['target']
                     target_key = schema['target_key']
                     match_type = schema['empty_labels']
-                    if match_type == self.Labels.HAS_BOTH:
+                    if match_type == self._Labels.HAS_BOTH:
                         query = f"MATCH (u:{source})-[e:{edge}]->(v:{target}) RETURN"
-                    elif match_type == self.Labels.BOTH_EMPTY:
+                    elif match_type == self._Labels.BOTH_EMPTY:
                         query = f"MATCH (u)-[e:{edge}]->(v) where size(labels(u)) = 0 and size(labels(v)) = 0 RETURN"
-                    elif match_type == self.Labels.SOURCE_EMPTY:
+                    elif match_type == self._Labels.SOURCE_EMPTY:
                         query = f"MATCH (u)-[e:{edge}]->(v:{target}) where size(labels(u)) = 0 RETURN"
-                    elif match_type == self.Labels.TARGET_EMPTY:
+                    elif match_type == self._Labels.TARGET_EMPTY:
                         query = f"MATCH (u:{source})-[e:{edge}]->(v) where size(labels(v)) = 0 RETURN"
                     query += f" id(u) AS {source_key}"
                     query += f", id(v) AS {target_key}"
@@ -1237,7 +1237,7 @@ class Neo4jConnector(object):
                 'source' : source, 'target' : target,
                 'source_key' : neo4j_source_node_name,
                 'target_key' : neo4j_target_node_name,
-                'empty_labels' : self.Labels.get_label_type(has_source, has_target)}
+                'empty_labels' : self._Labels.get_label_type(has_source, has_target)}
 
 
     def __extract_xgt_edge_schemas(self, edge, vertices, neo4j_source_node_name,
@@ -1447,7 +1447,7 @@ class Neo4jConnector(object):
         return ''
 
     def __xgt_unlabeled_vertex_name(self):
-        return '_neo4j_empty_'
+        return 'unlabeled'
 
     def __neo4j_to_xgt_vertex_name(self, name):
         if name == '':

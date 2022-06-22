@@ -503,21 +503,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c = self.conn
     self.neo4j_driver.query('CREATE ()').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
     assert node_frame.num_rows == 1
 
   def test_empty_labels_schema(self):
     c = self.conn
     self.neo4j_driver.query('CREATE ({int:2})').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
     res = self.xgt.run_job('match (v) return v.int')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 2
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     self.neo4j_driver.query('CREATE ({str:"bbb"})').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('_neo4j_empty_')
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
     res = self.xgt.run_job('match (v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "bbb"
