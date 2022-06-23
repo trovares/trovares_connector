@@ -1,21 +1,30 @@
 # trovares_connector Package
 
 [![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
-[![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
 [![Available on Pypi](https://img.shields.io/pypi/v/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
 [![Pypi Versions](https://img.shields.io/pypi/pyversions/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
-[![Available on pypi](https://img.shields.io/pypi/dm/trovares_connector)](https://pypi.org/project/trovares_connector/#history)
+[![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
 [![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT)
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 
-Detailed documentation is available [here](https://trovares.github.io/trovares_connector/).
+<table>
+  <tr>
+    <td><b>Homepage:</b></td>
+    <td><a href="https://www.trovares.com">trovares.com</a></td>
+  </tr>
+  <tr>
+    <td><b>Detailed Documentation</b></td>
+    <td><a href="https://trovares.github.io/trovares_connector/">trovares.github.io/trovares_connector</a></td>
+  </tr>
+</table>
 
 ## Requirements
 
  - [Neo4j Python](https://pypi.org/project/neo4j/)
  - [xGT Python](https://pypi.org/project/xgt/)
  - [Pyarrow](https://pypi.org/project/pyarrow/)
+ - [Trovares xGT](https://www.trovares.com)
 
 ## Installation
 
@@ -25,6 +34,12 @@ You can install this python package by executing this command:
 python -m pip install trovares_connector
 ```
 
+If you don't have Trovares xGT, you can install and run the [Developer version](https://hub.docker.com/r/trovares/xgt) from Docker:
+
+```bash
+docker pull trovares/xgt
+docker run --publish=4367:4367 trovares/xgt
+```
 ## Using the trovares_connector
 
 From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.

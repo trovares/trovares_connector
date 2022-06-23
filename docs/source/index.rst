@@ -41,14 +41,12 @@ You can install this python package by executing this command:
 
    python -m pip install trovares_connector
 
-If you don't have Trovares xGT, it is available through the AWS marketplace or you can use the Docker version:
+If you don't have Trovares xGT, it is available through the AWS Marketplace or you can use the `Developer version of xGT with Docker <https://hub.docker.com/r/trovares/xgt>`_:
 
 .. code-block:: bash
 
    docker pull trovares/xgt
    docker run --publish=4367:4367 trovares/xgt
-
-More information about the Docker image can be found `here <https://hub.docker.com/r/trovares/xgt>`_.
 
 For requirements and optional components see :ref:`requirements`.
 
