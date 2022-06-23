@@ -22,47 +22,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. toctree::
-   :maxdepth: 1
-   :numbered:
+Trovares Connector
+==================
 
+This package is for connecting the `Trovares xGT <https://www.trovares.com/>`_ graph analytics engine with the Neo4j graph database.
 
-trovares_connector Package
-===========================
+The connector `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
-This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
-
-The `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
-
-Requirements
-------------
-
-* `Neo4j Python package <https://pypi.org/project/neo4j/>`_
-* `xGT Python package <https://pypi.org/project/xgt/>`_
-* `Pyarrow package <https://pypi.org/project/pyarrow/>`_
-
-These can be installed through pip:
-
-.. code-block:: bash
-
-   python -m pip install xgt neo4j pyarrow
-
-Optional
---------
-
-* `APOC <https://github.com/neo4j-contrib/neo4j-apoc-procedures>`_
-   Improves schema querying.
-   Automatically used if installed as a plugin for Neo4j.
-* `Py2neo Python package <https://pypi.org/project/py2neo/>`_
-   Alternative Neo4j driver that provides http or bolt connections.
-   Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
-   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
-* `Neo4j-arrow plugin and Python package <https://github.com/neo4j-field/neo4j-arrow>`_
-   Alternative driver for transfers that is very experimental.
-   This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
-   In addition it requires the neo4j-arrow python package found in the above link.
-   At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
-   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
+A basic guide is provided below. 
+For a quick start see :ref:`quick_start`.
 
 Installation
 ------------
@@ -73,9 +41,19 @@ You can install this python package by executing this command:
 
    python -m pip install trovares_connector
 
+If you don't have Trovares xGT, it is available through the AWS marketplace or you can use the Docker version:
 
-Using the trovares_connector
------------------------------
+.. code-block:: bash
+
+   docker pull trovares/xgt
+   docker run --publish=4367:4367 trovares/xgt
+
+More information about the Docker image can be found `here <https://hub.docker.com/r/trovares/xgt>`_.
+
+For requirements and optional components see :ref:`requirements`.
+
+Using the Trovares Connector
+----------------------------
 
 From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
 
@@ -108,7 +86,6 @@ All of these data frames are created in Trovares xGT and then all of the data is
    conn.transfer_to_xgt(vertices=conn.neo4j_node_labels,
                         edges=conn.neo4j_relationship_types)
 
-
 Copy a portion of a graph based on node labels and/or relationship types
 ------------------------------------------------------------------------
 
@@ -129,12 +106,31 @@ Using this idiom requires knowing some schema information about the graph data s
    edges_to_copy = ['KNOWS']
    conn.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
 
+Mapping Neo4j labels and types
+------------------------------
+
+When transferring, labels and relationship types are automatically mapped to the same name in xGT.
+The exception is that unlabeled vertices are mapped to the frame "unlabeled" because xGT doesn't support empty names.
+It's possible to change the mapping of any label or relationship type by passing a pair where the first element represents the Neo4j label or relationship type and the second represents the xGT type.
+
+An example of changing the mapping of Person and KNOWS, but not Job:
+
+.. code-block:: python
+
+   conn.transfer_to_xgt(vertices=[('Person', 'p'), 'Job'], edges=[('KNOWS', 'k')])
+
+In addition the unlabeled nodes in Neo4j are named '' and this can be used to map these to a custom xGT type:
+
+.. code-block:: python
+
+   conn.transfer_to_xgt(vertices=[('', 'my_empty_type')])
+
 Using various Neo4j drivers
 ---------------------------
 
 The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
 The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
-These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components explained above.
+These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in :ref:`requirements`.
 
 Some examples of connecting:
 
@@ -172,7 +168,7 @@ These additional connectors will connect to Neo4j with a combination of connecti
 Additional Examples
 -------------------
 
-More detailed examples can be found here:
+More detailed examples can be found in :ref:`jupyter` or on github:
 
 * `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples>`_
 * `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter>`_
@@ -226,6 +222,20 @@ Would get converted to the following when transferring to xGT:
 
   (:A)-[:A_PART_OF_C]->(:C), (:B)-[:B_PART_OF_C]->(:C)
 
+Additional Topics
+=================
+
+The following topics provide additional material.
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Additional Topics
+
+  quick_start.rst
+  jupyter/index.rst
+  requirements.rst
+  RELEASE.rst
+
 API Details
 ===========
 
@@ -238,7 +248,7 @@ API Details
 
 .. autosummary::
   :toctree:
+  :caption: Python API 
 
   Neo4jConnector
   Neo4jDriver
-

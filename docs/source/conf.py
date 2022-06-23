@@ -42,8 +42,7 @@ copyright = '2022, Trovares, Inc.'
 author = 'trovares.com'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.0'
-
+release = '1.2.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -53,6 +52,7 @@ extensions = [
   'sphinx.ext.autosummary',
   'sphinx.ext.napoleon',
   'sphinx.ext.mathjax',
+  'myst_nb',
   #'IPython.sphinxext.ipython_console_highlighting',
 ]
 mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
@@ -81,19 +81,18 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
 #html_theme = 'alabaster'
-html_theme = 'bizstyle'
+html_theme = 'sphinx_book_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Combined with the ".. autosummary" directive in rST files and the
 # sphinx-apidoc program, this option enables building separate pages for
@@ -107,22 +106,31 @@ html_show_sourcelink = False
 # These options are specific to the 'agogo' theme currently used. If/when
 # we switch to a custom theme, this will change or may go away entirely.
 html_theme_options = {
-   'sidebarwidth': '20%',
-#   'body_min_width': '0',
-#   'body_max_width': None,
-#   'globaltoc_includehidden': True,
-
-  'rightsidebar': True,
+  'home_page_in_toc' : True,
+  'extra_navbar' : '',
+  'repository_url' : 'https://github.com/trovares/trovares_connector',
+  'path_to_docs' : 'docs/source',
+  'repository_branch' : 'main',
+  #"use_edit_page_button": True,
+  "use_issues_button": True,
+  "use_repository_button": True,
+  "use_download_button": True,
 }
+
+# Left sidebar title
+html_title = "Trovares Connector"
+
+# Don't execute notebooks when executing.
+nb_execution_mode = "off"
 
 # Contents of the sidebar. Since we don't have that many entities that we're
 # documenting, we just add the list of everything and a search box.
 #
 # Technically, this dict maps fileglobs to corresponding sidebar formats.
 # Since we want one sidebar for everything, we use the ** to match everything.
-html_sidebars = {
-#   '**': [ 'globaltoc.html', 'searchbox.html' ]
-}
+#html_sidebars = {
+#   '**': ['localtoc.html', 'globaltoc.html', 'relations.html', 'searchbox.html' ]
+#}
 
 # Configures the page during generation.
 def setup(app):

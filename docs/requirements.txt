@@ -1,4 +1,6 @@
 furo>=2021.11.16
+sphinx-book-theme
+myst-nb
 pyarrow
 neo4j
 xgt

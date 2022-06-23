@@ -20,4 +20,6 @@ help:
 	rm -rf "${BUILDDIR}" 
 	mkdir -p "${BUILDDIR}"
 	cp -pr "${SOURCEDIR}"/* "${BUILDDIR}"
+	cp ../RELEASE.rst "${BUILDDIR}"
+	cp -R ../jupyter "${BUILDDIR}"
 	@$(SPHINXBUILD) -M $@ "$(BUILDDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
