@@ -1,9 +1,10 @@
 # trovares_connector Package
-[![CI]](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)
-[![License](https://img.shields.io/github/license/trovares/trovares_connector)
-[![Available on Pypi](https://img.shields.io/pypi/v/trovares_connector)
-[![Pypi Versions](https://img.shields.io/pypi/pyversions/trovares_connector)
-[![Available on pypi](https://img.shields.io/pypi/dm/trovares_connector)
+
+[![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
+[![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
+[![Available on Pypi](https://img.shields.io/pypi/v/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
+[![Pypi Versions](https://img.shields.io/pypi/pyversions/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
+[![Available on pypi](https://img.shields.io/pypi/dm/trovares_connector)](https://pypi.org/project/trovares_connector/#history)
 [![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT)
 
 This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
