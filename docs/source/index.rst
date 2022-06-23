@@ -29,7 +29,7 @@ This package is for connecting the `Trovares xGT <https://www.trovares.com/>`_ g
 
 The connector `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
-A basic guide is provided below. 
+A basic guide is provided below.
 For a quick start see :ref:`quick_start`.
 
 Installation
@@ -248,7 +248,7 @@ API Details
 
 .. autosummary::
   :toctree:
-  :caption: Python API 
+  :caption: Python API
 
   Neo4jConnector
   Neo4jDriver
