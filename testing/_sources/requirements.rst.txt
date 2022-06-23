@@ -18,7 +18,8 @@ Optional
 
 * `APOC <https://github.com/neo4j-contrib/neo4j-apoc-procedures>`_
    Improves schema querying.
-   Automatically used if installed as a plugin for Neo4j.
+   Available as an option to be turned on with the connector.
+   Does not support nodes without labels.
 * `Py2neo Python package <https://pypi.org/project/py2neo/>`_
    Alternative Neo4j driver that provides http or bolt connections.
    Transfers are 2X faster, but the memory requirements can be excessive for large transfers.

@@ -6,7 +6,7 @@ Quick Start
 Installing
 ----------
 
-In a seperate terminal install xGT and run it:
+In a seperate terminal install the `Developer version of xGT with Docker <https://hub.docker.com/r/trovares/xgt>`_ and run it:
 
 .. code-block:: bash
 
