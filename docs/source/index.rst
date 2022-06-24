@@ -85,6 +85,12 @@ All of these data frames are created in Trovares xGT and then all of the data is
    conn.transfer_to_xgt(vertices=conn.neo4j_node_labels,
                         edges=conn.neo4j_relationship_types)
 
+Similarly if no vertices or edges are provided, the transfer will use all them.
+
+.. code-block:: python
+
+   conn.transfer_to_xgt()
+
 Copy a portion of a graph based on node labels and/or relationship types
 ------------------------------------------------------------------------
 
@@ -105,6 +111,31 @@ Using this idiom requires knowing some schema information about the graph data s
    edges_to_copy = ['KNOWS']
    conn.transfer_to_xgt(vertices=nodes_to_copy, edges=edges_to_copy)
 
+When transferring, vertex types will be auto-inferred and transferred with edge types.
+The code below would auto-transfer the Person node.
+
+.. code-block:: python
+
+   conn.transfer_to_xgt(edges=edges_to_copy)
+
+This feature can be disabled by setting `import_edge_nodes` to False.
+
+Appending data
+--------------
+
+By default a transfer will drop any associated frame on xGT.
+To append to a frame, set `append` to True on the transfer.
+
+.. code-block:: python
+
+   conn.transfer_to_xgt(vertices=['Person'], append=True)
+
+When appending edges to existing vertices, care must be taken to not import the nodes as well.
+
+.. code-block:: python
+
+   conn.transfer_to_xgt(edges=['Person'], append=True, import_edge_nodes=False)
+
 Mapping Neo4j labels and types
 ------------------------------
 
@@ -123,6 +154,7 @@ In addition the unlabeled nodes in Neo4j are named '' and this can be used to ma
 .. code-block:: python
 
    conn.transfer_to_xgt(vertices=[('', 'my_empty_type')])
+
 
 Using various Neo4j drivers
 ---------------------------
