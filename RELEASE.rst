@@ -8,12 +8,13 @@ New Features
 ^^^^^^^^^^^^
   - Add support for unlabeled nodes.
   - Add support for mapping Neo4j labels and types to xGT.
-  - Add option to disable auto downloading edge's source and target vertices.
+  - Add option to disable auto downloading edges' source and target vertices.
 
 Changed
 ^^^^^^^
   - Improved download estimates for single relationships with multiple nodes.
   - Rename disable_apoc to enable_apoc.
+  - Endpoints are now returned as a tuple of source and target instead of a string.
   - Documentation improvements.
 
 1.1.0 (06-17-2022)
