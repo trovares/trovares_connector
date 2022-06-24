@@ -14,7 +14,7 @@ This package is for connecting the Trovares xGT graph analytics engine with the 
     <td><a href="https://www.trovares.com">trovares.com</a></td>
   </tr>
   <tr>
-    <td><b>Detailed Documentation</b></td>
+    <td><b>Detailed Documentation:</b></td>
     <td><a href="https://trovares.github.io/trovares_connector/">trovares.github.io/trovares_connector</a></td>
   </tr>
 </table>
