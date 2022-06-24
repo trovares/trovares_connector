@@ -219,6 +219,7 @@ Other limitations:
   See below for more details.
 * Point data type is converted into a list.
 * Unlabeled vertices are supported, but will be typed with the name "unlabeled" by default.
+* Transfer times are estimates based on Neo4j's count stores and may be inaccurate especially for edges going to multiple node labels.
 
 Single relationship with multiple node conversion
 -------------------------------------------------
