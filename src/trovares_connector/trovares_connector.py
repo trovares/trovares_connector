@@ -1000,7 +1000,7 @@ class Neo4jConnector(object):
                   u"#"*progress, "."*(self._bar_size-progress), self._count,
                   self._total_count, duration, rate, remaining), end=self._bar_end, flush=True)
 
-    class BasicArrowClientAuthHandler(pf.ClientAuthHandler):
+    class _BasicArrowClientAuthHandler(pf.ClientAuthHandler):
         def __init__(self, username, password):
             super().__init__()
             self.basic_auth = pf.BasicAuth(username, password)
@@ -1337,7 +1337,7 @@ class Neo4jConnector(object):
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(self.BasicArrowClientAuthHandler())
+        arrow_conn.authenticate(self._BasicArrowClientAuthHandler())
         writer, _ = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
@@ -1345,7 +1345,7 @@ class Neo4jConnector(object):
 
     def __arrow_reader(self, frame_name):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(self.BasicArrowClientAuthHandler())
+        arrow_conn.authenticate(self._BasicArrowClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):
