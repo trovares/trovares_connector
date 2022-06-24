@@ -412,31 +412,6 @@ By default this is True.</p></li>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BasicArrowClientAuthHandler</span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler" title="Permalink to this definition">#</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.authenticate">
-<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incoming</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.authenticate" title="Permalink to this definition">#</a></dt>
-<dd><p>Conduct the handshake with the server.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outgoing</strong> (<em>ClientAuthSender</em>) – A channel to send messages to the server.</p></li>
-<li><p><strong>incoming</strong> (<em>ClientAuthReader</em>) – A channel to read messages from the server.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.get_token">
-<span class="sig-name descname"><span class="pre">get_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.get_token" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the auth token for a call.</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
