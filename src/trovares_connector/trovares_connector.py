@@ -656,10 +656,21 @@ class Neo4jConnector(object):
                 for record in query.result():
                     estimated_counts += record[0]
         for edge, schema_list in xgt_schemas['edges'].items():
-            q = f"MATCH ()-[e:{edge}]->() RETURN count(e)"
-            with self._neo4j_driver.query(q, False) as query:
-                for record in query.result():
-                    estimated_counts += record[0]
+            for schema in schema_list:
+                source = schema['source']
+                target = schema['target']
+                match_type = schema['empty_labels']
+                # We can't use both source and target, because that won't use
+                # the count store.
+                if match_type == self._Labels.SOURCE_EMPTY:
+                    q = f"MATCH ()-[e:{edge}]->(:{target}) RETURN count(e)"
+                elif match_type == self._Labels.TARGET_EMPTY:
+                    q = f"MATCH (:{source})-[e:{edge}]->() RETURN count(e)"
+                else:
+                    q = f"MATCH ()-[e:{edge}]->() RETURN count(e)"
+                with self._neo4j_driver.query(q, False) as query:
+                    for record in query.result():
+                        estimated_counts += record[0]
 
         with self.progress_display(estimated_counts) as progress_bar:
             for vertex, schema in xgt_schemas['vertices'].items():
@@ -988,7 +999,7 @@ class Neo4jConnector(object):
             self._count += count_to_add
             # Counts are no longer accurate
             while (self._count > self._total_count):
-                self._total_count *= 2
+                self._total_count = self._count
             progress = int(self._count * self._bar_size / self._total_count)
             current_elapsed = time.time() - self._start_time
             remaining = 0 if self._count == 0 else ((self._total_count - self._count) *
