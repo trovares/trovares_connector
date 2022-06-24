@@ -553,10 +553,11 @@ class Neo4jConnector(object):
         """
         if not append:
             for edge in xgt_schemas['edges']:
-                self._xgt_server.drop_frame(edge)
                 schemas = xgt_schemas['edges'][edge]
+                if (len(schemas) == 1):
+                    self._xgt_server.drop_frame(schemas[0]['xgt_name'])
                 # Frame name refers to multiple edges:
-                if (len(schemas) > 1):
+                elif (len(schemas) > 1):
                     for schema in schemas:
                         multi_edge_name = self.__edge_name_transform(schema['xgt_name'], schema['xgt_source'], schema['xgt_target'], True)
                         self._xgt_server.drop_frame(multi_edge_name)
