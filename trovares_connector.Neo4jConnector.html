@@ -1,78 +1,366 @@
 
+<!DOCTYPE html>
 
-<!doctype html>
-
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>trovares_connector.Neo4jConnector &#8212; trovares_connector 1.1.0 documentation</title>
+    <title>trovares_connector.Neo4jConnector &#8212; Trovares Connector</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
     
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/bizstyle.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="trovares_connector.Neo4jDriver" href="trovares_connector.Neo4jDriver.html" />
-    <link rel="prev" title="trovares_connector Package" href="index.html" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <!--[if lt IE 9]>
-    <script src="_static/css3-mediaqueries.js"></script>
-    <![endif]-->
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="trovares_connector.Neo4jDriver.html" title="trovares_connector.Neo4jDriver"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="trovares_connector Package"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">trovares_connector 1.1.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">trovares_connector.Neo4jConnector</a></li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Release Notes" href="RELEASE.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">Trovares Connector</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Trovares Connector
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Additional Topics
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="quick_start.html">
+   Quick Start
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="jupyter/index.html">
+   Jupyter Notebooks
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/hello_world.html">
+     Hello World
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/temporal_triangles.html">
+     Temporal Triangles
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="requirements.html">
+   Requirements
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RELEASE.html">
+   Release Notes
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Python API
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   trovares_connector.Neo4jConnector
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="trovares_connector.Neo4jDriver.html">
+   trovares_connector.Neo4jDriver
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/trovares/trovares_connector"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/trovares/trovares_connector/issues/new?title=Issue%20on%20page%20%2Ftrovares_connector.Neo4jConnector.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/trovares_connector.Neo4jConnector.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>trovares_connector.Neo4jConnector</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
   <section id="trovares-connector-neo4jconnector">
-<h1>trovares_connector.Neo4jConnector<a class="headerlink" href="#trovares-connector-neo4jconnector" title="Permalink to this heading">¶</a></h1>
+<h1>trovares_connector.Neo4jConnector<a class="headerlink" href="#trovares-connector-neo4jconnector" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">trovares_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">trovares_connector.</span></span><span class="sig-name descname"><span class="pre">Neo4jConnector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector" title="Permalink to this definition">#</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.__init__" title="Permalink to this definition">#</a></dt>
 <dd><p>Initializes the connector class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
 <li><p><strong>neo4j_driver</strong> (<em>neo4j.Neo4jDriver</em><em>, </em><em>neo4j.BoltDriver</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.Neo4jDriver</em><em>, </em><em>database</em><em>)</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.BoltDriver</em><em>, </em><em>database</em><em>)</em><em>, or </em><a class="reference internal" href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver" title="trovares_connector.Neo4jDriver"><em>trovares_connector.Neo4jDriver</em></a>) – Connection object to Neo4j.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
-<li><p><strong>disable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
-If set to True this disables that feature.</p></li>
+<li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this enables that feature.
+By default this is True.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="trovares_connector.Neo4jConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
 <td><p>Initializes the connector class.</p></td>
@@ -95,7 +383,11 @@ If set to True this disables that feature.</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="autosummary longtable docutils align-default">
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.Neo4jConnector.neo4j_edges" title="trovares_connector.Neo4jConnector.neo4j_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">neo4j_edges</span></code></a></p></td>
 <td><p>Retrieve a dictionary of the edges (relationships) mapped to a description of the edge's metadata, including its property schema and its endpoint node labels (for both source and target).</p></td>
@@ -120,43 +412,19 @@ If set to True this disables that feature.</p></li>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BasicArrowClientAuthHandler</span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.authenticate">
-<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incoming</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.authenticate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Conduct the handshake with the server.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outgoing</strong> (<em>ClientAuthSender</em>) – A channel to send messages to the server.</p></li>
-<li><p><strong>incoming</strong> (<em>ClientAuthReader</em>) – A channel to read messages from the server.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.get_token">
-<span class="sig-name descname"><span class="pre">get_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.BasicArrowClientAuthHandler.get_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the auth token for a call.</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_apoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
 <dd><p>Initializes the connector class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xgt_server</strong> (<em>xgt.Connection</em>) – Connection object to xGT.</p></li>
 <li><p><strong>neo4j_driver</strong> (<em>neo4j.Neo4jDriver</em><em>, </em><em>neo4j.BoltDriver</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.Neo4jDriver</em><em>, </em><em>database</em><em>)</em><em>, </em><em>tuple</em><em>(</em><em>neo4j.BoltDriver</em><em>, </em><em>database</em><em>)</em><em>, or </em><a class="reference internal" href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver" title="trovares_connector.Neo4jDriver"><em>trovares_connector.Neo4jDriver</em></a>) – Connection object to Neo4j.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – Print detailed information during calls.</p></li>
-<li><p><strong>disable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
-If set to True this disables that feature.</p></li>
+<li><p><strong>enable_apoc</strong> (<em>bool</em>) – If the connector finds APOC, it will use that to improve schema queries.
+If set to True this enables that feature.
+By default this is True.</p></li>
 </ul>
 </dd>
 </dl>
@@ -164,19 +432,19 @@ If set to True this disables that feature.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.copy_data_to_xgt">
-<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.copy_data_to_xgt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.copy_data_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from Neo4j to the requested vertex and/or edge frames
 in Trovares xGT.</p>
 <p>This function copies data from Neo4j to xGT for all of the nodes and
 all of the relationships, one frame at a time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
 to create in xGT.
 This dictionary can be the value returned from the
 <a class="reference internal" href="#trovares_connector.Neo4jConnector.get_xgt_schemas" title="trovares_connector.Neo4jConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -184,7 +452,7 @@ This dictionary can be the value returned from the
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.create_xgt_schemas">
-<span class="sig-name descname"><span class="pre">create_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.create_xgt_schemas" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.create_xgt_schemas" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates vertex and/or edge frames in Trovares xGT.</p>
 <p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
@@ -192,7 +460,7 @@ Then those frames are created in xGT.
 Finally, all of the nodes and all of the relationships are copied,
 one frame at a time, from Neo4j to xGT.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
 to create in xGT.
@@ -205,7 +473,7 @@ any existing frames with the same names prior to creation).</p></li>
 <li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -213,26 +481,32 @@ any existing frames with the same names prior to creation).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.get_xgt_schemas">
-<span class="sig-name descname"><span class="pre">get_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">{}</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.get_xgt_schemas" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_edge_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">{}</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.get_xgt_schemas" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a dictionary containing the schema information for all of
 the nodes/vertices and all of the edges requested.
 If both vertices and edges is None, it will retrieve them all.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
-<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.
-Any vertices not given for an edge will be automatically requested.</p></li>
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names) as a string or tuple.
+To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names or tuple.
+To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).
+Any vertices not given for an edge will be automatically requested unless disabled.</p></li>
 <li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the Neo4j node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
+<li><p><strong>import_edge_nodes</strong> (<em>boolean</em>) – Add vertices from edge if not explicitly listed.
+By default True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Dictionary containing the schema information both all of the nodes/
 vertices and all of the edges requested.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -240,16 +514,16 @@ vertices and all of the edges requested.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_edges">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_edges" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_edges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_edges" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a dictionary of the edges (relationships) mapped to a
 description of the edge’s metadata, including its property schema and
 its endpoint node labels (for both source and target).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Dictionary mapping the edge names to a description of the
 edge’s schema and edge endpoints.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -257,13 +531,13 @@ edge’s schema and edge endpoints.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_node_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_node_labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_node_labels" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of the Neo4j node labels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the string names of node labels in the connected Neo4j.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -271,16 +545,16 @@ edge’s schema and edge endpoints.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_node_type_properties">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_node_type_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_node_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_node_type_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of the property types attached to the nodes in Neo4j.</p>
 <p>Each element of this list is a dictionary describing the property,
 including its name, its possible data types, and which node labels
 it may be attached to.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the string names of node property types in the connected Neo4j.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -288,17 +562,17 @@ it may be attached to.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_nodes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_nodes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_nodes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_nodes" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a dictionary of the node labels (types) mapped to a
 description of the node’s schema.</p>
 <p>Each dictionary entry has a key, which is the node label, and a value
 that is a dictionary of property-names mapped to property-types.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Dictionary mapping the node labels to a description of the
 node’s schema.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -306,13 +580,13 @@ node’s schema.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_property_keys">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_property_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_property_keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_property_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_property_keys" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of the Neo4j property keys.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the string names of property keys in the connected Neo4j.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -320,18 +594,18 @@ node’s schema.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_rel_type_properties">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_rel_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_rel_type_properties" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_rel_type_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_rel_type_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of the property types attached to the relationships in
 Neo4j.</p>
 <p>Each element of this list is a dictionary describing the property,
 including its name, its possible data types, and which relationship(s)
 it may be attached to.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the string names of relationship property types in the
 connected Neo4j.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -339,13 +613,13 @@ connected Neo4j.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.neo4j_relationship_types">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_relationship_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_relationship_types" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neo4j_relationship_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#trovares_connector.Neo4jConnector.neo4j_relationship_types" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of the Neo4j relationship types.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>List of the string names of relationship types in the connected Neo4j.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -353,13 +627,13 @@ connected Neo4j.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.transfer_to_neo4j">
-<span class="sig-name descname"><span class="pre">transfer_to_neo4j</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.transfer_to_neo4j" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_to_neo4j</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertex_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#trovares_connector.Neo4jConnector.transfer_to_neo4j" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from Trovares xGT to Neo4j.</p>
 <p>All of the nodes and all of the relationships are copied,
 one frame at a time, from xGT to Neo4j.
 If both vertices and edges is None, it will retrieve them all.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
 <li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.
@@ -370,7 +644,7 @@ If none will use the default namespace.</p></li>
 <li><p><strong>vertex_keys</strong> (<em>boolean</em>) – If true will transfer vertex key columns.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -378,7 +652,7 @@ If none will use the default namespace.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.Neo4jConnector.transfer_to_xgt">
-<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.transfer_to_xgt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_id_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_source_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_source'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neo4j_target_node_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neo4j_target'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_edge_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#trovares_connector.Neo4jConnector.transfer_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from Neo4j to Trovares xGT.</p>
 <p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
@@ -387,11 +661,15 @@ Finally, all of the nodes and all of the relationships are copied,
 one frame at a time, from Neo4j to xGT.
 If both vertices and edges is None, it will retrieve them all.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names).</p></li>
-<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names.
-Any vertices not given for an edge will be automatically requested.</p></li>
+<li><p><strong>vertices</strong> (<em>iterable</em>) – List of requested node labels (vertex frame names) as a string or tuple.
+To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).</p></li>
+<li><p><strong>edges</strong> (<em>iterable</em>) – List of requested relationship type (edge frame) names or tuple.
+To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+(‘neo4j_name’, ‘xgt_name’).
+Any vertices not given for an edge will be automatically requested unless disabled.</p></li>
 <li><p><strong>neo4j_id_name</strong> (<em>str</em>) – The name of the xGT column holding the Neo4j node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> (<em>str</em>) – The name of the xGT column holding the source node’s ID value.</p></li>
 <li><p><strong>neo4j_source_node_name</strong> – The name of the xGT column holding the target node’s ID value.</p></li>
@@ -400,9 +678,11 @@ that should be appended to.
 Set to false when the xGT frames are to be newly created (removing
 any existing frames with the same names prior to creation).</p></li>
 <li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
+<li><p><strong>import_edge_nodes</strong> (<em>boolean</em>) – Add vertices from edge if not explicitly listed.
+By default True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -413,55 +693,50 @@ any existing frames with the same names prior to creation).</p></li>
 </section>
 
 
-            <div class="clearer"></div>
-          </div>
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="RELEASE.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Release Notes</p>
         </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="index.html"
-                          title="previous chapter">trovares_connector Package</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="trovares_connector.Neo4jDriver.html"
-                          title="next chapter">trovares_connector.Neo4jDriver</a></p>
-  </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
+    </a>
+    <a class='right-next' id="next-link" href="trovares_connector.Neo4jDriver.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">trovares_connector.Neo4jDriver</p>
     </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+            </footer>
         </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By trovares.com<br/>
+  
+      &copy; Copyright 2022, Trovares, Inc..<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
       </div>
-      <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="trovares_connector.Neo4jDriver.html" title="trovares_connector.Neo4jDriver"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="trovares_connector Package"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">trovares_connector 1.1.0 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">trovares_connector.Neo4jConnector</a></li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Trovares, Inc..
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
-    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
   </body>
 </html>
