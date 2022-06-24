@@ -285,7 +285,7 @@ class Neo4jConnector(object):
     def __init__(self, xgt_server,
                        neo4j_driver,
                        verbose = False,
-                       disable_apoc = True):
+                       enable_apoc = True):
         """
         Initializes the connector class.
 
@@ -297,9 +297,10 @@ class Neo4jConnector(object):
             Connection object to Neo4j.
         verbose : bool
             Print detailed information during calls.
-        disable_apoc : bool
+        enable_apoc : bool
             If the connector finds APOC, it will use that to improve schema queries.
-            If set to True this disables that feature.
+            If set to True this enables that feature.
+            By default this is True.
         """
 
         self._xgt_server = xgt_server
@@ -314,7 +315,7 @@ class Neo4jConnector(object):
         self.__verbose = verbose
         self._default_namespace = xgt_server.get_default_namespace()
 
-        self._neo4j_has_apoc = False if disable_apoc else self.__neo4j_check_for_apoc()
+        self._neo4j_has_apoc = False if not enable_apoc else self.__neo4j_check_for_apoc()
         if self.__verbose and self._neo4j_has_apoc:
             print("Using apoc to query schema.")
 
@@ -449,10 +450,14 @@ class Neo4jConnector(object):
         Parameters
         ----------
         vertices : iterable
-            List of requested node labels (vertex frame names).
+            List of requested node labels (vertex frame names) as a string or tuple.
+            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+            ('neo4j_name', 'xgt_name').
         edges : iterable
-            List of requested relationship type (edge frame) names.
-            Any vertices not given for an edge will be automatically requested.
+            List of requested relationship type (edge frame) names or tuple.
+            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+            ('neo4j_name', 'xgt_name').
+            Any vertices not given for an edge will be automatically requested unless disabled.
         neo4j_id_name : str
             The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
@@ -720,10 +725,14 @@ class Neo4jConnector(object):
         Parameters
         ----------
         vertices : iterable
-            List of requested node labels (vertex frame names).
+            List of requested node labels (vertex frame names) as a string or tuple.
+            To map to a specific from a Neo4j label to a xGT frame use a tuple like so:
+            ('neo4j_name', 'xgt_name').
         edges : iterable
-            List of requested relationship type (edge frame) names.
-            Any vertices not given for an edge will be automatically requested.
+            List of requested relationship type (edge frame) names or tuple.
+            To map to a specific from a Neo4j type to a xGT frame use a tuple like so:
+            ('neo4j_name', 'xgt_name').
+            Any vertices not given for an edge will be automatically requested unless disabled.
         neo4j_id_name : str
             The name of the xGT column holding the Neo4j node's ID value.
         neo4j_source_node_name : str
@@ -1027,10 +1036,16 @@ class Neo4jConnector(object):
             fields = ('nodeType', 'nodeLabels', 'propertyName', 'propertyTypes', 'mandatory')
             if self._neo4j_has_apoc:
                 q="CALL apoc.meta.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
+                # Get unlabeled nodes. APOC has a bug...
+                q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_node_type_properties += [{_ : record[_] for _ in fields} for record in query.result() if record['nodeType'] == '']
             else:
                 q="CALL db.schema.nodeTypeProperties() YIELD nodeType, nodeLabels, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.query(q, False) as query:
-                self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_node_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_node_type_properties
 
     def __neo4j_rel_type_properties(self, flush_cache = True):
@@ -1038,10 +1053,17 @@ class Neo4jConnector(object):
             fields = ('relType', 'propertyName', 'propertyTypes', 'mandatory')
             if self._neo4j_has_apoc:
                 q="CALL apoc.meta.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
+                # Get edges attached to unlabeled nodes. APOC has a bug...
+                found = {record['relType'] : True for record in self._neo4j_rel_type_properties }
+                q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_rel_type_properties += [{_ : record[_] for _ in fields} for record in query.result() if record['relType'] not in found]
             else:
                 q="CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory RETURN *"
-            with self._neo4j_driver.query(q, False) as query:
-                self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
+                with self._neo4j_driver.query(q, False) as query:
+                    self._neo4j_rel_type_properties = [{_ : record[_] for _ in fields} for record in query.result()]
         return self._neo4j_rel_type_properties
 
     def __add_neo4j_schema_connectivity_to_neo4j_edges(self) -> None:
@@ -1276,18 +1298,29 @@ class Neo4jConnector(object):
                     vertices[source] = source
                 if target != None and target not in vertices:
                     vertices[target] = target
-                if source == None or target == None:
-                    vname = self.__neo4j_unlabeled_vertex_name()
-                    if source == None:
-                        source_name = vname
-                    if target == None:
-                        target_name = vname
+            if source == None or target == None:
+                vname = self.__neo4j_unlabeled_vertex_name()
+                if source == None:
+                    source_name = vname
+                if target == None:
+                    target_name = vname
+                if import_edge_nodes:
                     if not vname in vertices:
                         vertices[vname] = self.__xgt_unlabeled_vertex_name()
+            if source_name in vertices:
+                source_name = vertices[source_name]
+            elif source_name == self.__neo4j_unlabeled_vertex_name():
+                source_name = self.__xgt_unlabeled_vertex_name()
+
+            if target_name in vertices:
+                target_name = vertices[target_name]
+            elif target_name == self.__neo4j_unlabeled_vertex_name():
+                target_name = self.__xgt_unlabeled_vertex_name()
+
             result = self.__extract_xgt_edge_schema(edge,
                 source, target, neo4j_source_node_name,
-                neo4j_target_node_name, edges[edge], vertices[source_name],
-                vertices[target_name], flush_cache)
+                neo4j_target_node_name, edges[edge], source_name,
+                target_name, flush_cache)
             if result is not None:
                 schemas.append(result)
 

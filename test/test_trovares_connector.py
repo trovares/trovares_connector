@@ -359,6 +359,20 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.get_data(length=1)[0][1] == 1
     self.xgt.drop_frame("Relationship")
 
+  def test_transfer_relationship_without_vertex_bolt_two_phase(self):
+    self._populate_relationship_working_types_bolt()
+    c = self.conn
+    c.transfer_to_xgt(vertices=['Node'])
+    xgt_schema = c.get_xgt_schemas(edges=['Relationship'], import_edge_nodes=False)
+    c.create_xgt_schemas(xgt_schema, append=True)
+    c.copy_data_to_xgt(xgt_schema)
+    node_frame = self.xgt.get_vertex_frame('Node')
+    edge_frame = self.xgt.get_edge_frame('Relationship')
+    assert node_frame.num_rows == 6
+    assert edge_frame.num_rows == 3
+    assert node_frame.get_data(length=1)[0][1] == 1
+    self.xgt.drop_frame("Relationship")
+
   def test_transfer_everything_bolt(self):
     self._populate_relationship_working_types_bolt()
     c = self.conn
@@ -602,6 +616,28 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     with self.assertRaises(xgt.XgtNameError):
         node_frame = self.xgt.get_vertex_frame('Node')
 
+  def test_edge_empty_labels_schema_no_implicit(self):
+    c = self.conn
+    self.neo4j_driver.query(
+        'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({str:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
+    c.transfer_to_xgt(vertices=['', 'Node'])
+    c.transfer_to_xgt(edges=['e1', 'e2', 'e3'], append=True, import_edge_nodes=False)
+    node_frame = self.xgt.get_edge_frame('e1')
+    res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == 1
+    node_frame = self.xgt.get_edge_frame('e2')
+    res = self.xgt.run_job('match ()-[:e2]->(v) return v.str')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == "aaa"
+    node_frame = self.xgt.get_edge_frame('e3')
+    res = self.xgt.run_job('match (v)-[:e3]->() return v.bool')
+    assert node_frame.num_rows == 1
+    assert res.get_data()[0][0] == True
+    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    assert node_frame.num_rows == 4
+    node_frame = self.xgt.get_vertex_frame('Node')
+    assert node_frame.num_rows == 2
 
   def _populate_node(self):
     self.neo4j_driver.query(

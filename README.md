@@ -6,7 +6,8 @@
 [![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
 [![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT)
 
-This package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
+This Python package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
+Trovares xGT can [significantly speedup Neo4j queries](https://www.trovares.com/trovaresvneo4j).
 
 <table>
   <tr>
@@ -14,8 +15,12 @@ This package is for connecting the Trovares xGT graph analytics engine with the 
     <td><a href="https://www.trovares.com">trovares.com</a></td>
   </tr>
   <tr>
-    <td><b>Detailed Documentation:</b></td>
+    <td><b>Documentation:</b></td>
     <td><a href="https://trovares.github.io/trovares_connector/">trovares.github.io/trovares_connector</a></td>
+  </tr>
+  <tr>
+    <td><b>General Help:</b></td>
+    <td><a href="https://github.com/trovares/trovares_connector/discussions">github.com/trovares/trovares_connector/discussions</a></td>
   </tr>
 </table>
 

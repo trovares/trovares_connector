@@ -25,7 +25,8 @@
 Trovares Connector
 ==================
 
-This package is for connecting the `Trovares xGT <https://www.trovares.com/>`_ graph analytics engine with the Neo4j graph database.
+This Python package is for connecting the `Trovares xGT <https://www.trovares.com/>`_ graph analytics engine with the Neo4j graph database.
+Trovares xGT can `significantly speedup Neo4j queries <https://www.trovares.com/trovaresvneo4j>`_.
 
 The connector `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
