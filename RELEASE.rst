@@ -6,9 +6,9 @@ Release Notes
 
 New Features
 ^^^^^^^^^^^^
-  - Add support for unlabeled nodes.
-  - Add support for mapping Neo4j labels and types to xGT.
-  - Add option to disable auto downloading edges' source and target vertices.
+  - Added support for unlabeled nodes.
+  - Added support for mapping Neo4j labels and types to xGT.
+  - Added option to disable auto-downloading edges' source and target vertices.
 
 Changed
 ^^^^^^^
@@ -22,7 +22,7 @@ Changed
 
 New Features
 ^^^^^^^^^^^^
-  - Add support for point and list data types.
+  - Added support for point and list data types.
 
 Changed
 ^^^^^^^
@@ -39,6 +39,6 @@ Fixed
 New Features
 ^^^^^^^^^^^^
   - Initial Release.
-  - Add support for transferring graph data from Neo4j to xGT.
-  - Add support for transferring graph data from xGT to Neo4j.
-  - Provide methods for querying Neo4j's data schema.
+  - Added support for transferring graph data from Neo4j to xGT.
+  - Added support for transferring graph data from xGT to Neo4j.
+  - Provided methods for querying Neo4j's data schema.
