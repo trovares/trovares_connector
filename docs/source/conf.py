@@ -52,8 +52,9 @@ extensions = [
   'sphinx.ext.autosummary',
   'sphinx.ext.napoleon',
   'sphinx.ext.mathjax',
+  'sphinx.ext.viewcode',
   'myst_nb',
-  #'IPython.sphinxext.ipython_console_highlighting',
+  'sphinx_copybutton',
 ]
 mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 

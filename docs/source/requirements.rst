@@ -6,12 +6,20 @@ Requirements
 * `Neo4j Python package <https://pypi.org/project/neo4j/>`_
 * `xGT Python package <https://pypi.org/project/xgt/>`_
 * `Pyarrow package <https://pypi.org/project/pyarrow/>`_
+* `Trovares xGT <https://www.trovares.com>`_
 
-These can be installed through pip:
+The Python packages can be installed through pip:
 
 .. code-block:: bash
 
    python -m pip install xgt neo4j pyarrow
+
+If you don't have Trovares xGT, you can install and run the `Developer version <https://hub.docker.com/r/trovares/xgt>`_ from Docker:
+
+.. code-block:: bash
+
+   docker pull trovares/xgt
+   docker run --publish=4367:4367 trovares/xgt
 
 Optional
 --------
