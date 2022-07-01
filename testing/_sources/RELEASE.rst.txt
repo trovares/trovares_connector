@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+1.2.1 (07-01-2022)
+------------------
+Fixed
+^^^^^
+  - Fixed python dependencies not installing on pip install.
+
 1.2.0 (06-24-2022)
 ------------------
 
