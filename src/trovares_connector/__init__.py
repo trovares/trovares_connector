@@ -19,7 +19,11 @@
 __ALL__ = [
   'Neo4jConnector',
   'Neo4jDriver',
+  'ODBCConnector',
+  'SQLODBCDriver',
 ]
 
 from .trovares_connector import Neo4jConnector
 from .trovares_connector import Neo4jDriver
+from .odbc import ODBCConnector
+from .odbc import SQLODBCDriver

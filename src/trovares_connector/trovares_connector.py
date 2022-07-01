@@ -26,6 +26,8 @@ import xgt
 import os
 import time
 from enum import Enum
+from .common import ProgressDisplay
+from .common import BasicArrowClientAuthHandler
 
 class Neo4jDriver(object):
     def __init__(self, host = 'localhost',
@@ -672,7 +674,7 @@ class Neo4jConnector(object):
                     for record in query.result():
                         estimated_counts += record[0]
 
-        with self.progress_display(estimated_counts) as progress_bar:
+        with ProgressDisplay(estimated_counts) as progress_bar:
             for vertex, schema in xgt_schemas['vertices'].items():
                 if self.__verbose:
                     print(f'Copy data for vertex {vertex} into schema: {schema}')
@@ -867,7 +869,7 @@ class Neo4jConnector(object):
         for edge in edges:
             estimated_counts += xgt_server.get_edge_frame(edge).num_rows
 
-        with self.progress_display(estimated_counts) as progress_bar:
+        with ProgressDisplay(estimated_counts) as progress_bar:
             for vertex in vertices:
                 if vertex in id_neo4j_map:
                     continue
@@ -953,79 +955,6 @@ class Neo4jConnector(object):
                             tx.close()
                         except StopIteration:
                             break
-
-    class progress_display():
-        def __init__(self, total_count, bar_size = 60, prefix = "Transferring: "):
-            self._bar_end = '\r'
-            # When drawing the bar, we can only use 1 line so we need to shrink
-            # the bar elements for cases where the terminal is too tiny.
-            try:
-                terminal_size = os.get_terminal_size().columns
-            except:
-                # Can't get terminal_size
-                terminal_size = 0
-            static_element_size = 80
-            current_space_requirement = static_element_size + bar_size
-            # Can't get terminal_size
-            if terminal_size == 0:
-                pass
-            # Terminal is too tiny for a bar: just print the results.
-            elif terminal_size < static_element_size:
-                bar_size = 0
-                self._bar_end = '\n'
-            # Shrink bar to fit the print within the terminal.
-            elif terminal_size < current_space_requirement:
-                bar_size = terminal_size - static_element_size
-            self._total_count = total_count
-            self._count = 0
-            self._bar_size = bar_size
-            self._prefix = prefix
-            self._start_time = time.time()
-
-        def __enter__(self):
-            self.show_progress()
-            return self
-
-        def __exit__(self, exc_type,exc_value, exc_traceback):
-            print("", flush=True)
-
-        def __format_time(self, seconds, digits=1):
-            isec, fsec = divmod(round(seconds*10**digits), 10**digits)
-            return f'{datetime.timedelta(seconds=isec)}.{fsec:0{digits}.0f}'
-
-        def show_progress(self, count_to_add = 0):
-            if self._total_count == 0:
-                return
-            self._count += count_to_add
-            # Counts are no longer accurate
-            while (self._count > self._total_count):
-                self._total_count = self._count
-            progress = int(self._count * self._bar_size / self._total_count)
-            current_elapsed = time.time() - self._start_time
-            remaining = 0 if self._count == 0 else ((self._total_count - self._count) *
-                                                   (current_elapsed)) / self._count
-            rate = 0 if self._count == 0 else round(self._count / (current_elapsed), 1)
-            remaining = self.__format_time(remaining)
-            duration = self.__format_time(current_elapsed)
-            print("{}[{}{}] {}/{} in {}s ({}/s, eta: {}s)     ".format(self._prefix,
-                  u"#"*progress, "."*(self._bar_size-progress), self._count,
-                  self._total_count, duration, rate, remaining), end=self._bar_end, flush=True)
-
-    class _BasicArrowClientAuthHandler(pf.ClientAuthHandler):
-        def __init__(self, username, password):
-            super().__init__()
-            self.basic_auth = pf.BasicAuth(username, password)
-            self.token = None
-        def __init__(self):
-            super().__init__()
-            self.basic_auth = pf.BasicAuth()
-            self.token = None
-        def authenticate(self, outgoing, incoming):
-            auth = self.basic_auth.serialize()
-            outgoing.write(auth)
-            self.token = incoming.read()
-        def get_token(self):
-            return self.token
 
     def __neo4j_check_for_apoc(self):
         try:
@@ -1348,7 +1277,7 @@ class Neo4jConnector(object):
 
     def __arrow_writer(self, frame_name, schema):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(self._BasicArrowClientAuthHandler())
+        arrow_conn.authenticate(BasicArrowClientAuthHandler())
         writer, _ = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
@@ -1356,7 +1285,7 @@ class Neo4jConnector(object):
 
     def __arrow_reader(self, frame_name):
         arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(self._BasicArrowClientAuthHandler())
+        arrow_conn.authenticate(BasicArrowClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):
