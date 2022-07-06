@@ -52,12 +52,33 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-get update
         python -m pip install --upgrade pip
         # TODO(landwehrj) Workaround for backwards compatibility issues with protobuf
-        pip install py2neo parameterized 'protobuf>=3.12.0,<=3.20.1'
+        pip install py2neo parameterized 'protobuf>=3.12.0,<=3.20.1' pyodbc
         pip install pytest
-        pip install ./
+        pip install './[odbc]'
         wget https://raw.githubusercontent.com/neo4j-field/neo4j-arrow/main/python/neo4j_arrow.py -P ./test
+
+        sudo apt-get install odbc-mariadb
+        # FIXME(plugin has a bug on ubuntu 20), so we manually install.
+        wget https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.16/mariadb-connector-odbc-3.1.16-ubuntu-focal-amd64.tar.gz
+        tar -xvzf mariadb-connector-odbc-3.1.16-ubuntu-focal-amd64.tar.gz
+        cd mariadb-connector-odbc-3.1.16-ubuntu-focal-amd64
+        sudo install lib/mariadb/libmaodbc.so /usr/lib/
+        sudo install -d /usr/lib/mariadb/
+        sudo install -d /usr/lib/mariadb/plugin/
+        sudo install lib/mariadb/plugin/caching_sha2_password.so /usr/lib/mariadb/plugin/
+        sudo install lib/mariadb/plugin/client_ed25519.so /usr/lib/mariadb/plugin/
+        sudo install lib/mariadb/plugin/dialog.so /usr/lib/mariadb/plugin/
+        sudo install lib/mariadb/plugin/mysql_clear_password.so /usr/lib/mariadb/plugin/
+        sudo install lib/mariadb/plugin/sha256_password.so /usr/lib/mariadb/plugin/
+
+    - name: Setup ODBC Driver
+      run: |
+        ls /usr/lib/x86_64-linux-gnu/odbc/
+        #echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
+        echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
 
     - name: Launch neo4j
       run: |
@@ -69,6 +90,12 @@ jobs:
             --env NEO4JLABS_PLUGINS='["graph-data-science"]' \
             --env HOST=0.0.0.0  --env NEO4J_dbms_default__listen__address=0.0.0.0 \
             neo4j:4.4.4
+
+    - name: Launch mariadb
+      run: |
+        docker run --rm -d --name mysql -p3306:3306 -e MYSQL_ROOT_PASSWORD=foo \
+            -e MYSQL_USER=test -e MYSQL_PASSWORD=foo \
+            -e MYSQL_DATABASE=test -d mariadb:latest
 
     - name: Launch xGT
       run: "docker run --rm -d --name xgt -p 4367:4367 trovares/xgt"
