@@ -1,3 +1,4 @@
+import xgt
 import pyarrow as pa
 import pyarrow.flight as pf
 from arrow_odbc import read_arrow_batches_from_odbc
@@ -52,9 +53,9 @@ class ODBCConnector(object):
                             mapping_vertices[val[0]] = {'frame' : val[1], 'key' : val[2][0]}
                         # ('table', (,), ...)
                         elif len(val[2]) == 4:
-                            mapping_edges[val[0]] = {'frame' : val[1], 'source' : val[2][2],
-                                                     'target' : val[2][3], 'source_key' : val[2][0],
-                                                     'target_key' : val[2][1]}
+                            mapping_edges[val[0]] = {'frame' : val[1], 'source' : val[2][0],
+                                                     'target' : val[2][1], 'source_key' : val[2][2],
+                                                     'target_key' : val[2][3]}
                     else:
                         mapping_tables[val[0]] = {'frame' : val[1]}
                 elif isinstance(val[1], tuple) and len(val[1]) == 1:
@@ -90,7 +91,16 @@ class ODBCConnector(object):
         return result
 
     def create_xgt_schemas(self, xgt_schemas, append = False,
-                           force = False) -> None:
+                           force = False, easy_edges = False) -> None:
+        if easy_edges:
+            for edge, schema in xgt_schemas['edges'].items():
+                src = schema['mapping']['source']
+                trg = schema['mapping']['target']
+                if src not in xgt_schemas['vertices']:
+                    xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
+                if trg not in xgt_schemas['vertices']:
+                    xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : {'frame' : trg, 'key' : 'key' } }
+
         if not append:
             for _, schema in xgt_schemas['tables'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
@@ -110,14 +120,21 @@ class ODBCConnector(object):
                         self._xgt_server.drop_frame(schema['xgt_name'])
                     else:
                         raise e
-
             for table, schema in xgt_schemas['tables'].items():
                 self._xgt_server.create_table_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'])
+
+            remove_list = []
             for vertex, schema in xgt_schemas['vertices'].items():
                 key = schema['mapping']['key']
                 if isinstance(key, int):
                     key = schema['xgt_schema'][key][0]
                 self._xgt_server.create_vertex_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'], key = key)
+                if 'temp_creation' in schema:
+                    remove_list.append(vertex)
+
+            for vertex in remove_list:
+                xgt_schemas['vertices'].pop(vertex)
+
             for edge, schema in xgt_schemas['edges'].items():
                 src = schema['mapping']['source']
                 trg = schema['mapping']['target']
@@ -130,9 +147,9 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables = None, append = False, force = False) -> None:
+    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False) -> None:
         xgt_schema = self.get_xgt_schemas(tables)
-        self.create_xgt_schemas(xgt_schema, append, force)
+        self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
         self.copy_data_to_xgt(xgt_schema)
 
     def transfer_to_odbc(self, vertices = None, edges = None,

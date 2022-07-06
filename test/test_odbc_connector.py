@@ -61,7 +61,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.odbc_driver.commit()
     self.xgt.drop_namespace('test', force_drop = True)
 
-  def test(self):
+  def test_transfer(self):
     cursor = self.odbc_driver.cursor()
     # FIXME(josh) : With multiple rows floats with a bit size of 24 or lower don't work.
     cursor.execute("CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53), "
@@ -72,6 +72,66 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor.execute("INSERT INTO test VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)")
     self.odbc_driver.commit()
 
-    self.conn.transfer_to_xgt(tables = [('test','test')])
+    self.conn.transfer_to_xgt(tables = ['test'])
     assert self.xgt.get_table_frame('test').num_rows == 2
     print(self.xgt.get_table_frame('test').get_data())
+
+  def test_rename(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hello')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test','test1')])
+    assert self.xgt.get_table_frame('test1').num_rows == 1
+    print(self.xgt.get_table_frame('test1').get_data())
+
+  def test_vertex(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test','test1', (0,))])
+    assert self.xgt.get_vertex_frame('test1').num_rows == 2
+    print(self.xgt.get_vertex_frame('test1').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test','test2', ('Value1',))])
+    assert self.xgt.get_vertex_frame('test2').num_rows == 2
+    print(self.xgt.get_vertex_frame('test2').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test3', 'key' : 0 } )])
+    assert self.xgt.get_vertex_frame('test3').num_rows == 2
+    print(self.xgt.get_vertex_frame('test3').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'key' : 'Value1' } )])
+    assert self.xgt.get_vertex_frame('test4').num_rows == 2
+    print(self.xgt.get_vertex_frame('test4').get_data())
+
+    self.xgt.drop_namespace('test', force_drop = True)
+
+  def test_edge(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test','test1', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    assert self.xgt.get_edge_frame('test1').num_rows == 2
+    print(self.xgt.get_edge_frame('test1').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test', 'Vertex1', (0,)), ('test','test2', ('Vertex1', 'Vertex1', 'Value1', 'Value2'))])
+    assert self.xgt.get_edge_frame('test2').num_rows == 2
+    print(self.xgt.get_edge_frame('test2').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test3', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 0, 'target_key' : 1 } )])
+    assert self.xgt.get_edge_frame('test3').num_rows == 2
+    print(self.xgt.get_edge_frame('test3').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 'Value1', 'target_key' : 'Value2' } )])
+    assert self.xgt.get_edge_frame('test4').num_rows == 2
+    print(self.xgt.get_edge_frame('test4').get_data())
+
+    self.xgt.drop_namespace('test', force_drop = True)
