@@ -5,3 +5,4 @@ myst-nb
 pyarrow
 neo4j
 xgt
+arrow_odbc
