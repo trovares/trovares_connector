@@ -8,6 +8,16 @@ from .common import BasicArrowClientAuthHandler
 
 class SQLODBCDriver(object):
     def __init__(self, connection_string):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to the ODBC applications.
+            Example:
+            'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+        """
         self._connection_string = connection_string
         self._schema_query = "SELECT * FROM {0} LIMIT 1"
         self._data_query = "SELECT * FROM {0}"
@@ -15,6 +25,16 @@ class SQLODBCDriver(object):
 
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
+        """
+        Initializes the connector class.
+
+        Parameters
+        ----------
+        xgt_server : xgt.Connection
+            Connection object to xGT.
+        odbc_driver : SQLODBCDriver
+            Connection object to ODBC.
+        """
         self._xgt_server = xgt_server
         self._default_namespace = xgt_server.get_default_namespace()
         self._driver = odbc_driver
@@ -33,6 +53,21 @@ class ODBCConnector(object):
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def get_xgt_schemas(self, tables = None):
+        """
+        Retrieve a dictionary containing the schema information for all of
+        the tables requested and their mappings.
+
+        Parameters
+        ----------
+        tables : iterable
+            List of requested tables.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the schema information of the tables,
+            vertices, and edges requested.
+        """
         if tables is None:
             tables = [ ]
         mapping_vertices = { }
@@ -92,6 +127,35 @@ class ODBCConnector(object):
 
     def create_xgt_schemas(self, xgt_schemas, append = False,
                            force = False, easy_edges = False) -> None:
+        """
+        Creates table, vertex and/or edge frames in Trovares xGT.
+
+        This function first infers the schemas for all of the needed frames in xGT to
+        store the requested data.
+        Then those frames are created in xGT.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Dictionary containing schema information for vertex and edge frames
+            to create in xGT.
+            This dictionary can be the value returned from the
+            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
+        append : boolean
+            Set to true when the xGT frames are already created and holding data
+            that should be appended to.
+            Set to false when the xGT frames are to be newly created (removing
+            any existing frames with the same names prior to creation).
+        force : boolean
+            Set to true to force xGT to drop edges when a vertex frame has dependencies.
+        easy_edges : boolean
+            Set to true to create a basic vertex class wtih key column for any edges
+            without corresponding vertex frames.
+
+        Returns
+        -------
+            None
+        """
         if easy_edges:
             for edge, schema in xgt_schemas['edges'].items():
                 src = schema['mapping']['source']
@@ -148,6 +212,37 @@ class ODBCConnector(object):
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
     def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False) -> None:
+        """
+        Copies data from the ODBC application to Trovares xGT.
+
+        This function first infers the schemas for all of the needed frames in xGT to
+        store the requested data.
+        Then those frames are created in xGT.
+        Finally, all of the tables, vertices, and all of the edges are copied,
+        one frame at a time, from the ODBC application to xGT.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Dictionary containing schema information for vertex and edge frames
+            to create in xGT.
+            This dictionary can be the value returned from the
+            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
+        append : boolean
+            Set to true when the xGT frames are already created and holding data
+            that should be appended to.
+            Set to false when the xGT frames are to be newly created (removing
+            any existing frames with the same names prior to creation).
+        force : boolean
+            Set to true to force xGT to drop edges when a vertex frame has dependencies.
+        easy_edges : boolean
+            Set to true to create a basic vertex class wtih key column for any edges
+            without corresponding vertex frames.
+
+        Returns
+        -------
+            None
+        """
         xgt_schema = self.get_xgt_schemas(tables)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
         self.copy_data_to_xgt(xgt_schema)
@@ -205,6 +300,25 @@ class ODBCConnector(object):
             )
 
     def copy_data_to_xgt(self, xgt_schemas):
+        """
+        Copies data from the ODBC application to the requested table, vertex and/or edge frames
+        in Trovares xGT.
+
+        This function copies data from the ODBC application to xGT for all of the tables, vertices
+        and edges, one frame at a time.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Dictionary containing schema information for table, vertex and edge frames
+            to create in xGT.
+            This dictionary can be the value returned from the
+            :py:meth:`~ODBCConnector.get_xgt_schemas` method.
+
+        Returns
+        -------
+            None
+        """
         estimate = 0
         def estimate_size(table):
             estimate = 0

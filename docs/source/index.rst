@@ -265,6 +265,7 @@ The following topics provide additional material.
 
   quick_start.rst
   jupyter/index.rst
+  odbc/index.rst
   requirements.rst
   RELEASE.rst
 

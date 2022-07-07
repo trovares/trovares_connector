@@ -473,7 +473,7 @@ class Neo4jConnector(object):
         Returns
         -------
         dict
-            Dictionary containing the schema information both all of the nodes/
+            Dictionary containing the schema information of all the nodes/
             vertices and all of the edges requested.
         """
         result = {'vertices' : dict(), 'edges' : dict()}
@@ -531,8 +531,6 @@ class Neo4jConnector(object):
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
         Then those frames are created in xGT.
-        Finally, all of the nodes and all of the relationships are copied,
-        one frame at a time, from Neo4j to xGT.
 
         Parameters
         ----------
