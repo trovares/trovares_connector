@@ -35,7 +35,7 @@ jobs:
     - name: Build HTML
       uses: ammaraskar/sphinx-action@0.4
       with:
-         pre-build-command: "apt-get -y update && apt-get -y install odbc-mariadb"
+         pre-build-command: "apt-get -y update && apt-get -y install unixodbc"
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
