@@ -90,7 +90,6 @@ class TestXgtODBCConnector(unittest.TestCase):
     assert self.xgt.get_table_frame('test2').num_rows == 1
     print(self.xgt.get_table_frame('test2').get_data())
 
-
   def test_vertex(self):
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")

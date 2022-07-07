@@ -9,6 +9,8 @@
 This Python package is for connecting the Trovares xGT graph analytics engine with the Neo4j graph database.
 Trovares xGT can [significantly speedup Neo4j queries](https://www.trovares.com/trovaresvneo4j).
 
+The package also provides an optional ODBC connector for connecting to databases or applications that support ODBC.
+
 <table>
   <tr>
     <td><b>Homepage:</b></td>

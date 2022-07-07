@@ -112,9 +112,10 @@ html_theme_options = {
   'path_to_docs' : 'docs/source',
   'repository_branch' : 'main',
   #"use_edit_page_button": True,
-  "use_issues_button": True,
-  "use_repository_button": True,
-  "use_download_button": True,
+  'use_issues_button': True,
+  'use_repository_button': True,
+  'use_download_button': True,
+  'show_toc_level': 2,
 }
 
 # Left sidebar title
