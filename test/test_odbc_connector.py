@@ -86,6 +86,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     assert self.xgt.get_table_frame('test1').num_rows == 1
     print(self.xgt.get_table_frame('test1').get_data())
 
+    self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test2'})])
+    assert self.xgt.get_table_frame('test2').num_rows == 1
+    print(self.xgt.get_table_frame('test2').get_data())
+
+
   def test_vertex(self):
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
@@ -109,8 +114,6 @@ class TestXgtODBCConnector(unittest.TestCase):
     assert self.xgt.get_vertex_frame('test4').num_rows == 2
     print(self.xgt.get_vertex_frame('test4').get_data())
 
-    self.xgt.drop_namespace('test', force_drop = True)
-
   def test_edge(self):
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
@@ -133,5 +136,3 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 'Value1', 'target_key' : 'Value2' } )])
     assert self.xgt.get_edge_frame('test4').num_rows == 2
     print(self.xgt.get_edge_frame('test4').get_data())
-
-    self.xgt.drop_namespace('test', force_drop = True)

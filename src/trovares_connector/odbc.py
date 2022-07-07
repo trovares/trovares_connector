@@ -1,3 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- --------------------------------------------------===#
+#
+#  Copyright 2022 Trovares Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#===----------------------------------------------------------------------===#
+
 import xgt
 import pyarrow as pa
 import pyarrow.flight as pf
@@ -140,7 +159,7 @@ class ODBCConnector(object):
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
             This dictionary can be the value returned from the
-            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
+            :py:meth:`~ODBCConnector.get_xgt_schemas` method.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
@@ -227,7 +246,7 @@ class ODBCConnector(object):
             Dictionary containing schema information for vertex and edge frames
             to create in xGT.
             This dictionary can be the value returned from the
-            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
+            :py:meth:`~ODBCConnector.get_xgt_schemas` method.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
@@ -246,58 +265,6 @@ class ODBCConnector(object):
         xgt_schema = self.get_xgt_schemas(tables)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
         self.copy_data_to_xgt(xgt_schema)
-
-    def transfer_to_odbc(self, vertices = None, edges = None,
-                         tables = None, namespace = None) -> None:
-        xgt_server = self._xgt_server
-        if namespace == None:
-            namespace = self._default_namespace
-        if vertices == None and edges == None and tables == None:
-            vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
-            edges = [frame.name for frame in xgt_server.get_edge_frames(namespace=namespace)]
-            tables = [frame.name for frame in xgt_server.get_table_frames(namespace=namespace)]
-            namespace = None
-        if vertices == None:
-            vertices = []
-        if edges == None:
-            edges = []
-        if tables == None:
-            tables = []
-
-        for edge in edges:
-            edge_frame = xgt_server.get_edge_frame(edge)
-            vertices.append(edge_frame.source_name)
-            vertices.append(edge_frame.target_name)
-
-        for table in tables:
-            if isinstance(table, tuple):
-                frame, table = table
-            else:
-                frame = table
-            reader = self.__arrow_reader(frame)
-            reader1 = reader.to_reader()
-
-            first_batch = reader1.read_next_batch()
-            schema = first_batch.schema
-            def iter_record_batches():
-                count = 0
-                l = pa.Table.from_pandas(first_batch.to_pandas()).to_batches()
-                for x in l:
-                    count += 1
-                    yield x
-                for batch in reader1:
-                    l = pa.Table.from_pandas(batch.to_pandas()).to_batches()
-                    for x in l:
-                        count += 1
-                        yield x
-
-            final_reader = pa.RecordBatchReader.from_batches(schema, iter_record_batches())
-            insert_into_table(
-                connection_string=self._driver._connection_string,
-                chunk_size=10000,
-                table=table,
-                reader=final_reader,
-            )
 
     def copy_data_to_xgt(self, xgt_schemas):
         """
