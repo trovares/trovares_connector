@@ -35,8 +35,7 @@ jobs:
     - name: Build HTML
       uses: ammaraskar/sphinx-action@0.4
       with:
-        # TODO(landwehrj) Workaround for backwards compatibility issues with protobuf
-         pre-build-command: "pip install 'protobuf>=3.12.0,<=3.20.1'"
+         pre-build-command: "sudo apt-get update && sudo apt-get install odbc-mariadb"
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
