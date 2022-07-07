@@ -40,7 +40,7 @@ Examples
 These examples show typical usage patterns.
 
 Copy a SQL table
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 This example copies test_table from the test database into test_table on xGT.
 
@@ -70,7 +70,7 @@ Or as a dictionary:
    conn.transfer_to_xgt([('test_table', {'frame' : 'xgt_table'} )])
 
 Copy a SQL table to vertices
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example copy Person into the vertex frame Person.
 The simplest way is to pass the key column as tuple with the table name.
@@ -104,7 +104,7 @@ Dictionary remap:
 The frame may be omitted in the last example if the frame name is the same as SQL table.
 
 Copy a SQL table to edges
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example copy Person into the vertex frame Person and the edge Friend into the edge frame Friend.
 The simplest way is to pass the frames and source and target columns as tuple with the table name.
@@ -138,7 +138,7 @@ Or a dictionary:
 
 
 Copy a SQL table to edges without a vertex table
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example will create the corresponding vertex frame for the source and target with a key column named Key using the source and target keys when creating the edge.
 
@@ -157,7 +157,7 @@ This example will create the corresponding vertex frame for the source and targe
 
 
 Appending data
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 By default a transfer will drop any associated frame on xGT.
 To append to a frame, set `append` to True on the transfer.
@@ -165,6 +165,23 @@ To append to a frame, set `append` to True on the transfer.
 .. code-block:: python
 
    conn.transfer_to_xgt(['Person'], append=True)
+
+Connecting to Snowflake
+^^^^^^^^^^^^^^^^^^^^^^^
+
+After installing `their ODBC driver <https://docs.snowflake.com/en/user-guide/odbc.html>`_, connect like so:
+
+.. code-block:: python
+
+   connection_string="DSN=snowflake;Database=test;Uid=test;Pwd=test;"
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = ODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_schema.my_table', 'test_table')])
+
+This would transfer the table, `my_table`, in the `my_schema` schema, under the `test` database to the xGT table named `test_table`.
 
 Limitations
 -----------

@@ -390,6 +390,11 @@ title="Print to PDF"
      Appending data
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-snowflake">
+     Connecting to Snowflake
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -454,6 +459,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#appending-data">
      Appending data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-snowflake">
+     Connecting to Snowflake
     </a>
    </li>
   </ul>
@@ -592,6 +602,20 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="connecting-to-snowflake">
+<h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this headline">#</a></h3>
+<p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">their ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Uid=test;Pwd=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">ODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_schema.my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, in the <cite>my_schema</cite> schema, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
 </section>
 </section>
 <section id="limitations">
