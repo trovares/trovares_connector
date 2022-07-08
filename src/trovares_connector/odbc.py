@@ -113,8 +113,8 @@ class ODBCConnector(object):
                     else:
                         mapping_tables[val[0]] = {'frame' : val[1]}
                 elif isinstance(val[1], tuple) and len(val[1]) == 1:
-                    mapping_vertices[val[0]] = {'frame' : val[0], 'key' : val[1]}
-                elif isinstance(val[1], tuple) and len(val[2]) == 2:
+                    mapping_vertices[val[0]] = {'frame' : val[0], 'key' : val[1][0]}
+                elif isinstance(val[1], tuple) and len(val[1]) == 4:
                     mapping_edges[val[0]] = {'frame' : val[0], 'source' : val[1][0],
                                              'target' : val[1][1], 'source_key' : val[1][2],
                                              'target_key' : val[1][3]}
@@ -175,18 +175,17 @@ class ODBCConnector(object):
         -------
             None
         """
-        if easy_edges:
-            for edge, schema in xgt_schemas['edges'].items():
-                src = schema['mapping']['source']
-                trg = schema['mapping']['target']
-                if src not in xgt_schemas['vertices']:
-                    xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
-                if trg not in xgt_schemas['vertices']:
-                    xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : {'frame' : trg, 'key' : 'key' } }
-
         if not append:
-            for _, schema in xgt_schemas['tables'].items():
-                self._xgt_server.drop_frame(schema['mapping']['frame'])
+            if easy_edges:
+                for edge, schema in xgt_schemas['edges'].items():
+                    src = schema['mapping']['source']
+                    trg = schema['mapping']['target']
+                    if src not in xgt_schemas['vertices']:
+                        xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
+                    if trg not in xgt_schemas['vertices']:
+                        xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : {'frame' : trg, 'key' : 'key' } }
+                for _, schema in xgt_schemas['tables'].items():
+                    self._xgt_server.drop_frame(schema['mapping']['frame'])
 
             for _, schema in xgt_schemas['edges'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
@@ -200,7 +199,7 @@ class ODBCConnector(object):
                         edge_frames = str(e).split(':')[-1].split(' ')[1:]
                         for edge in edge_frames:
                             self._xgt_server.drop_frame(edge)
-                        self._xgt_server.drop_frame(schema['xgt_name'])
+                        self._xgt_server.drop_frame(schema['mapping']['frame'])
                     else:
                         raise e
             for table, schema in xgt_schemas['tables'].items():
@@ -338,6 +337,7 @@ class ODBCConnector(object):
         val = next(reader, None)
         if val != None:
             return (self._xgt_server.get_schema_from_data(pa.Table.from_batches([val])), val.schema)
+        raise ValueError("Table " + table + " contains no data. Can't determine schema.")
 
     def __extract_xgt_table_schema(self, table, mapping):
         xgt_schema, arrow_schema = self.__get_xgt_schema(table)

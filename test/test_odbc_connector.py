@@ -58,6 +58,8 @@ class TestXgtODBCConnector(unittest.TestCase):
   def _erase_mysql_database(self):
     cursor = self.odbc_driver.cursor()
     cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute("DROP TABLE IF EXISTS Node")
+    cursor.execute("DROP TABLE IF EXISTS Relationship")
     self.odbc_driver.commit()
     self.xgt.drop_namespace('test', force_drop = True)
 
@@ -97,6 +99,10 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
     self.odbc_driver.commit()
 
+    self.conn.transfer_to_xgt(tables = [('test', (0,))])
+    assert self.xgt.get_vertex_frame('test').num_rows == 2
+    print(self.xgt.get_vertex_frame('test').get_data())
+
     self.conn.transfer_to_xgt(tables = [('test','test1', (0,))])
     assert self.xgt.get_vertex_frame('test1').num_rows == 2
     print(self.xgt.get_vertex_frame('test1').get_data())
@@ -120,7 +126,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
     self.odbc_driver.commit()
 
-    self.conn.transfer_to_xgt(tables = [('test','test1', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    assert self.xgt.get_edge_frame('test').num_rows == 2
+    print(self.xgt.get_edge_frame('test').get_data())
+
+    self.conn.transfer_to_xgt(tables = [('test','test1', ('Vertex', 'Vertex', 0, 1))])
     assert self.xgt.get_edge_frame('test1').num_rows == 2
     print(self.xgt.get_edge_frame('test1').get_data())
 
@@ -135,3 +145,56 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 'Value1', 'target_key' : 'Value2' } )])
     assert self.xgt.get_edge_frame('test4').num_rows == 2
     print(self.xgt.get_edge_frame('test4').get_data())
+
+  def test_append(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    assert self.xgt.get_edge_frame('test').num_rows == 1
+    print(self.xgt.get_edge_frame('test').get_data())
+
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    self.odbc_driver.commit()
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append=True)
+    assert self.xgt.get_edge_frame('test').num_rows == 2
+    print(self.xgt.get_edge_frame('test').get_data())
+
+  def test_dropping(self):
+    c = self.conn
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE Node (id INT)")
+    cursor.execute("INSERT INTO Node VALUES (0)")
+    cursor.execute("CREATE TABLE Relationship (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO Relationship VALUES (0, 0, 'hola')")
+    self.odbc_driver.commit()
+
+    xgt_schema1 = self.conn.get_xgt_schemas(tables = [('Node', (0,)), ('Relationship', ('Node', 'Node', 0, 1))])
+    xgt_schema2 = self.conn.get_xgt_schemas(tables = [('Node', (0,))])
+
+    c.create_xgt_schemas(xgt_schema1)
+    self.xgt.get_vertex_frame('Node')
+    self.xgt.get_edge_frame('Relationship')
+
+    c.create_xgt_schemas(xgt_schema1)
+    self.xgt.get_vertex_frame('Node')
+    self.xgt.get_edge_frame('Relationship')
+
+    with self.assertRaises(xgt.XgtFrameDependencyError):
+        c.create_xgt_schemas(xgt_schema2)
+    c.create_xgt_schemas(xgt_schema2, force=True)
+    self.xgt.get_vertex_frame('Node')
+    with self.assertRaises(xgt.XgtNameError):
+        self.xgt.get_edge_frame('Relationship')
+
+  def test_transfer_no_data(self):
+    c = self.conn
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE Node (id INT)")
+    with self.assertRaises(ValueError):
+        self.conn.transfer_to_xgt(tables = [('Node', (0,))])
+

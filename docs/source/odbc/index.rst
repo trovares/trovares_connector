@@ -183,6 +183,14 @@ After installing `their ODBC driver <https://docs.snowflake.com/en/user-guide/od
 
 This would transfer the table, `my_table`, in the `my_schema` schema, under the `test` database to the xGT table named `test_table`.
 
+Additional Examples
+^^^^^^^^^^^^^^^^^^^
+
+More detailed examples can be found in :ref:`jupyter` or on github:
+
+* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples/odbc>`_
+* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter/odbc>`_
+
 Limitations
 -----------
 
