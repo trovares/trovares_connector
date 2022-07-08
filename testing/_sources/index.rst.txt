@@ -203,8 +203,8 @@ Additional Examples
 
 More detailed examples can be found in :ref:`jupyter` or on github:
 
-* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples>`_
-* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter>`_
+* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples/neo4j>`_
+* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter/neo4j>`_
 
 Limitations
 -----------
