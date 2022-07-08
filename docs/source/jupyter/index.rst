@@ -26,7 +26,15 @@ The following sections provide additional examples from Jupyter Notebooks.
 When you click on the notebook below, the source code can be downloaded with the download icon above.
 
 .. toctree::
+  :caption: Neo4j Jupyter
   :maxdepth: 1
   :glob:
  
-  *
+  neo4j/*
+
+.. toctree::
+  :caption: ODBC Jupyter
+  :maxdepth: 1
+  :glob:
+ 
+  odbc/*
