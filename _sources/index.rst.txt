@@ -33,6 +33,8 @@ The connector `source code <http://github.com/trovares/trovares_connector/>`_ is
 A basic guide is provided below.
 For a quick start see :ref:`quick_start`.
 
+The package also provides an optional :ref:`odbc` for connecting to databases or applications that support ODBC.
+
 Installation
 ------------
 
@@ -62,12 +64,12 @@ From any Python environment, simply importing both `xgt` and `trovares_connector
    from trovares_connector import Neo4jConnector
 
 Examples
-========
+--------
 
 These examples show typical usage patterns.
 
 Copy entire graph from Neo4j to Trovares xGT
---------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
 All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.
@@ -92,7 +94,7 @@ Similarly if no vertices or edges are provided, the transfer will use all them.
    conn.transfer_to_xgt()
 
 Copy a portion of a graph based on node labels and/or relationship types
-------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.
@@ -121,7 +123,7 @@ The code below would auto-transfer the Person node.
 This feature can be disabled by setting `import_edge_nodes` to False.
 
 Appending data
---------------
+^^^^^^^^^^^^^^
 
 By default a transfer will drop any associated frame on xGT.
 To append to a frame, set `append` to True on the transfer.
@@ -137,7 +139,7 @@ When appending edges to existing vertices, care must be taken to not import the 
    conn.transfer_to_xgt(edges=['Person'], append=True, import_edge_nodes=False)
 
 Mapping Neo4j labels and types
-------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When transferring, labels and relationship types are automatically mapped to the same name in xGT.
 The exception is that unlabeled vertices are mapped to the frame "unlabeled" because xGT doesn't support empty names.
@@ -157,7 +159,7 @@ In addition the unlabeled nodes in Neo4j are named '' and this can be used to ma
 
 
 Using various Neo4j drivers
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
 The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
@@ -197,15 +199,15 @@ Some examples of connecting:
 These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.
 
 Additional Examples
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 More detailed examples can be found in :ref:`jupyter` or on github:
 
-* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples>`_
-* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter>`_
+* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples/neo4j>`_
+* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter/neo4j>`_
 
 Limitations
-===========
+-----------
 
 Doesn't support the following:
 
@@ -222,7 +224,7 @@ Other limitations:
 * Transfer times are estimates based on Neo4j's count stores and may be inaccurate especially for edges going to multiple node labels.
 
 Single relationship with multiple node conversion
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 xGT is schema based and requires an edge to have distinct types.
 Neo4j is schema-less so can have multiple node types per edge type.
@@ -255,21 +257,22 @@ Would get converted to the following when transferring to xGT:
   (:A)-[:A_PART_OF_C]->(:C), (:B)-[:B_PART_OF_C]->(:C)
 
 Additional Topics
-=================
+-----------------
 
 The following topics provide additional material.
 
 .. toctree::
-  :maxdepth: 1
+  :maxdepth: 2
   :caption: Additional Topics
 
   quick_start.rst
   jupyter/index.rst
+  odbc/index.rst
   requirements.rst
   RELEASE.rst
 
 API Details
-===========
+-----------
 
 .. currentmodule:: trovares_connector
 
