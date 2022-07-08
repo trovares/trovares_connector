@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+1.3.0 (07-08-2022)
+------------------
+New Features
+^^^^^^^^^^^^
+  - Added ODBC connector for transferring from applications that support ODBC to xGT.
+
 1.2.1 (07-01-2022)
 ------------------
 Fixed
