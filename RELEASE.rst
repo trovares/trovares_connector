@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+1.3.1 (07-11-2022)
+------------------
+Fixed
+^^^^^
+  - Fixed odbc import issue if odbc not installed.
+
 1.3.0 (07-08-2022)
 ------------------
 New Features

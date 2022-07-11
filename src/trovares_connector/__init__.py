@@ -25,5 +25,8 @@ __ALL__ = [
 
 from .trovares_connector import Neo4jConnector
 from .trovares_connector import Neo4jDriver
-from .odbc import ODBCConnector
-from .odbc import SQLODBCDriver
+try:
+    from .odbc import ODBCConnector
+    from .odbc import SQLODBCDriver
+except ImportError:
+    pass
