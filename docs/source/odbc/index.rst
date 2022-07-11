@@ -197,7 +197,6 @@ Limitations
 Doesn't support the following:
 
 * Transferring to the database from xGT.
-* Using None for datetimes will use the current date time.
 * Floats under 25 bits.
 * Transfer sizes/times are estimates.
 

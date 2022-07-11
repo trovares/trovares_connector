@@ -68,7 +68,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     # FIXME(josh) : With multiple rows floats with a bit size of 24 or lower don't work.
     cursor.execute("CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53), "
                    "TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE, "
-                   "TestDatetime DATETIME, TestTimestamp TIMESTAMP, TestTime TIME, TestYear YEAR)")
+                   "TestDatetime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)")
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06', '1986-05-06 12:56:34', "
                    "'1989-05-06 12:56:34', '12:56:34', 1999)")
     cursor.execute("INSERT INTO test VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)")
