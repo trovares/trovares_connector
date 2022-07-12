@@ -28,9 +28,11 @@ target=src/trovares_connector/frontend
 curl -o antlr-4.jar https://www.antlr.org/download/antlr-4.10.1-complete.jar
 
 rm -rf ${target}
+cp tools/Cypher/Cypher.g4 .
 java -Xmx500M -cp "antlr-4.jar" org.antlr.v4.Tool -o ${target} \
-  -Dlanguage=Python3 -visitor tools/Cypher/Cypher.g4
-cp -p tools/Cypher/frontend__init__.py ${target}/__init__.py
+  -Dlanguage=Python3 -visitor Cypher.g4
+rm -rf Cypher.g4
+# cp -p tools/Cypher/frontend__init__.py ${target}/__init__.py
 
 # clean up
 rm -f antlr-4.jar
