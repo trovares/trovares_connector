@@ -1,4 +1,4 @@
-# Generated from tools/Cypher/Cypher.g4 by ANTLR 4.10.1
+# Generated from Cypher.g4 by ANTLR 4.10.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO

@@ -1,4 +1,4 @@
-# Generated from tools/Cypher/Cypher.g4 by ANTLR 4.10.1
+# Generated from Cypher.g4 by ANTLR 4.10.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .CypherParser import CypherParser
