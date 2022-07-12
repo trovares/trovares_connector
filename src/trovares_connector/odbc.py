@@ -184,8 +184,8 @@ class ODBCConnector(object):
                         xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
                     if trg not in xgt_schemas['vertices']:
                         xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : {'frame' : trg, 'key' : 'key' } }
-                for _, schema in xgt_schemas['tables'].items():
-                    self._xgt_server.drop_frame(schema['mapping']['frame'])
+            for _, schema in xgt_schemas['tables'].items():
+                self._xgt_server.drop_frame(schema['mapping']['frame'])
 
             for _, schema in xgt_schemas['edges'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
@@ -202,6 +202,7 @@ class ODBCConnector(object):
                         self._xgt_server.drop_frame(schema['mapping']['frame'])
                     else:
                         raise e
+
             for table, schema in xgt_schemas['tables'].items():
                 self._xgt_server.create_table_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'])
 
