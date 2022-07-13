@@ -23,8 +23,8 @@ __ALL__ = [
   'SQLODBCDriver',
 ]
 
-from .trovares_connector import Neo4jConnector
-from .trovares_connector import Neo4jDriver
+from .neo4j_connector import Neo4jConnector, Neo4jDriver
+
 try:
     from .odbc import ODBCConnector
     from .odbc import SQLODBCDriver

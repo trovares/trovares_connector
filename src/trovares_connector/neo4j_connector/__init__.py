@@ -1,4 +1,3 @@
-#/usr/bin/env bash
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
 #  Copyright 2022 Trovares Inc.
@@ -17,21 +16,10 @@
 #
 #===----------------------------------------------------------------------===#
 
-set -euo pipefail
-scriptdir=$(cd $(dirname $0) && pwd)
+__ALL__ = [
+  'Neo4jConnector',
+  'Neo4jDriver',
+]
 
-# go to repo root
-cd ${scriptdir}/..
-
-target=src/trovares_connector/neo4j_connector/frontend
-
-curl -o antlr-4.jar https://www.antlr.org/download/antlr-4.10.1-complete.jar
-
-rm -rf ${target}
-cp tools/Cypher/Cypher.g4 .
-java -Xmx500M -cp "antlr-4.jar" org.antlr.v4.Tool -o ${target} \
-  -Dlanguage=Python3 -visitor Cypher.g4
-rm -rf Cypher.g4
-
-# clean up
-rm -f antlr-4.jar
+from .neo4j_connector import Neo4jConnector
+from .neo4j_connector import Neo4jDriver
