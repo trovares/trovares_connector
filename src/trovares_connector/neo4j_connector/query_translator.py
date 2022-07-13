@@ -1,8 +1,20 @@
-#====-------------------------------------------------------*- Python -*-====#
+# -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#              Copyright 2022 Trovares Inc.  All rights reserved.
+#  Copyright 2022 Trovares Inc.
 #
-#====--------------------------------------------------------------------====#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#===----------------------------------------------------------------------===#
 
 from pprint import pprint
 
@@ -11,25 +23,16 @@ from .frontend.CypherLexer import CypherLexer
 from .frontend.CypherParser import CypherParser
 from .frontend.CypherListener import CypherListener
 
-# from trovares_connector import Neo4jConnector
-
 class Xlater: pass
 
 class QueryTranslator(object):
-    def __init__(self, neo4j_connector, verbose = False):
+    def __init__(self, xgt_schemas, verbose = False):
         self._verbose = verbose
-        self._neo4j_connector = neo4j_connector
-        self._edge_name_mapping = dict()
-        self._create_edge_name_mapping(neo4j_connector.get_xgt_schemas())
+        self._edge_name_mapping = self._create_edge_name_mapping(xgt_schemas)
 
-    @property
-    def neo4j_connector(self):
-        return self._neo4j_connector
-
-    def _create_edge_name_mapping(self, xlate_structure) -> None:
-        edges = xlate_structure['edges']
-        for edge in edges:
-            values = edges[edge]
+    def _create_edge_name_mapping(self, xlate_structure) -> dict():
+        mapping = dict()
+        for edge, values in xlate_structure['edges'].items():
             if len(values) > 1:
                 res = []
                 for value in values:
@@ -38,10 +41,11 @@ class QueryTranslator(object):
                         "target" : value['target'],
                         "mapped_name" : f"{value['xgt_source']}_{edge}_{value['xgt_target']}",
                         })
-                self._edge_name_mapping[edge] = res
+                mapping[edge] = res
         if self._verbose:
             print("Edge Name Mapping:")
-            pprint(self._edge_name_mapping)
+            pprint(mapping)
+        return mapping
     
     def translate(self, query:str) -> str:
         lexer = CypherLexer(InputStream(query))
@@ -55,15 +59,15 @@ class QueryTranslator(object):
 
         self._rewrites = dict()
         for edge in xlater.edges:
-            self.add_rewrites_for_edge_frame_names(edge)
+            self._add_rewrites_for_edge_frame_names(edge)
 
         new_query = self.rewrite_query(query)
         del self._rewrites
         return new_query
 
-    def add_rewrites_for_edge_frame_names(self, edge) -> None:
+    def _add_rewrites_for_edge_frame_names(self, edge) -> None:
         if self._verbose:
-            print("In add_rewrites_for_edge_frame_names")
+            print("In _add_rewrites_for_edge_frame_names")
             pprint(edge)
         left_nodes = edge[0]
         relationship = edge[1]
@@ -72,7 +76,6 @@ class QueryTranslator(object):
             if self._verbose:
                 print(f"Exploring frame name: {frame_name}")
             if frame_name in self._edge_name_mapping:
-                #print(f"  -> Exploring frame name: {frame_name}")
                 left_node_labels = left_nodes['labels']
                 if len(left_node_labels) == 0:
                     source = None
@@ -107,8 +110,6 @@ class QueryTranslator(object):
                         if variant['source'] == source and variant['target'] == target:
                             if self._verbose:
                                 print(f"Use this variant: {variant}")
-                                #print("rp-detail:")
-                                #pprint(rp)
                             reltype_loc = relationship['rel_types'][frame_name].location
                             if reltype_loc['offset'] in self._rewrites:
                                 raise ValueError(f"Multiple rewrites at offset: {reltype_loc['offset']}")
@@ -117,7 +118,7 @@ class QueryTranslator(object):
                                 'to':variant['mapped_name']}
 
     def rewrite_query(self, query:str) -> str:
-        """Produce a re-written query from the self._rewrites info"""
+        """Produce a re-written query from the self._rewrites information."""
         if self._verbose:
             print(f"Rewrites:")
             pprint(self._rewrites)
@@ -133,6 +134,15 @@ class QueryTranslator(object):
 
 
 class QueryElement(object):
+    """
+    Utility object to store an element of a query.
+    
+    The original text is available as a property, and the location within
+    the original query is captured.  The location includes the byte offset
+    into the query, the length of the element (in bytes), and the line 
+    number and column number of the start and the stop positions of the
+    element.
+    """
     def __init__(self, text:str, location):
         self._text = text
         self._location = location
@@ -152,53 +162,20 @@ class QueryElement(object):
 class Xlater(CypherListener):
     def __init__(self, verbose = False):
         self._verbose = verbose
-        self._query = None
         self._AST_node_stack = []
         self._symbol_table_node_variables = dict()
-        self._path_ranges = []
-        self._sections = []
         self._edges = []
         self._node_patterns = []
         self._relationship_patterns = []
 
     @property
-    def query(self):
-        return self._query
-    @property
     def edges(self):
         return self._edges
-    @property
-    def path_ranges(self):
-        return self._path_ranges
     @property
     def node_patterns(self):
         return self._node_patterns
 
-    def exitOC_Cypher(self, ctx:CypherParser.OC_QueryContext):
-        if self._verbose:
-            print('OC_Cypher')
-        self._query = ctx.getText()
-        if len(self._query) > 5 and self._query[-5:] == '<EOF>':
-            self._query = self._query[:-5]
-
-    def exitOC_Match(self, ctx:CypherParser.OC_MatchContext):
-        self._trace_context(ctx, "OC_Match")
-        capture = {'fulltext':ctx.getText(), 'location':self._encode_location(ctx),
-                   'node_patterns':self._node_patterns,
-                   'relationship_patterns':self._relationship_patterns,
-                  }
-        self._node_patterns = []
-        self._relationship_patterns = []
-        self._sections.append(capture)
-        
-    def exitOC_RangeLiteral(self, ctx:CypherParser.OC_RangeLiteralContext):
-        self._trace_context(ctx, "OC_RangeLiteral")
-        self._path_ranges.append([ctx.getText(), self._encode_location(ctx)])
-
     # Capture edges in patterns
-    def exitOC_PatternElement(self, ctx:CypherParser.OC_PatternElementContext):
-        self._trace_context(ctx, "OC_PatternElement")
-
     def exitOC_PatternElementChain(self, ctx:CypherParser.OC_PatternElementChainContext):
         self._trace_context(ctx, "OC_PatternElementChain")
         left_node = self._node_patterns[-2]
@@ -221,12 +198,10 @@ class Xlater(CypherListener):
         capture = {'fulltext':ctx.getText(), 'location':self._encode_location(ctx),
                     'variable':variable, 'labels':labels}
         if variable is not None:
-            #print(f"symbol: {variable}, labels: {labels}")
-            if self._verbose and variable in self._symbol_table_node_variables:
-                #if  (len(labels) != len(self._symbol_table_node_variables[variable])
-                #      or [_.text for _ in labels] != [_.text for _ in self._symbol_table_node_variables[variable]]
-                #    ):
-                print(f"Variable {variable} already in symbol table: {self._symbol_table_node_variables[variable]}")
+            if self._verbose:
+                print(f"symbol: {variable}, labels: {labels}")
+                if variable in self._symbol_table_node_variables:
+                    print(f"Variable {variable} already in symbol table: {self._symbol_table_node_variables[variable]}")
             self._symbol_table_node_variables[variable] = labels
         self._node_patterns.append(capture)
         if self._verbose:
@@ -250,9 +225,6 @@ class Xlater(CypherListener):
         if self._verbose:
             print(f"  -->Push NL: {node_label}")
 
-    # def exitOC_RelationshipsPattern(self, ctx:CypherParser.OC_RelationshipsPatternContext):
-    #     self._trace_context(ctx, "OC_RelationshipsPattern")
-
     def exitOC_RelationshipPattern(self, ctx:CypherParser.OC_RelationshipPatternContext):
         self._trace_context(ctx, "OC_RelationshipPattern")
         rel_detail = self._AST_node_stack.pop()
@@ -273,9 +245,9 @@ class Xlater(CypherListener):
             else:
                 capture[key] = rel_detail[key]
 
+        self._relationship_patterns.append(capture)
         if self._verbose:
             print(f"  -> Push RelationshipPattern: {capture}")
-        self._relationship_patterns.append(capture)
 
     def exitOC_RelationshipDetail(self, ctx:CypherParser.OC_RelationshipDetailContext):
         self._trace_context(ctx, "OC_RelationshipDetail")
@@ -288,9 +260,9 @@ class Xlater(CypherListener):
                     'rel_types':rel_types,
                     'range_literal':self._nonterminal_or_none(ctx.oC_RangeLiteral()),
                   }
+        self._AST_node_stack.append(capture)
         if self._verbose:
             print(f"  -> Push RelationshipDetail: {capture}")
-        self._AST_node_stack.append(capture)
 
     def exitOC_RelationshipTypes(self, ctx:CypherParser.OC_RelationshipTypesContext):
         self._trace_context(ctx, "exitOC_RelationshipTypes")
@@ -345,18 +317,3 @@ class Xlater(CypherListener):
             print(f"\n====================> {name}: {ctx.getText()}")
             print(f"  getChildCount: {ctx.getChildCount()}")
             print(f"  children: {ctx.children}")
-
-    def _dump_node(self, ctx):
-        print(dir(ctx))
-        #print(f"getAltNumber: {ctx.getAltNumber()}")
-        print(f"getChildCount: {ctx.getChildCount()}")
-        if ctx.getChildCount() > 0:
-            print(f"getChild: {ctx.getChild(0)}")
-            print(f"getChildren: {ctx.getChildren()}")
-        print(f"getPayload: {ctx.getPayload()}")
-        #print(f"getRuleContext: {ctx.getRuleContext()}")
-        print(f"getSourceInterval: {ctx.getSourceInterval()}")
-        text = ctx.getText()
-        print(f"getText({len(text)}): [{text}]")
-        #print(f"start: {ctx.start}")
-        #print(f"stop: {ctx.stop}")

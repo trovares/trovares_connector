@@ -974,7 +974,7 @@ class Neo4jConnector(object):
         ToDo(documenters) This needs to be fully explained.
         """
         if self._query_translator is None:
-            self._query_translator = QueryTranslator(neo4j_connector = self,
+            self._query_translator = QueryTranslator(self.get_xgt_schemas(),
                                                      verbose = self.__verbose)
             if self.__verbose:
                 print("Built query translator instance")
