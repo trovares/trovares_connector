@@ -26,7 +26,34 @@ from .frontend.CypherListener import CypherListener
 class Xlater: pass
 
 class QueryTranslator(object):
+    """
+    It is sometimes necessary to make alterations to naming of graph components
+    as part of the automatic graph schema creation from a Neo4j database to 
+    hold data in a Trovares xGT server.  One example of this is when a
+    relationship type consists of some edges from one source node label and
+    other edges from a different source node label.
+
+    Given a Cypher query that formulated to run against a Neo4j database, there
+    may be some changes required in order to run that same query against a
+    Trovares xGT server holding a graph schema that has been auto-generated.
+
+    This class provides the service of translating a Neo4j-targeted query into
+    a Trovares xGT-targeted query.
+    """
     def __init__(self, xgt_schemas, verbose = False):
+        """
+        Initializes a QueryTranslator instance.
+
+        Parameters
+        ----------
+        xgt_schemas : dict
+            Information about an auto-generated schema for Trovares xGT
+            based on a Neo4j database.  The structure of this schema should
+            be the same the data returned from the
+            :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
+        verbose : bool
+            Print detailed information.  Default is False
+        """
         self._verbose = verbose
         self._edge_name_mapping = self._create_edge_name_mapping(xgt_schemas)
 
@@ -48,6 +75,21 @@ class QueryTranslator(object):
         return mapping
     
     def translate(self, query:str) -> str:
+        """
+        Translates a Cypher query from a Neo4j-targeted query to a Trovares
+        xGT-targeted query.
+
+        Parameters
+        ----------
+        query : str
+          A Cypher query that can be run against the Neo4j database that is
+          part of this connector instance.
+
+        Returns
+        -------
+        str
+          Translated Cypher query
+        """
         lexer = CypherLexer(InputStream(query))
         stream = CommonTokenStream(lexer)
         parser = CypherParser(stream)
@@ -61,7 +103,7 @@ class QueryTranslator(object):
         for edge in xlater.edges:
             self._add_rewrites_for_edge_frame_names(edge)
 
-        new_query = self.rewrite_query(query)
+        new_query = self._rewrite_query(query)
         del self._rewrites
         return new_query
 
@@ -117,7 +159,7 @@ class QueryTranslator(object):
                                 'from':reltype_loc, 
                                 'to':variant['mapped_name']}
 
-    def rewrite_query(self, query:str) -> str:
+    def _rewrite_query(self, query:str) -> str:
         """Produce a re-written query from the self._rewrites information."""
         if self._verbose:
             print(f"Rewrites:")
