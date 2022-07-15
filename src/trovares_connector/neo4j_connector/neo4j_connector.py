@@ -328,7 +328,6 @@ class Neo4jConnector(object):
         self._neo4j_rel_type_properties = None
         self._neo4j_property_keys = None
         self._neo4j_node_labels = None
-        self._query_translator = None
 
     def __str__(self) -> str:
         result = ""
@@ -992,12 +991,11 @@ class Neo4jConnector(object):
         str
           Translated Cypher query
         """
-        if self._query_translator is None:
-            self._query_translator = QueryTranslator(self.get_xgt_schemas(),
-                                                     verbose = self.__verbose)
-            if self.__verbose:
-                print("Built query translator instance")
-        return self._query_translator.translate(query)
+        query_translator = QueryTranslator(self.get_xgt_schemas(),
+                                           verbose = self.__verbose)
+        if self.__verbose:
+            print("Built query translator instance")
+        return query_translator.translate(query)
 
     def __neo4j_check_for_apoc(self):
         try:
