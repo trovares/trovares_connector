@@ -971,7 +971,26 @@ class Neo4jConnector(object):
         """
         Translate a Cypher query to be ready to run in Trovares xGT.
 
-        ToDo(documenters) This needs to be fully explained.
+        It is sometimes necessary to make alterations to naming of graph components
+        as part of the automatic graph schema creation from a Neo4j database to 
+        hold data in a Trovares xGT server.  One example of this is when a
+        relationship type consists of some edges from one source node label and
+        other edges from a different source node label.
+
+        Given a Cypher query that formulated to run against a Neo4j database, there
+        may be some changes required in order to run that same query against a
+        Trovares xGT server holding a graph schema that has been auto-generated.
+
+        Parameters
+        ----------
+        query : str
+          A Cypher query that can be run against the Neo4j database that is
+          part of this connector instance.
+
+        Returns
+        -------
+        str
+          Translated Cypher query
         """
         if self._query_translator is None:
             self._query_translator = QueryTranslator(self.get_xgt_schemas(),
