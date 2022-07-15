@@ -670,8 +670,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def test_query_translator_multiple_node_labels_to_and_from(self):
     c = self.conn
     self.neo4j_driver.query(
-      'CREATE (:Node1{})-[:REL{}]->(:Node1{}), (:Node2{})-[:REL{}]->(:Node1{})'
-            ', (:Node1{}-[:REL{}]->(:Node2{}), (:Node2{}-[:REL{}]->(:Node2{})').finalize()
+      'CREATE (:Node1{})-[:REL{}]->(:Node1{}), (:Node2{})-[:REL{}]->(:Node1{}),'
+            '(:Node1{})-[:REL{}]->(:Node2{}), (:Node2{})-[:REL{}]->(:Node2{})').finalize()
 
     query = "MATCH (:Node1)-[:REL]->(b:Node1) RETURN count(*)"
     assert "Node1_REL_Node1" in c.translate_query(query)
