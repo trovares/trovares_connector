@@ -10,6 +10,7 @@ This Python package is for connecting the Trovares xGT graph analytics engine wi
 Trovares xGT can [significantly speedup Neo4j queries](https://www.trovares.com/trovaresvneo4j).
 
 The package also provides an optional ODBC connector for connecting to databases or applications that support ODBC.
+Information about the ODBC connector can be found [in the documentation](https://trovares.github.io/trovares_connector/odbc). 
 
 <table>
   <tr>
@@ -39,6 +40,11 @@ You can install this python package by executing this command:
 
 ```bash
 python -m pip install trovares_connector
+```
+
+If you want to use the ODBC connector, you can install the optional dependencies like so:
+```bash
+python -m pip install 'trovares_connector[odbc]'
 ```
 
 If you don't have Trovares xGT, you can install and run the [Developer version](https://hub.docker.com/r/trovares/xgt) from Docker:
