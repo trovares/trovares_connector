@@ -197,7 +197,6 @@ Limitations
 Doesn't support the following:
 
 * Transferring to the database from xGT.
-* Floats under 25 bits.
 * Transfer sizes/times are estimates.
 
 API Details
