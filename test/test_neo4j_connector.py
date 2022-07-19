@@ -640,7 +640,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert node_frame.num_rows == 2
 
   def test_query_translator_loop_data(self):
-    self.neo4j_driver.query("create (a:Node{prop : 1})-[b:Edge{prop : 1}]->(a)").finalize()
+    self.neo4j_driver.query("create (a:Node{int:1})-[b:EDGE{int:1}]->(a)").finalize()
     query = "match(a) return a"
     assert query == self.conn.translate_query(query)
     query = "match(a:Node) return a"
