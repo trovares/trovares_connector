@@ -639,6 +639,67 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     node_frame = self.xgt.get_vertex_frame('Node')
     assert node_frame.num_rows == 2
 
+  def test_query_translator_loop_data(self):
+    self.neo4j_driver.query("create (a:Node{prop : 1})-[b:Edge{prop : 1}]->(a)").finalize()
+    query = "match(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0)-[]->(v1) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[]->(v1) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[]->(v1:Node) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[e:EDGE]->(v1:Node) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match()-[e]->() return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match()-[e:EDGE]->() return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(a)-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a)-->()-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->()-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->(e:Edge)-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->(e1:Edge)-->(e2:Edge)-->(a) return a"
+    assert query == self.conn.translate_query(query)
+
+  def test_query_translator_loop_no_data(self):
+    query = "match(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0)-[]->(v1) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[]->(v1) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[]->(v1:Node) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(v0:Node)-[e:EDGE]->(v1:Node) return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match()-[e]->() return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match()-[e:EDGE]->() return v0"
+    assert query == self.conn.translate_query(query)
+    query = "match(a)-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a)-->()-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->()-->()-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->(e:Edge)-->(a) return a"
+    assert query == self.conn.translate_query(query)
+    query = "match(a:Node)-->(e1:Edge)-->(e2:Edge)-->(a) return a"
+    assert query == self.conn.translate_query(query)
+
   def test_query_translator_multiple_node_labels_to(self):
     c = self.conn
     self.neo4j_driver.query(
