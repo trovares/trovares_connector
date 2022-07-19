@@ -114,6 +114,8 @@ class QueryTranslator(object):
         left_nodes = edge[0]
         relationship = edge[1]
         right_nodes = edge[2]
+        if 'rel_types' not in relationship:
+            return
         for frame_name in relationship['rel_types'].keys():
             if self._verbose:
                 print(f"Exploring frame name: {frame_name}")
@@ -269,7 +271,10 @@ class Xlater(CypherListener):
 
     def exitOC_RelationshipPattern(self, ctx:CypherParser.OC_RelationshipPatternContext):
         self._trace_context(ctx, "OC_RelationshipPattern")
-        rel_detail = self._AST_node_stack.pop()
+        if len(self._AST_node_stack) == 0:
+            rel_detail = dict()
+        else:
+            rel_detail = self._AST_node_stack.pop()
 
         left_arrow = False
         right_arrow = False
@@ -294,7 +299,7 @@ class Xlater(CypherListener):
     def exitOC_RelationshipDetail(self, ctx:CypherParser.OC_RelationshipDetailContext):
         self._trace_context(ctx, "OC_RelationshipDetail")
         if ctx.oC_RelationshipTypes() is None:
-            rel_types = []
+            rel_types = dict()
         else:
             rel_types = self._AST_node_stack.pop()
         capture = {'fulltext':ctx.getText(), 'location':self._encode_location(ctx),
