@@ -42,6 +42,63 @@ class SQLODBCDriver(object):
         self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
 
+    def get_data_query(self, table, arrow_schema):
+        return  self._data_query.format(table)
+
+    def get_record_batch_schema(self, table):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+        val = next(reader, None)
+        if val == None:
+            raise ValueError("Table " + table + " contains no data. Can't determine schema.")
+        return pa.Table.from_batches([val])
+
+class MongoODBCDriver(object):
+    def __init__(self, connection_string, include_id=False):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to the ODBC applications.
+            Example:
+            'DSB=MongoDB;Database=test;Uid=test;Pwd=foo;'
+        include_id : boolean
+            Include the MongoDB id field when transferring from MongoDB.
+            If the id field is included, writing data back to the database will update the columns
+            instead of inserting new rows.
+            By default false.
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT * FROM {0} LIMIT 1"
+        self._data_query = "SELECT {0} FROM {1}"
+        self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
+        self._include_id = include_id
+
+    def get_data_query(self, table, arrow_schema):
+        cols = ','.join([x.name for x in arrow_schema])
+        return  self._data_query.format(cols, table)
+
+    def get_record_batch_schema(self, table):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+        val = next(reader, None)
+        if val == None:
+            raise ValueError("Table " + table + " contains no data. Can't determine schema.")
+        table = pa.Table.from_batches([val])
+        if not self._include_id:
+            # Remove the _id column.
+            table = table.drop(['_id'])
+            return table
+        return table
+
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
         """
@@ -310,11 +367,11 @@ class ODBCConnector(object):
 
         with ProgressDisplay(estimate) as progress_bar:
             for table, schema in xgt_schemas['tables'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['vertices'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['edges'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
 
     def transfer_to_odbc(self, vertices = None, edges = None,
                          tables = None, namespace = None) -> None:
@@ -425,15 +482,8 @@ class ODBCConnector(object):
         writer.close()
 
     def __get_xgt_schema(self, table):
-        reader = read_arrow_batches_from_odbc(
-            query=self._driver._schema_query.format(table),
-            connection_string=self._driver._connection_string,
-            batch_size=1,
-        )
-        val = next(reader, None)
-        if val != None:
-            return (self._xgt_server.get_schema_from_data(pa.Table.from_batches([val])), val.schema)
-        raise ValueError("Table " + table + " contains no data. Can't determine schema.")
+        table = self._driver.get_record_batch_schema(table)
+        return (self._xgt_server.get_schema_from_data(table), table.schema)
 
     def __extract_xgt_table_schema(self, table, mapping):
         xgt_schema, arrow_schema = self.__get_xgt_schema(table)
