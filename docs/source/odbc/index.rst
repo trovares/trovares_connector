@@ -183,6 +183,34 @@ After installing `their ODBC driver <https://docs.snowflake.com/en/user-guide/od
 
 This would transfer the table, `my_table`, in the `my_schema` schema, under the `test` database to the xGT table named `test_table`.
 
+Transferring data from xGT to ODBC
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example copies test_table from xGT to a test database.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
+   connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = ODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_odbc(tables=['test_table'])
+
+To map to a specific xGT table type pass a tuple of (xGT frame, SQL table):
+
+.. code-block:: python
+
+   conn.transfer_to_odbc(tables=[('xgt_table', 'sql_table')])
+
+Parameters for transferring edges and vertices exist as well.
+Some limitations exist.
+See below for more details.
+
 Additional Examples
 ^^^^^^^^^^^^^^^^^^^
 
@@ -196,8 +224,8 @@ Limitations
 
 Doesn't support the following:
 
-* Transferring to the database from xGT.
-* Transfer sizes/times are estimates.
+* Transferring null and Datetime to the database from xGT.
+* Transfer sizes/times are estimates and may not be available.
 
 API Details
 -----------

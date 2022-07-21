@@ -316,6 +316,102 @@ class ODBCConnector(object):
             for table, schema in xgt_schemas['edges'].items():
                 self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
 
+    def transfer_to_odbc(self, vertices = None, edges = None,
+                         tables = None, namespace = None) -> None:
+        """
+        Copies data from Trovares xGT to an ODBC application.
+
+        Parameters
+        ----------
+        vertices : iterable
+            List of requested vertex frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        edges : iterable
+            List of requested edge frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        tables : iterable
+            List of requested table frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        namespace : str
+            Namespace for the selected frames.
+            If none will use the default namespace.
+
+        Returns
+        -------
+            None
+        """
+        xgt_server = self._xgt_server
+        if namespace == None:
+            namespace = self._default_namespace
+        if vertices == None and edges == None and tables == None:
+            vertices = [(frame.name, frame.name) for frame in xgt_server.get_vertex_frames(namespace=namespace)]
+            edges = [(frame.name, frame.name) for frame in xgt_server.get_edge_frames(namespace=namespace)]
+            tables = [(frame.name, frame.name) for frame in xgt_server.get_table_frames(namespace=namespace)]
+            namespace = None
+        if vertices == None:
+            vertices = []
+        if edges == None:
+            edges = []
+        if tables == None:
+            tables = []
+
+        final_vertices = []
+        final_edges = []
+        final_tables = []
+
+        for vertex in vertices:
+            if isinstance(vertex, str):
+                final_vertices.append((vertex, vertex))
+            else:
+                final_vertices.append(vertex)
+        for edge in edges:
+            if isinstance(edge, str):
+                final_edges.append((edge, edge))
+            else:
+                final_edges.append(edge)
+        for table in tables:
+            if isinstance(table, str):
+                final_tables.append((table, table))
+            else:
+                final_tables.append(table)
+
+        estimate = 0
+
+        for vertex in final_vertices:
+            estimate += xgt_server.get_vertex_frame(vertex[0]).num_rows
+        for edge in final_edges:
+            estimate += xgt_server.get_edge_frame(edge[0]).num_rows
+        for table in final_tables:
+            estimate += xgt_server.get_table_frame(table[0]).num_rows
+
+        with ProgressDisplay(estimate) as progress_bar:
+            for table in final_vertices + final_edges + final_tables:
+                frame, table = table
+                reader = self.__arrow_reader(frame)
+                batch_reader = reader.to_reader()
+
+                first_batch = batch_reader.read_next_batch()
+                schema = first_batch.schema
+                def iter_record_batches():
+                    table = pa.Table.from_pandas(first_batch.to_pandas()).to_batches()
+                    for batch in table:
+                        yield batch
+                        progress_bar.show_progress(batch.num_rows)
+                    for batch in batch_reader:
+                        table = pa.Table.from_pandas(batch.to_pandas()).to_batches()
+                        for batch in table:
+                            yield batch
+                            progress_bar.show_progress(batch.num_rows)
+
+                final_reader = pa.RecordBatchReader.from_batches(schema, iter_record_batches())
+                print(table + "\n")
+                insert_into_table(
+                    connection_string=self._driver._connection_string,
+                    chunk_size=10000,
+                    table=table,
+                    reader=final_reader,
+                )
+
     def __copy_data(self, query_for_extract, frame, schema, progress_bar):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,

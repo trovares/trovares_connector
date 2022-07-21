@@ -65,7 +65,6 @@ class TestXgtODBCConnector(unittest.TestCase):
 
   def test_transfer(self):
     cursor = self.odbc_driver.cursor()
-    # FIXME(josh) : With multiple rows floats with a bit size of 24 or lower don't work.
     cursor.execute("CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53), "
                    "TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE, "
                    "TestDatetime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)")
@@ -186,7 +185,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     with self.assertRaises(xgt.XgtFrameDependencyError):
         c.create_xgt_schemas(xgt_schema2)
-    c.create_xgt_schemas(xgt_schema2, force=True)
+    c.create_xgt_schemas(xgt_schema2, force = True)
     self.xgt.get_vertex_frame('Node')
     with self.assertRaises(xgt.XgtNameError):
         self.xgt.get_edge_frame('Relationship')
@@ -198,3 +197,116 @@ class TestXgtODBCConnector(unittest.TestCase):
     with self.assertRaises(ValueError):
         self.conn.transfer_to_xgt(tables = [('Node', (0,))])
 
+  def test_transfer_to_odbc(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = ['test'])
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(tables = ['test'])
+    self.conn.transfer_to_xgt(tables = ['test'])
+    assert self.xgt.get_table_frame('test').num_rows == 1
+    print(self.xgt.get_table_frame('test').get_data())
+
+  def test_transfer_to_odbc_rename(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', 'test1')])
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(tables = [('test1', 'test')])
+    self.conn.transfer_to_xgt(tables = ['test'])
+    assert self.xgt.get_table_frame('test').num_rows == 1
+    print(self.xgt.get_table_frame('test').get_data())
+
+  def test_transfer_to_odbc_vertex(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', (0,))])
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(vertices = ['test'])
+    self.conn.transfer_to_xgt(tables = [('test', (0,))])
+    assert self.xgt.get_vertex_frame('test').num_rows == 1
+    print(self.xgt.get_vertex_frame('test').get_data())
+
+  def test_transfer_to_odbc_vertex_rename(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', 'test1', (0,))])
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(vertices = [('test1', 'test')])
+    self.conn.transfer_to_xgt(tables = [('test', (0,))])
+    assert self.xgt.get_vertex_frame('test').num_rows == 1
+    print(self.xgt.get_vertex_frame('test').get_data())
+
+  def test_transfer_to_odbc_edges(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True)
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(edges = ['test'])
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True)
+    assert self.xgt.get_edge_frame('test').num_rows == 1
+    print(self.xgt.get_edge_frame('test').get_data())
+
+  def test_transfer_to_odbc_edges_rename(self):
+    cursor = self.odbc_driver.cursor()
+    create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
+                       TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
+                       TestTime TIME, TestYear YEAR)"""
+    cursor.execute(create_statement)
+    # Null, Timestamp, and Datetime don't work.
+    cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
+                   "'12:56:34', 1999)")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables=[('test', 'test1', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True)
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute(create_statement)
+    self.conn.transfer_to_odbc(edges = [('test1', 'test')])
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True, force = True)
+    assert self.xgt.get_edge_frame('test').num_rows == 1
+    print(self.xgt.get_edge_frame('test').get_data())
