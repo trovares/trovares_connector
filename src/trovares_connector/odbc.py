@@ -352,8 +352,10 @@ class ODBCConnector(object):
                 batch_size=10000,
             )
             for batch in reader:
-                for _, item in batch.to_pydict().items():
-                    estimate += item[0]
+                for _, row in batch.to_pydict().items():
+                    for item in row:
+                        if isinstance(item, int):
+                            estimate += item
             return estimate
         try:
             for table, schema in xgt_schemas['tables'].items():
