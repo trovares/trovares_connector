@@ -25,6 +25,30 @@ from arrow_odbc import insert_into_table
 from .common import ProgressDisplay
 from .common import BasicArrowClientAuthHandler
 
+# Convert the pyarrow type to an xgt type.
+def _pyarrow_type_to_xgt_type(pyarrow_type):
+  if pa.types.is_boolean(pyarrow_type):
+    return xgt.BOOLEAN
+  elif pa.types.is_timestamp(pyarrow_type) or pa.types.is_date64(pyarrow_type):
+    return xgt.DATETIME
+  elif pa.types.is_date(pyarrow_type):
+    return xgt.DATE
+  elif pa.types.is_time(pyarrow_type):
+    return xgt.TIME
+  elif pa.types.is_integer(pyarrow_type):
+    return xgt.INT
+  elif pa.types.is_float32(pyarrow_type) or \
+       pa.types.is_float64(pyarrow_type) or \
+       pa.types.is_decimal(pyarrow_type):
+    return xgt.FLOAT
+  elif pa.types.is_string(pyarrow_type):
+    return xgt.TEXT
+  else:
+    raise XgtTypeError("Cannot convert pyarrow type " + str(pyarrow_type) + " to xGT type.")
+
+def _infer_xgt_schema_from_pyarrow_schema(pyarrow_schema):
+  return [[c.name, _pyarrow_type_to_xgt_type(c.type)] for c in pyarrow_schema]
+
 class SQLODBCDriver(object):
     def __init__(self, connection_string):
         """
@@ -42,19 +66,16 @@ class SQLODBCDriver(object):
         self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
 
-    def get_data_query(self, table, arrow_schema):
+    def _get_data_query(self, table, arrow_schema):
         return  self._data_query.format(table)
 
-    def get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
         )
-        val = next(reader, None)
-        if val == None:
-            raise ValueError("Table " + table + " contains no data. Can't determine schema.")
-        return pa.Table.from_batches([val])
+        return reader.schema
 
 class MongoODBCDriver(object):
     def __init__(self, connection_string, include_id=False):
@@ -79,25 +100,23 @@ class MongoODBCDriver(object):
         self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
         self._include_id = include_id
 
-    def get_data_query(self, table, arrow_schema):
+    def _get_data_query(self, table, arrow_schema):
         cols = ','.join([x.name for x in arrow_schema])
         return  self._data_query.format(cols, table)
 
-    def get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
         )
-        val = next(reader, None)
-        if val == None:
-            raise ValueError("Table " + table + " contains no data. Can't determine schema.")
-        table = pa.Table.from_batches([val])
+
+        schema = reader.schema
         if not self._include_id:
             # Remove the _id column.
-            table = table.drop(['_id'])
-            return table
-        return table
+            return pa.schema([field for field in schema if field.name != '_id'])
+
+        return schema
 
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
@@ -369,11 +388,11 @@ class ODBCConnector(object):
 
         with ProgressDisplay(estimate) as progress_bar:
             for table, schema in xgt_schemas['tables'].items():
-                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['vertices'].items():
-                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['edges'].items():
-                self.__copy_data(self._driver.get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
 
     def transfer_to_odbc(self, vertices = None, edges = None,
                          tables = None, namespace = None) -> None:
@@ -449,15 +468,16 @@ class ODBCConnector(object):
                 reader = self.__arrow_reader(frame)
                 batch_reader = reader.to_reader()
 
-                first_batch = batch_reader.read_next_batch()
-                schema = first_batch.schema
+                _, target_schema = self.__get_xgt_schema(table)
+                schema = reader.schema
+                final_schema = [xgt_field.with_name(database_field.name) for database_field, xgt_field in zip(target_schema, schema)]
+                final_schema = pa.schema(final_schema)
+                schema = final_schema
+                final_names = [database_field.name for database_field in target_schema]
                 def iter_record_batches():
-                    table = pa.Table.from_pandas(first_batch.to_pandas(date_as_object=True, timestamp_as_object=True)).to_batches()
-                    for batch in table:
-                        yield batch
-                        progress_bar.show_progress(batch.num_rows)
                     for batch in batch_reader:
-                        table = pa.Table.from_pandas(batch.to_pandas(date_as_object=True, timestamp_as_object=True)).to_batches()
+                        table = pa.Table.from_pandas(batch.to_pandas(date_as_object=True, timestamp_as_object=True))
+                        table = table.rename_columns(final_names).to_batches()
                         for batch in table:
                             yield batch
                             progress_bar.show_progress(batch.num_rows)
@@ -484,8 +504,8 @@ class ODBCConnector(object):
         writer.close()
 
     def __get_xgt_schema(self, table):
-        table = self._driver.get_record_batch_schema(table)
-        return (self._xgt_server.get_schema_from_data(table), table.schema)
+        schema = self._driver._get_record_batch_schema(table)
+        return (_infer_xgt_schema_from_pyarrow_schema(schema), schema)
 
     def __extract_xgt_table_schema(self, table, mapping):
         xgt_schema, arrow_schema = self.__get_xgt_schema(table)

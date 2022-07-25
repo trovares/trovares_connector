@@ -250,7 +250,6 @@ Limitations
 
 * Transferring null to a database from xGT is not supported.
 * When transferring to a database, the table must already be created.
-* Column names must match the table's column names when transferring to a database.
 * Transfer sizes/times are estimates and may not be available.
 
 API Details
