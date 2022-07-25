@@ -452,12 +452,12 @@ class ODBCConnector(object):
                 first_batch = batch_reader.read_next_batch()
                 schema = first_batch.schema
                 def iter_record_batches():
-                    table = pa.Table.from_pandas(first_batch.to_pandas()).to_batches()
+                    table = pa.Table.from_pandas(first_batch.to_pandas(date_as_object=True, timestamp_as_object=True)).to_batches()
                     for batch in table:
                         yield batch
                         progress_bar.show_progress(batch.num_rows)
                     for batch in batch_reader:
-                        table = pa.Table.from_pandas(batch.to_pandas()).to_batches()
+                        table = pa.Table.from_pandas(batch.to_pandas(date_as_object=True, timestamp_as_object=True)).to_batches()
                         for batch in table:
                             yield batch
                             progress_bar.show_progress(batch.num_rows)

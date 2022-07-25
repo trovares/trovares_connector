@@ -248,7 +248,7 @@ More detailed examples can be found in :ref:`jupyter` or on github:
 Limitations
 -----------
 
-* Transferring null and Datetime to a database from xGT is not supported.
+* Transferring null to a database from xGT is not supported.
 * When transferring to a database, the table must already be created.
 * Column names must match the table's column names when transferring to a database.
 * Transfer sizes/times are estimates and may not be available.

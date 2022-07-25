@@ -201,11 +201,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = ['test'])
@@ -220,11 +220,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = [('test', 'test1')])
@@ -239,11 +239,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = [('test', (0,))])
@@ -258,11 +258,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = [('test', 'test1', (0,))])
@@ -277,11 +277,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True)
@@ -296,11 +296,11 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor = self.odbc_driver.cursor()
     create_statement = """CREATE TABLE test (TestBool BOOL, TestInt INT, TestBigInt BIGINT, TestFloat FLOAT(24), TestDouble FLOAT(53),
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
-                       TestTime TIME, TestYear YEAR)"""
+                       TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null, Timestamp, and Datetime don't work.
+    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
-                   "'12:56:34', 1999)")
+                   "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables=[('test', 'test1', ('Vertex1', 'Vertex2', 1, 2))], easy_edges = True)
