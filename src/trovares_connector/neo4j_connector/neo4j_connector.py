@@ -340,12 +340,12 @@ class Neo4jConnector(object):
 
     @property
     def xgt_server(self):
-        """Retrieve the Trovares driver used to connect to the xGT server"""
+        """Retrieve the Trovares driver used to connect to the xGT server."""
         return self._xgt_server
 
     @property
     def neo4j_driver(self):
-        """Retrieve the Neo4j driver used to connect to the neo4j database"""
+        """Retrieve the Neo4j driver used to connect to the neo4j database."""
         return self._neo4j_driver
 
     @property
@@ -989,7 +989,7 @@ class Neo4jConnector(object):
         Returns
         -------
         str
-          Translated Cypher query
+          Translated Cypher query.
         """
         query_translator = QueryTranslator(self.get_xgt_schemas(),
                                            verbose = self.__verbose)

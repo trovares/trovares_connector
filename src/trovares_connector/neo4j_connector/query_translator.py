@@ -88,7 +88,7 @@ class QueryTranslator(object):
         Returns
         -------
         str
-          Translated Cypher query
+          Translated Cypher query.
         """
         lexer = CypherLexer(InputStream(query))
         stream = CommonTokenStream(lexer)
@@ -140,7 +140,7 @@ class QueryTranslator(object):
                     temp = source
                     source = target
                     target = temp
-                
+
                 if self._verbose:
                     print(f"----> Source: {source}")
                     print(f"----> Target: {target}")
@@ -156,7 +156,7 @@ class QueryTranslator(object):
                                 print(f"Use this variant: {variant}")
                             reltype_loc = relationship['rel_types'][frame_name].location
                             if reltype_loc['offset'] in self._rewrites:
-                                raise ValueError(f"Multiple rewrites at offset: {reltype_loc['offset']}")
+                                raise ValueError(f"Internal Error:  Multiple rewrites at the same offset ({reltype_loc['offset']}) is ambiguous")
                             self._rewrites[reltype_loc['offset']] = {
                                 'from':reltype_loc, 
                                 'to':variant['mapped_name']}
@@ -180,10 +180,10 @@ class QueryTranslator(object):
 class QueryElement(object):
     """
     Utility object to store an element of a query.
-    
+
     The original text is available as a property, and the location within
     the original query is captured.  The location includes the byte offset
-    into the query, the length of the element (in bytes), and the line 
+    into the query, the length of the element (in bytes), and the line
     number and column number of the start and the stop positions of the
     element.
     """

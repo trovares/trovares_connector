@@ -72,13 +72,13 @@ def run_query(query):
     print(f"xGT counted {job.get_data()[0][0]} answers")
 
 run_query("""
-MATCH (:TestNodeB)-[:REL01]->(:TestNodeC)
-RETURN count(*)
-""")
+    MATCH (:TestNodeB)-[:REL01]->(:TestNodeC)
+    RETURN count(*)
+    """)
 
 run_query("""
-MATCH (:TestNode)-[:REL01]->(:TestNodeC)
-RETURN count(*)
-""")
+    MATCH (:TestNode)-[:REL01]->(:TestNodeC)
+    RETURN count(*)
+    """)
 
 cleanup_neo4j_database(neo4j_driver)
