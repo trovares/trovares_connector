@@ -132,8 +132,18 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="../jupyter/odbc/cypher_with_sql.html">
+     Non-Graph analytics ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="../jupyter/odbc/hello_world.html">
      Hello World ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../jupyter/odbc/save_to_mysql.html">
+     Transfer or backup data to MySQL
     </a>
    </li>
    <li class="toctree-l2">
@@ -161,6 +171,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="trovares_connector.SQLODBCDriver.html">
      trovares_connector.SQLODBCDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="trovares_connector.MongoODBCDriver.html">
+     trovares_connector.MongoODBCDriver
     </a>
    </li>
   </ul>
@@ -406,6 +421,16 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-mongodb">
+     Connecting to MongoDB
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">
+     Transferring data from xGT to ODBC
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#additional-examples">
      Additional Examples
     </a>
@@ -479,6 +504,16 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#connecting-to-snowflake">
      Connecting to Snowflake
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-mongodb">
+     Connecting to MongoDB
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">
+     Transferring data from xGT to ODBC
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -556,7 +591,7 @@ The simplest way is to pass the key column as tuple with the table name.</p>
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
-<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">ODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,))])</span>
@@ -583,7 +618,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
-<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">ODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,)),</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))])</span>
@@ -608,7 +643,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
-<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">ODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))],</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -626,16 +661,62 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <section id="connecting-to-snowflake">
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this headline">#</a></h3>
 <p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">their ODBC driver</a>, connect like so:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Uid=test;Pwd=test;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Uid=test;Pwd=test;&quot;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
-<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">ODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_schema.my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p>This would transfer the table, <cite>my_table</cite>, in the <cite>my_schema</cite> schema, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
+</section>
+<section id="connecting-to-mongodb">
+<h3>Connecting to MongoDB<a class="headerlink" href="#connecting-to-mongodb" title="Permalink to this headline">#</a></h3>
+<p>This example uses MongoDB 5 with CData’s MongoDB ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">MongoODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=MongoDB;Database=test;Uid=test;Pwd=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">MongoODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_collection&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the collection, <cite>my_collection</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
+The driver provides an parameter, include_id, that by default is false.
+This parameter removes the _id field returned by the driver.
+If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.</p>
+</section>
+<section id="transferring-data-from-xgt-to-odbc">
+<h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Permalink to this headline">#</a></h3>
+<p>This example copies test_table from xGT to a test database.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;test_table&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To map to a specific xGT table type pass a tuple of (xGT frame, SQL table):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;xgt_table&#39;</span><span class="p">,</span> <span class="s1">&#39;sql_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>Parameters for transferring edges and vertices exist as well.
+Some limitations exist.
+See below for more details.</p>
 </section>
 <section id="additional-examples">
 <h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this headline">#</a></h3>
@@ -648,10 +729,10 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 </section>
 <section id="limitations">
 <h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">#</a></h2>
-<p>Doesn’t support the following:</p>
 <ul class="simple">
-<li><p>Transferring to the database from xGT.</p></li>
-<li><p>Transfer sizes/times are estimates.</p></li>
+<li><p>Transferring null to a database from xGT is not supported.</p></li>
+<li><p>When transferring to a database, the table must already be created.</p></li>
+<li><p>Transfer sizes/times are estimates and may not be available.</p></li>
 </ul>
 </section>
 <section id="api-details">
@@ -666,6 +747,9 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.SQLODBCDriver.html#trovares_connector.SQLODBCDriver" title="trovares_connector.SQLODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SQLODBCDriver</span></code></a>(connection_string)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver" title="trovares_connector.MongoODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MongoODBCDriver</span></code></a>(connection_string[, include_id])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>

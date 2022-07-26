@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Temporal Triangles ODBC &#8212; Trovares Connector</title>
+    <title>Transfer or backup data to MySQL &#8212; Trovares Connector</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -44,8 +44,8 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ODBC Connector" href="../../odbc/index.html" />
-    <link rel="prev" title="Transfer or backup data to MySQL" href="save_to_mysql.html" />
+    <link rel="next" title="Temporal Triangles ODBC" href="temporal_triangles.html" />
+    <link rel="prev" title="Hello World ODBC" href="hello_world.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -141,13 +141,13 @@
      Hello World ODBC
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="save_to_mysql.html">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      Transfer or backup data to MySQL
     </a>
    </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
+   <li class="toctree-l2">
+    <a class="reference internal" href="temporal_triangles.html">
      Temporal Triangles ODBC
     </a>
    </li>
@@ -293,7 +293,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/trovares/trovares_connector/issues/new?title=Issue%20on%20page%20%2Fjupyter/odbc/temporal_triangles.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/trovares/trovares_connector/issues/new?title=Issue%20on%20page%20%2Fjupyter/odbc/save_to_mysql.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -321,7 +321,7 @@ title="Open an issue"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../../_sources/jupyter/odbc/temporal_triangles.ipynb.txt"
+        <a href="../../_sources/jupyter/odbc/save_to_mysql.ipynb.txt"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -401,13 +401,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#transfer-data-to-xgt">
-   Transfer data to xGT
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#run-query-on-xgt">
-   Run query on xGT
+  <a class="reference internal nav-link" href="#transfer-data-to-mysql">
+   Transfer data to MySQL
   </a>
  </li>
 </ul>
@@ -419,7 +414,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Temporal Triangles ODBC</h1>
+                <h1>Transfer or backup data to MySQL</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -450,13 +445,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#transfer-data-to-xgt">
-   Transfer data to xGT
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#run-query-on-xgt">
-   Run query on xGT
+  <a class="reference internal nav-link" href="#transfer-data-to-mysql">
+   Transfer data to MySQL
   </a>
  </li>
 </ul>
@@ -469,9 +459,9 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="temporal-triangles-odbc">
-<h1>Temporal Triangles ODBC<a class="headerlink" href="#temporal-triangles-odbc" title="Permalink to this headline">#</a></h1>
-<p>This notebook walks through running the temporal triangles benchmark on xGT using MySQL.</p>
+  <section id="transfer-or-backup-data-to-mysql">
+<h1>Transfer or backup data to MySQL<a class="headerlink" href="#transfer-or-backup-data-to-mysql" title="Permalink to this headline">#</a></h1>
+<p>This notebook walks through transferring data from xGT to MySQL.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -479,6 +469,7 @@ title="Print to PDF"
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">pyodbc</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">os</span>
 </pre></div>
 </div>
 </div>
@@ -503,8 +494,8 @@ title="Print to PDF"
 <h2>Transfer the dataset locally<a class="headerlink" href="#transfer-the-dataset-locally" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_object</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://datasets.trovares.com/TT/tt.1M&#39;</span><span class="p">)</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;tt.1M&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">local_file</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_object</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://datasets.trovares.com/TT/tt.10M&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;tt.10M&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">local_file</span><span class="p">:</span>
     <span class="n">local_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_object</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -515,10 +506,20 @@ title="Print to PDF"
 <h2>Load the data into MySQL<a class="headerlink" href="#load-the-data-into-mysql" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP TABLE IF EXISTS Edges&quot;</span><span class="p">)</span>
-<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Edges (src BIGINT, trg BIGINT, timestamp BIGINT)&quot;</span><span class="p">)</span>
-<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;LOAD DATA LOCAL INFILE &#39;./tt.1M&#39; INTO TABLE Edges FIELDS TERMINATED BY &#39;,&#39; LINES TERMINATED BY &#39;</span><span class="se">\n</span><span class="s2">&#39;;&quot;</span><span class="p">)</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP TABLE IF EXISTS Events1&quot;</span><span class="p">)</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP TABLE IF EXISTS Events2&quot;</span><span class="p">)</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Events1 (src BIGINT, trg BIGINT, timestamp BIGINT)&quot;</span><span class="p">)</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Events2 (src BIGINT, trg BIGINT, timestamp BIGINT)&quot;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;LOAD DATA LOCAL INFILE &#39;./tt.10M&#39; INTO TABLE Events1 FIELDS TERMINATED BY &#39;,&#39; LINES TERMINATED BY &#39;</span><span class="se">\n</span><span class="s2">&#39;;&quot;</span><span class="p">)</span> 
 <span class="n">pyodbc_driver</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="n">t_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load time: </span><span class="si">{</span><span class="n">t_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Load time: 25.33
 </pre></div>
 </div>
 </div>
@@ -528,68 +529,40 @@ title="Print to PDF"
 <h2>Query to run<a class="headerlink" href="#query-to-run" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">threshold</span><span class="o">=</span><span class="mi">15</span>
-<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    MATCH (v1)-[e1:Edges]-&gt;(v2)</span>
-<span class="s2">              -[e2:Edges]-&gt;(v3)</span>
-<span class="s2">              -[e3:Edges]-&gt;(v1)</span>
-<span class="s2">    WHERE v1 &lt;&gt; v2 AND v1 &lt;&gt; v3 AND v2 &lt;&gt; v3</span>
-<span class="s2">      AND e1.timestamp &lt;= e2.timestamp</span>
-<span class="s2">      AND e2.timestamp &lt;= e3.timestamp</span>
-<span class="s2">      AND e3.timestamp - e1.timestamp &lt; </span><span class="si">{:d}</span><span class="s2"></span>
-<span class="s2">    RETURN v1.key as v1id,</span>
-<span class="s2">           e1.timestamp as e1_timestamp,</span>
-<span class="s2">           v2.key as v2id,</span>
-<span class="s2">           e2.timestamp as e2_timestamp,</span>
-<span class="s2">           v3.key as v3id,</span>
-<span class="s2">           e3.timestamp as e3_timestamp,</span>
-<span class="s2">           e3.timestamp - e1.timestamp as delta</span>
-<span class="s2">  &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cypher_query</span> <span class="o">=</span> <span class="s2">&quot;MATCH (row:Events) WHERE row.timestamp &lt; 1 return count(*)&quot;</span>
+<span class="n">sql_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT COUNT(*) FROM Events WHERE timestamp &lt; 1&quot;</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="transfer-data-to-xgt">
-<h2>Transfer data to xGT<a class="headerlink" href="#transfer-data-to-xgt" title="Permalink to this headline">#</a></h2>
+<section id="transfer-data-to-mysql">
+<h2>Transfer data to MySQL<a class="headerlink" href="#transfer-data-to-mysql" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">c</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Edges&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Vertex&#39;</span><span class="p">,</span> <span class="s1">&#39;Vertex&#39;</span><span class="p">,</span> <span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="s1">&#39;trg&#39;</span><span class="p">))],</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;xgtd://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/tt.10M&#39;</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">drop_frame</span><span class="p">(</span><span class="s1">&#39;Events2&#39;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">create_table_frame_from_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;Events2&#39;</span><span class="p">,</span>
+                                        <span class="n">schema</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="n">xgt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;trg&#39;</span><span class="p">,</span> <span class="n">xgt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="n">xgt</span><span class="o">.</span><span class="n">INT</span><span class="p">)])</span>
+<span class="n">t_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load xgt time: </span><span class="si">{</span><span class="n">t_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">c</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Events2&#39;</span><span class="p">])</span>
 <span class="n">t_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transfer to xgt time: </span><span class="si">{</span><span class="n">t_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Transferring: [############################################################] 1000000/1000000 in 0:00:00.8s (1306231.1/s, eta: 0:00:00.0s)     
-Transfer to xgt time: 0.85
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Load xgt time: 0.94
+Transferring: [############################################################] 10000000/10000000 in 0:00:33.3s (300334.1/s, eta: 0:00:00.0s)     
+Transfer to xgt time: 33.30
 </pre></div>
 </div>
 </div>
 </div>
-</section>
-<section id="run-query-on-xgt">
-<h2>Run query on xGT<a class="headerlink" href="#run-query-on-xgt" title="Permalink to this headline">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">xgt_server</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-<span class="n">q_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query to xgt time: </span><span class="si">{</span><span class="n">q_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total xgt time including transfer: </span><span class="si">{</span><span class="n">t_duration</span> <span class="o">+</span> <span class="n">q_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[26563, 7598, 51565, 7598, 15727, 7612, 14]]
-Query to xgt time: 0.57
-Total xgt time including transfer: 1.43
-</pre></div>
-</div>
-</div>
-</div>
+<p>Here we see the performance for transfer is comparable to loading from CSV in MySQL and that CSV loading is much faster in xGT compared to MySQL.</p>
 </section>
 </section>
 
@@ -601,17 +574,17 @@ Total xgt time including transfer: 1.43
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="save_to_mysql.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="hello_world.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Transfer or backup data to MySQL</p>
+            <p class="prev-next-title">Hello World ODBC</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="../../odbc/index.html" title="next page">
+    <a class='right-next' id="next-link" href="temporal_triangles.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">ODBC Connector</p>
+        <p class="prev-next-title">Temporal Triangles ODBC</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
