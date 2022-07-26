@@ -482,7 +482,7 @@ class ODBCConnector(object):
                             yield batch
                             progress_bar.show_progress(batch.num_rows)
 
-                final_reader = pa.RecordBatchReader.from_batches(schema, iter_record_batches())
+                final_reader = pa.ipc.RecordBatchReader.from_batches(schema, iter_record_batches())
                 insert_into_table(
                     connection_string=self._driver._connection_string,
                     chunk_size=10000,

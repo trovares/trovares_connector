@@ -194,8 +194,8 @@ class TestXgtODBCConnector(unittest.TestCase):
     c = self.conn
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE Node (id INT)")
-    with self.assertRaises(ValueError):
-        self.conn.transfer_to_xgt(tables = [('Node', (0,))])
+    self.conn.transfer_to_xgt(tables = [('Node', (0,))])
+    assert self.xgt.get_vertex_frame('Node').num_rows == 0
 
   def test_transfer_to_odbc(self):
     cursor = self.odbc_driver.cursor()
