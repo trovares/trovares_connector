@@ -24,8 +24,8 @@ Requirements
 
 * `Neo4j Python package <https://pypi.org/project/neo4j/>`_ >= 4.4.1
 * `xGT Python package <https://pypi.org/project/xgt/>`_ >= 1.10
-* `Pyarrow package <https://pypi.org/project/pyarrow/>`_ >= 7.00
-* `Trovares xGT <https://www.trovares.com>`_ >= 1.10
+* `Pyarrow package <https://pypi.org/project/pyarrow/>`_ >= 7.0.0
+* `Trovares xGT <https://www.trovares.com>`_ >= 1.10.0
 
 The Python packages can be installed through pip:
 
