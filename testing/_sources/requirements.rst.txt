@@ -22,10 +22,10 @@
 Requirements
 ============
 
-* `Neo4j Python package <https://pypi.org/project/neo4j/>`_
-* `xGT Python package <https://pypi.org/project/xgt/>`_
-* `Pyarrow package <https://pypi.org/project/pyarrow/>`_
-* `Trovares xGT <https://www.trovares.com>`_
+* `Neo4j Python package <https://pypi.org/project/neo4j/>`_ >= 4.4.1
+* `xGT Python package <https://pypi.org/project/xgt/>`_ >= 1.10
+* `Pyarrow package <https://pypi.org/project/pyarrow/>`_ >= 7.00
+* `Trovares xGT <https://www.trovares.com>`_ >= 1.10
 
 The Python packages can be installed through pip:
 
@@ -57,3 +57,10 @@ Optional
    At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
    This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 
+ODBC
+^^^^
+
+To use the optional ODBC connection features, the following packages are required:
+
+* `Arrow ODBC <https://pypi.org/project/arrow_odbc/>`_
+* `Pandas <https://pypi.org/project/pandas/>`_
