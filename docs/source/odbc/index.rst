@@ -52,7 +52,7 @@ This example copies test_table from the test database into test_table on xGT.
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = ODBCDriver(connection_string)
+   odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt(['test_table'])
