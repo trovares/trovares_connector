@@ -141,7 +141,7 @@
      "text": [
       "Load xgt time: 0.94\n",
       "Transferring: [############################################################] 10000000/10000000 in 0:00:33.3s (300334.1/s, eta: 0:00:00.0s)     \n",
-      "Transfer to xgt time: 33.30\n"
+      "Transfer to MySQL time: 33.30\n"
      ]
     }
    ],
@@ -156,7 +156,7 @@
     "t0 = time.time()\n",
     "c.transfer_to_odbc(tables=['Events2'])\n",
     "t_duration = time.time() - t0\n",
-    "print(f\"Transfer to xgt time: {t_duration:,.2f}\")"
+    "print(f\"Transfer to MySQL time: {t_duration:,.2f}\")"
    ]
   },
   {

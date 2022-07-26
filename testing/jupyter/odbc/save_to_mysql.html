@@ -550,14 +550,14 @@ title="Print to PDF"
 <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">c</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Events2&#39;</span><span class="p">])</span>
 <span class="n">t_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transfer to xgt time: </span><span class="si">{</span><span class="n">t_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transfer to MySQL time: </span><span class="si">{</span><span class="n">t_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Load xgt time: 0.94
 Transferring: [############################################################] 10000000/10000000 in 0:00:33.3s (300334.1/s, eta: 0:00:00.0s)     
-Transfer to xgt time: 33.30
+Transfer to MySQL time: 33.30
 </pre></div>
 </div>
 </div>
