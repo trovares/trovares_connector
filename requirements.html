@@ -21,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -40,12 +40,12 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Release Notes" href="RELEASE.html" />
-    <link rel="prev" title="trovares_connector.SQLODBCDriver" href="odbc/trovares_connector.SQLODBCDriver.html" />
+    <link rel="prev" title="trovares_connector.MongoODBCDriver" href="odbc/trovares_connector.MongoODBCDriver.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -132,8 +132,18 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/odbc/cypher_with_sql.html">
+     Non-Graph analytics ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="jupyter/odbc/hello_world.html">
      Hello World ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/odbc/save_to_mysql.html">
+     Transfer or backup data to MySQL
     </a>
    </li>
    <li class="toctree-l2">
@@ -161,6 +171,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="odbc/trovares_connector.SQLODBCDriver.html">
      trovares_connector.SQLODBCDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">
+     trovares_connector.MongoODBCDriver
     </a>
    </li>
   </ul>
@@ -369,6 +384,13 @@ title="Print to PDF"
   <a class="reference internal nav-link" href="#optional">
    Optional
   </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#odbc">
+     ODBC
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -393,6 +415,13 @@ title="Print to PDF"
   <a class="reference internal nav-link" href="#optional">
    Optional
   </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#odbc">
+     ODBC
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -407,10 +436,10 @@ title="Print to PDF"
   <section id="requirements">
 <span id="id1"></span><h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">#</a></h1>
 <ul class="simple">
-<li><p><a class="reference external" href="https://pypi.org/project/neo4j/">Neo4j Python package</a></p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/xgt/">xGT Python package</a></p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/pyarrow/">Pyarrow package</a></p></li>
-<li><p><a class="reference external" href="https://www.trovares.com">Trovares xGT</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/neo4j/">Neo4j Python package</a> &gt;= 4.4.1</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/xgt/">xGT Python package</a> &gt;= 1.10.0</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pyarrow/">Pyarrow package</a> &gt;= 7.0.0</p></li>
+<li><p><a class="reference external" href="https://www.trovares.com">Trovares xGT</a> &gt;= 1.10.0</p></li>
 </ul>
 <p>The Python packages can be installed through pip:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install xgt neo4j pyarrow
@@ -447,6 +476,14 @@ This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 </dl>
 </li>
 </ul>
+<section id="odbc">
+<h3>ODBC<a class="headerlink" href="#odbc" title="Permalink to this headline">#</a></h3>
+<p>To use the optional ODBC connection features, the following packages are required:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypi.org/project/arrow_odbc/">Arrow ODBC</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pandas/">Pandas</a></p></li>
+</ul>
+</section>
 </section>
 </section>
 
@@ -458,11 +495,11 @@ This can be selected via the driver parameter in the Trovares Neo4jDriver class.
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="odbc/trovares_connector.SQLODBCDriver.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="odbc/trovares_connector.MongoODBCDriver.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">trovares_connector.SQLODBCDriver</p>
+            <p class="prev-next-title">trovares_connector.MongoODBCDriver</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="RELEASE.html" title="next page">

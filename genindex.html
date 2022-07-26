@@ -20,7 +20,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -39,7 +39,7 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -129,8 +129,18 @@
     </a>
    </li>
    <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/odbc/cypher_with_sql.html">
+     Non-Graph analytics ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
     <a class="reference internal" href="jupyter/odbc/hello_world.html">
      Hello World ODBC
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="jupyter/odbc/save_to_mysql.html">
+     Transfer or backup data to MySQL
     </a>
    </li>
    <li class="toctree-l2">
@@ -158,6 +168,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="odbc/trovares_connector.SQLODBCDriver.html">
      trovares_connector.SQLODBCDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">
+     trovares_connector.MongoODBCDriver
     </a>
    </li>
   </ul>
@@ -326,6 +341,7 @@ title="Open an issue"
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
@@ -336,9 +352,11 @@ title="Open an issue"
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="trovares_connector.Neo4jConnector.html#id0">__init__() (trovares_connector.Neo4jConnector method)</a>, <a href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector.__init__">[1]</a>
+      <li><a href="odbc/trovares_connector.MongoODBCDriver.html#id0">__init__() (trovares_connector.MongoODBCDriver method)</a>, <a href="odbc/trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver.__init__">[1]</a>
 
       <ul>
+        <li><a href="trovares_connector.Neo4jConnector.html#id0">(trovares_connector.Neo4jConnector method)</a>, <a href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector.__init__">[1]</a>
+</li>
         <li><a href="trovares_connector.Neo4jDriver.html#id0">(trovares_connector.Neo4jDriver method)</a>, <a href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver.__init__">[1]</a>
 </li>
         <li><a href="odbc/trovares_connector.ODBCConnector.html#id0">(trovares_connector.ODBCConnector method)</a>, <a href="odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.__init__">[1]</a>
@@ -386,6 +404,14 @@ title="Open an issue"
         <li><a href="odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.get_xgt_schemas">(trovares_connector.ODBCConnector method)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="odbc/trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver">MongoODBCDriver (class in trovares_connector)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -443,6 +469,8 @@ title="Open an issue"
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector.transfer_to_neo4j">transfer_to_neo4j() (trovares_connector.Neo4jConnector method)</a>
+</li>
+      <li><a href="odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_odbc">transfer_to_odbc() (trovares_connector.ODBCConnector method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
