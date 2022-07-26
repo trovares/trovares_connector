@@ -25,8 +25,10 @@ __ALL__ = [
 
 from .trovares_connector import Neo4jConnector
 from .trovares_connector import Neo4jDriver
+
 try:
     from .odbc import ODBCConnector
     from .odbc import SQLODBCDriver
+    from .odbc import MongoODBCDriver
 except ImportError:
     pass

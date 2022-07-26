@@ -25,6 +25,30 @@ from arrow_odbc import insert_into_table
 from .common import ProgressDisplay
 from .common import BasicArrowClientAuthHandler
 
+# Convert the pyarrow type to an xgt type.
+def _pyarrow_type_to_xgt_type(pyarrow_type):
+  if pa.types.is_boolean(pyarrow_type):
+    return xgt.BOOLEAN
+  elif pa.types.is_timestamp(pyarrow_type) or pa.types.is_date64(pyarrow_type):
+    return xgt.DATETIME
+  elif pa.types.is_date(pyarrow_type):
+    return xgt.DATE
+  elif pa.types.is_time(pyarrow_type):
+    return xgt.TIME
+  elif pa.types.is_integer(pyarrow_type):
+    return xgt.INT
+  elif pa.types.is_float32(pyarrow_type) or \
+       pa.types.is_float64(pyarrow_type) or \
+       pa.types.is_decimal(pyarrow_type):
+    return xgt.FLOAT
+  elif pa.types.is_string(pyarrow_type):
+    return xgt.TEXT
+  else:
+    raise XgtTypeError("Cannot convert pyarrow type " + str(pyarrow_type) + " to xGT type.")
+
+def _infer_xgt_schema_from_pyarrow_schema(pyarrow_schema):
+  return [[c.name, _pyarrow_type_to_xgt_type(c.type)] for c in pyarrow_schema]
+
 class SQLODBCDriver(object):
     def __init__(self, connection_string):
         """
@@ -41,6 +65,58 @@ class SQLODBCDriver(object):
         self._schema_query = "SELECT * FROM {0} LIMIT 1"
         self._data_query = "SELECT * FROM {0}"
         self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
+
+    def _get_data_query(self, table, arrow_schema):
+        return  self._data_query.format(table)
+
+    def _get_record_batch_schema(self, table):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+        return reader.schema
+
+class MongoODBCDriver(object):
+    def __init__(self, connection_string, include_id=False):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to the ODBC applications.
+            Example:
+            'DSB=MongoDB;Database=test;Uid=test;Pwd=foo;'
+        include_id : boolean
+            Include the MongoDB id field when transferring from MongoDB.
+            If the id field is included, writing data back to the database will update the columns
+            instead of inserting new rows.
+            By default false.
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT * FROM {0} LIMIT 1"
+        self._data_query = "SELECT {0} FROM {1}"
+        self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
+        self._include_id = include_id
+
+    def _get_data_query(self, table, arrow_schema):
+        cols = ','.join([x.name for x in arrow_schema])
+        return  self._data_query.format(cols, table)
+
+    def _get_record_batch_schema(self, table):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+
+        schema = reader.schema
+        if not self._include_id:
+            # Remove the _id column.
+            return pa.schema([field for field in schema if field.name != '_id'])
+
+        return schema
 
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
@@ -295,8 +371,10 @@ class ODBCConnector(object):
                 batch_size=10000,
             )
             for batch in reader:
-                for _, item in batch.to_pydict().items():
-                    estimate += item[0]
+                for _, row in batch.to_pydict().items():
+                    for item in row:
+                        if isinstance(item, int):
+                            estimate += item
             return estimate
         try:
             for table, schema in xgt_schemas['tables'].items():
@@ -310,11 +388,107 @@ class ODBCConnector(object):
 
         with ProgressDisplay(estimate) as progress_bar:
             for table, schema in xgt_schemas['tables'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['vertices'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
             for table, schema in xgt_schemas['edges'].items():
-                self.__copy_data(self._driver._data_query.format(table), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+
+    def transfer_to_odbc(self, vertices = None, edges = None,
+                         tables = None, namespace = None) -> None:
+        """
+        Copies data from Trovares xGT to an ODBC application.
+
+        Parameters
+        ----------
+        vertices : iterable
+            List of requested vertex frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        edges : iterable
+            List of requested edge frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        tables : iterable
+            List of requested table frame names.
+            May be a tuple specifying: (xgt_frame_name, database_table_name).
+        namespace : str
+            Namespace for the selected frames.
+            If none will use the default namespace.
+
+        Returns
+        -------
+            None
+        """
+        xgt_server = self._xgt_server
+        if namespace == None:
+            namespace = self._default_namespace
+        if vertices == None and edges == None and tables == None:
+            vertices = [(frame.name, frame.name) for frame in xgt_server.get_vertex_frames(namespace=namespace)]
+            edges = [(frame.name, frame.name) for frame in xgt_server.get_edge_frames(namespace=namespace)]
+            tables = [(frame.name, frame.name) for frame in xgt_server.get_table_frames(namespace=namespace)]
+            namespace = None
+        if vertices == None:
+            vertices = []
+        if edges == None:
+            edges = []
+        if tables == None:
+            tables = []
+
+        final_vertices = []
+        final_edges = []
+        final_tables = []
+
+        for vertex in vertices:
+            if isinstance(vertex, str):
+                final_vertices.append((vertex, vertex))
+            else:
+                final_vertices.append(vertex)
+        for edge in edges:
+            if isinstance(edge, str):
+                final_edges.append((edge, edge))
+            else:
+                final_edges.append(edge)
+        for table in tables:
+            if isinstance(table, str):
+                final_tables.append((table, table))
+            else:
+                final_tables.append(table)
+
+        estimate = 0
+
+        for vertex in final_vertices:
+            estimate += xgt_server.get_vertex_frame(vertex[0]).num_rows
+        for edge in final_edges:
+            estimate += xgt_server.get_edge_frame(edge[0]).num_rows
+        for table in final_tables:
+            estimate += xgt_server.get_table_frame(table[0]).num_rows
+
+        with ProgressDisplay(estimate) as progress_bar:
+            for table in final_vertices + final_edges + final_tables:
+                frame, table = table
+                reader = self.__arrow_reader(frame)
+                batch_reader = reader.to_reader()
+
+                _, target_schema = self.__get_xgt_schema(table)
+                schema = reader.schema
+                final_schema = [xgt_field.with_name(database_field.name) for database_field, xgt_field in zip(target_schema, schema)]
+                final_schema = pa.schema(final_schema)
+                schema = final_schema
+                final_names = [database_field.name for database_field in target_schema]
+                def iter_record_batches():
+                    for batch in batch_reader:
+                        table = pa.Table.from_pandas(batch.to_pandas(date_as_object=True, timestamp_as_object=True))
+                        table = table.rename_columns(final_names).to_batches()
+                        for batch in table:
+                            yield batch
+                            progress_bar.show_progress(batch.num_rows)
+
+                final_reader = pa.ipc.RecordBatchReader.from_batches(schema, iter_record_batches())
+                insert_into_table(
+                    connection_string=self._driver._connection_string,
+                    chunk_size=10000,
+                    table=table,
+                    reader=final_reader,
+                )
 
     def __copy_data(self, query_for_extract, frame, schema, progress_bar):
         reader = read_arrow_batches_from_odbc(
@@ -330,15 +504,8 @@ class ODBCConnector(object):
         writer.close()
 
     def __get_xgt_schema(self, table):
-        reader = read_arrow_batches_from_odbc(
-            query=self._driver._schema_query.format(table),
-            connection_string=self._driver._connection_string,
-            batch_size=1,
-        )
-        val = next(reader, None)
-        if val != None:
-            return (self._xgt_server.get_schema_from_data(pa.Table.from_batches([val])), val.schema)
-        raise ValueError("Table " + table + " contains no data. Can't determine schema.")
+        schema = self._driver._get_record_batch_schema(table)
+        return (_infer_xgt_schema_from_pyarrow_schema(schema), schema)
 
     def __extract_xgt_table_schema(self, table, mapping):
         xgt_schema, arrow_schema = self.__get_xgt_schema(table)

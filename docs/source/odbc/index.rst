@@ -83,7 +83,7 @@ The simplest way is to pass the key column as tuple with the table name.
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = ODBCDriver(connection_string)
+   odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('Person', ('ID',))])
@@ -117,7 +117,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = ODBCDriver(connection_string)
+   odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('Person', ('ID',)), ('Friend', ('Person', 'Person', 'src_key', 'trg_key'))])
@@ -150,7 +150,7 @@ This example will create the corresponding vertex frame for the source and targe
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = ODBCDriver(connection_string)
+   odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('Friend', ('Person', 'Person', 'src_key', 'trg_key'))], easy_edges=True)
@@ -173,15 +173,69 @@ After installing `their ODBC driver <https://docs.snowflake.com/en/user-guide/od
 
 .. code-block:: python
 
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
    connection_string="DSN=snowflake;Database=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = ODBCDriver(connection_string)
+   odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('my_schema.my_table', 'test_table')])
 
 This would transfer the table, `my_table`, in the `my_schema` schema, under the `test` database to the xGT table named `test_table`.
+
+Connecting to MongoDB
+^^^^^^^^^^^^^^^^^^^^^
+
+This example uses MongoDB 5 with CData's MongoDB ODBC driver.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, MongoODBCDriver
+
+   connection_string="DSN=MongoDB;Database=test;Uid=test;Pwd=test;"
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = MongoODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_collection', 'test_table')])
+
+This would transfer the collection, `my_collection`, under the `test` database to the xGT table named `test_table`.
+The driver provides an parameter, include_id, that by default is false.
+This parameter removes the _id field returned by the driver.
+If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.
+
+Transferring data from xGT to ODBC
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example copies test_table from xGT to a test database.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
+   connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = SQLODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_odbc(tables=['test_table'])
+
+To map to a specific xGT table type pass a tuple of (xGT frame, SQL table):
+
+.. code-block:: python
+
+   conn.transfer_to_odbc(tables=[('xgt_table', 'sql_table')])
+
+Parameters for transferring edges and vertices exist as well.
+Some limitations exist.
+See below for more details.
 
 Additional Examples
 ^^^^^^^^^^^^^^^^^^^
@@ -194,10 +248,9 @@ More detailed examples can be found in :ref:`jupyter` or on github:
 Limitations
 -----------
 
-Doesn't support the following:
-
-* Transferring to the database from xGT.
-* Transfer sizes/times are estimates.
+* Transferring null to a database from xGT is not supported.
+* When transferring to a database, the table must already be created.
+* Transfer sizes/times are estimates and may not be available.
 
 API Details
 -----------
@@ -209,3 +262,4 @@ API Details
 
   ODBCConnector
   SQLODBCDriver
+  MongoODBCDriver
