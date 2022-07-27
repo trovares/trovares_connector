@@ -1,11 +1,27 @@
 Release Notes
 =============
 
+1.4.0 (07-26-2022)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added support for transferring data from xGT to applications that support ODBC.
+  - Add MongoDB driver for improved MongoDB support.
+
+Changed
+^^^^^^^
+  - Can now transfer tables/databases via ODBC without data.
+
+Fixed
+^^^^^
+  - Fixed tables not dropping automatically on transfer for ODBC.
+
 1.3.1 (07-11-2022)
 ------------------
 Fixed
 ^^^^^
-  - Fixed odbc import issue if odbc not installed.
+  - Fixed odbc import issue if ODBC not installed.
 
 1.3.0 (07-08-2022)
 ------------------

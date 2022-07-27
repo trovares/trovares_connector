@@ -28,5 +28,6 @@ from .neo4j_connector import Neo4jConnector, Neo4jDriver
 try:
     from .odbc import ODBCConnector
     from .odbc import SQLODBCDriver
+    from .odbc import MongoODBCDriver
 except ImportError:
     pass
