@@ -1,6 +1,7 @@
+#/usr/bin/env bash
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2018-2022 Trovares Inc.
+#  Copyright 2022 Trovares Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,18 +17,22 @@
 #
 #===----------------------------------------------------------------------===#
 
-__ALL__ = [
-  'Neo4jConnector',
-  'Neo4jDriver',
-  'ODBCConnector',
-  'SQLODBCDriver',
-]
+set -euo pipefail
+scriptdir=$(cd $(dirname $0) && pwd)
 
-from .neo4j_connector import Neo4jConnector, Neo4jDriver
+# go to repo root
+cd ${scriptdir}/..
 
-try:
-    from .odbc import ODBCConnector
-    from .odbc import SQLODBCDriver
-    from .odbc import MongoODBCDriver
-except ImportError:
-    pass
+target=src/trovares_connector/neo4j_connector/frontend
+
+curl -o antlr-4.jar https://www.antlr.org/download/antlr-4.10.1-complete.jar
+
+rm -rf ${target}
+cp tools/Cypher/Cypher.g4 .
+java -Xmx500M -cp "antlr-4.jar" org.antlr.v4.Tool -o ${target} \
+  -Dlanguage=Python3 -visitor Cypher.g4
+rm -rf Cypher.g4
+touch ${targt}/__init__.py
+
+# clean up
+rm -f antlr-4.jar

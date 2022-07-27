@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2018-2022 Trovares Inc.
+#  Copyright 2022 Trovares Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -19,15 +19,7 @@
 __ALL__ = [
   'Neo4jConnector',
   'Neo4jDriver',
-  'ODBCConnector',
-  'SQLODBCDriver',
 ]
 
-from .neo4j_connector import Neo4jConnector, Neo4jDriver
-
-try:
-    from .odbc import ODBCConnector
-    from .odbc import SQLODBCDriver
-    from .odbc import MongoODBCDriver
-except ImportError:
-    pass
+from .neo4j_connector import Neo4jConnector
+from .neo4j_connector import Neo4jDriver

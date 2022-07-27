@@ -26,8 +26,10 @@ import xgt
 import os
 import time
 from enum import Enum
-from .common import ProgressDisplay
-from .common import BasicArrowClientAuthHandler
+from ..common import ProgressDisplay
+from ..common import BasicArrowClientAuthHandler
+
+from .query_translator import QueryTranslator
 
 class Neo4jDriver(object):
     def __init__(self, host = 'localhost',
@@ -335,6 +337,16 @@ class Neo4jConnector(object):
         result += f"Neo4j Schema nodes: {self.neo4j_nodes}\n\n"
         result += f"Neo4j Schema edges: {self.neo4j_edges}\n\n"
         return result
+
+    @property
+    def xgt_server(self):
+        """Retrieve the Trovares driver used to connect to the xGT server."""
+        return self._xgt_server
+
+    @property
+    def neo4j_driver(self):
+        """Retrieve the Neo4j driver used to connect to the neo4j database."""
+        return self._neo4j_driver
 
     @property
     def neo4j_relationship_types(self) -> list():
@@ -953,6 +965,37 @@ class Neo4jConnector(object):
                             tx.close()
                         except StopIteration:
                             break
+
+    def translate_query(self, query:str) -> str:
+        """
+        Translate a Cypher query to be ready to run in Trovares xGT.
+
+        It is sometimes necessary to make alterations to naming of graph components
+        as part of the automatic graph schema creation from a Neo4j database to 
+        hold data in a Trovares xGT server.  One example of this is when a
+        relationship type consists of some edges from one source node label and
+        other edges from a different source node label.
+
+        Given a Cypher query that formulated to run against a Neo4j database, there
+        may be some changes required in order to run that same query against a
+        Trovares xGT server holding a graph schema that has been auto-generated.
+
+        Parameters
+        ----------
+        query : str
+          A Cypher query that can be run against the Neo4j database that is
+          part of this connector instance.
+
+        Returns
+        -------
+        str
+          Translated Cypher query.
+        """
+        query_translator = QueryTranslator(self.get_xgt_schemas(),
+                                           verbose = self.__verbose)
+        if self.__verbose:
+            print("Built query translator instance")
+        return query_translator.translate(query)
 
     def __neo4j_check_for_apoc(self):
         try:
