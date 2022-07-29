@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+1.5.1 (07-29-2022)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added null support when writing to ODBC applications.
+
 1.5.0 (07-29-2022)
 ------------------
 
