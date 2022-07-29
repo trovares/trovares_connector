@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+1.5.0 (07-29-2022)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added query translator for Neo4j connector to better support running queries on data with multiple labels.
+
 1.4.0 (07-26-2022)
 ------------------
 
