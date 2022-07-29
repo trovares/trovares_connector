@@ -5,4 +5,4 @@ myst-nb
 pyarrow
 neo4j
 xgt
-arrow_odbc
+arrow_odbc==0.2.0

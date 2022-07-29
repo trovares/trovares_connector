@@ -25,6 +25,8 @@ on:
       - 'src/**'
       - 'docs/**'
       - 'setup.cfg'
+      - 'README.md'
+      - 'RELEASE.rst'
   workflow_dispatch:
 
 jobs:
