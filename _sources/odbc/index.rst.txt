@@ -248,7 +248,6 @@ More detailed examples can be found in :ref:`jupyter` or on github:
 Limitations
 -----------
 
-* Transferring null to a database from xGT is not supported.
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
 
