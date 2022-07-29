@@ -87,7 +87,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
    conn.transfer_to_xgt(vertices=conn.neo4j_node_labels,
                         edges=conn.neo4j_relationship_types)
 
-Similarly if no vertices or edges are provided, the transfer will use all them.
+Similarly if no vertices or edges are provided, the transfer will use all of them.
 
 .. code-block:: python
 
@@ -256,6 +256,13 @@ Would get converted to the following when transferring to xGT:
 
   (:A)-[:A_PART_OF_C]->(:C), (:B)-[:B_PART_OF_C]->(:C)
 
+Translating Cypher queries
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Because of the translation of names from Relationship Types in Neo4j to Edge Frame names in xGT, Cypher queries that work in Neo4j may not work in xGT.
+To aid in translating Cypher from the Neo4j version to the inferred graph schema in xGT, there is a `query_translate` method in the `Neo4jConnector` class (see :ref:`API_details`).
+
+
 Additional Topics
 -----------------
 
@@ -270,6 +277,8 @@ The following topics provide additional material.
   odbc/index.rst
   requirements.rst
   RELEASE.rst
+
+.. _API_details:
 
 API Details
 -----------

@@ -152,32 +152,10 @@
    </li>
   </ul>
  </li>
- <li class="toctree-l1 has-children">
+ <li class="toctree-l1">
   <a class="reference internal" href="odbc/index.html">
    ODBC Connector
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="odbc/trovares_connector.ODBCConnector.html">
-     trovares_connector.ODBCConnector
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="odbc/trovares_connector.SQLODBCDriver.html">
-     trovares_connector.SQLODBCDriver
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">
-     trovares_connector.MongoODBCDriver
-    </a>
-   </li>
-  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="requirements.html">
@@ -187,23 +165,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="RELEASE.html">
    Release Notes
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Python API
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="trovares_connector.Neo4jConnector.html">
-   trovares_connector.Neo4jConnector
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="trovares_connector.Neo4jDriver.html">
-   trovares_connector.Neo4jDriver
   </a>
  </li>
 </ul>
@@ -436,6 +397,11 @@ title="Print to PDF"
      Single relationship with multiple node conversion
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#translating-cypher-queries">
+     Translating Cypher queries
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -524,6 +490,11 @@ title="Print to PDF"
      Single relationship with multiple node conversion
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#translating-cypher-queries">
+     Translating Cypher queries
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -594,7 +565,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
                      <span class="n">edges</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">neo4j_relationship_types</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Similarly if no vertices or edges are provided, the transfer will use all them.</p>
+<p>Similarly if no vertices or edges are provided, the transfer will use all of them.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -734,6 +705,11 @@ This only occurs for these cases.</p>
 </pre></div>
 </div>
 </section>
+<section id="translating-cypher-queries">
+<h3>Translating Cypher queries<a class="headerlink" href="#translating-cypher-queries" title="Permalink to this headline">#</a></h3>
+<p>Because of the translation of names from Relationship Types in Neo4j to Edge Frame names in xGT, Cypher queries that work in Neo4j may not work in xGT.
+To aid in translating Cypher from the Neo4j version to the inferred graph schema in xGT, there is a <cite>query_translate</cite> method in the <cite>Neo4jConnector</cite> class (see <a class="reference internal" href="#api-details"><span class="std std-ref">API Details</span></a>).</p>
+</section>
 </section>
 <section id="additional-topics">
 <h2>Additional Topics<a class="headerlink" href="#additional-topics" title="Permalink to this headline">#</a></h2>
@@ -780,19 +756,13 @@ This only occurs for these cases.</p>
 </div>
 </section>
 <section id="api-details">
-<h2>API Details<a class="headerlink" href="#api-details" title="Permalink to this headline">#</a></h2>
+<span id="id1"></span><h2>API Details<a class="headerlink" href="#api-details" title="Permalink to this headline">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver" title="trovares_connector.Neo4jDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jDriver</span></code></a>([host, bolt_port, http_port, ...])</p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 </section>
