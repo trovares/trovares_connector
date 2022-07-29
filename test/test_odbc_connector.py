@@ -206,6 +206,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
+    cursor.execute("INSERT INTO test VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)")
     self.odbc_driver.commit()
 
     self.conn.transfer_to_xgt(tables = ['test'])
@@ -213,7 +214,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor.execute(create_statement)
     self.conn.transfer_to_odbc(tables = ['test'])
     self.conn.transfer_to_xgt(tables = ['test'])
-    assert self.xgt.get_table_frame('test').num_rows == 1
+    assert self.xgt.get_table_frame('test').num_rows == 2
     print(self.xgt.get_table_frame('test').get_data())
 
   def test_transfer_to_odbc_rename(self):

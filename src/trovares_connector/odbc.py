@@ -476,7 +476,7 @@ class ODBCConnector(object):
                 final_names = [database_field.name for database_field in target_schema]
                 def iter_record_batches():
                     for batch in batch_reader:
-                        table = pa.Table.from_pandas(batch.to_pandas(date_as_object=True, timestamp_as_object=True))
+                        table = pa.Table.from_pandas(batch.to_pandas(integer_object_nulls=True, date_as_object=True, timestamp_as_object=True))
                         table = table.rename_columns(final_names).to_batches()
                         for batch in table:
                             yield batch
