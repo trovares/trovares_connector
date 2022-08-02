@@ -6,3 +6,4 @@ pyarrow
 neo4j
 xgt
 arrow_odbc==0.2.0
+antlr4-python3-runtime
