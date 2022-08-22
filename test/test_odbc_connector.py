@@ -203,7 +203,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     cursor.execute("INSERT INTO test VALUES (NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)")
@@ -223,7 +222,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
@@ -242,7 +240,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
@@ -261,7 +258,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
@@ -280,7 +276,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()
@@ -299,7 +294,6 @@ class TestXgtODBCConnector(unittest.TestCase):
                        TestFixedString char(5), TestString varchar(255), TestDecimal DECIMAL(10, 6), TestDate DATE,
                        TestDateTime DATETIME, TestTimestamp TIMESTAMP NULL, TestTime TIME, TestYear YEAR)"""
     cursor.execute(create_statement)
-    # Null doesn't work.
     cursor.execute("INSERT INTO test VALUES (True, 32, 5000, 1.7, 1.98, 'vdxs', 'String', 1.78976, '1989-05-06',"
                    "'1989-05-06 12:56:34', '1989-05-06 12:56:34', '12:56:34', 1999)")
     self.odbc_driver.commit()

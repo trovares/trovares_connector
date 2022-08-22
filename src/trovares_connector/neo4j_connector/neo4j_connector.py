@@ -1317,16 +1317,24 @@ class Neo4jConnector(object):
         raise TypeError(f'The "{prop_type}" Neo4j type is not yet supported')
 
     def __arrow_writer(self, frame_name, schema):
-        arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicArrowClientAuthHandler())
+        try:
+            arrow_conn = self._xgt_server.arrow_conn
+        except AttributeError:
+            # Using xgt 1.10 without arrow_conn
+            arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
+            arrow_conn.authenticate(BasicArrowClientAuthHandler())
         writer, _ = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
         return writer
 
     def __arrow_reader(self, frame_name):
-        arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicArrowClientAuthHandler())
+        try:
+            arrow_conn = self._xgt_server.arrow_conn
+        except AttributeError:
+            # Using xgt 1.10 without arrow_conn
+            arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
+            arrow_conn.authenticate(BasicArrowClientAuthHandler())
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, cypher_for_extract, frame, neo4j_schema, progress_bar):

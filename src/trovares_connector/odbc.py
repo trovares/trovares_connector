@@ -23,7 +23,6 @@ import pyarrow.flight as pf
 from arrow_odbc import read_arrow_batches_from_odbc
 from arrow_odbc import insert_into_table
 from .common import ProgressDisplay
-from .common import BasicArrowClientAuthHandler
 
 # Convert the pyarrow type to an xgt type.
 def _pyarrow_type_to_xgt_type(pyarrow_type):
@@ -135,16 +134,14 @@ class ODBCConnector(object):
         self._driver = odbc_driver
 
     def __arrow_writer(self, frame_name, schema):
-        arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicArrowClientAuthHandler())
+        arrow_conn = self._xgt_server.arrow_conn
         writer, _ = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
             schema)
         return writer
 
     def __arrow_reader(self, frame_name):
-        arrow_conn = pf.FlightClient((self._xgt_server.host, self._xgt_server.port))
-        arrow_conn.authenticate(BasicArrowClientAuthHandler())
+        arrow_conn = self._xgt_server.arrow_conn
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def get_xgt_schemas(self, tables = None):
