@@ -359,7 +359,6 @@ title="Open an issue"
 <span class="kn">from</span> <span class="nn">arrow_odbc</span> <span class="kn">import</span> <span class="n">read_arrow_batches_from_odbc</span>
 <span class="kn">from</span> <span class="nn">arrow_odbc</span> <span class="kn">import</span> <span class="n">insert_into_table</span>
 <span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">ProgressDisplay</span>
-<span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">BasicArrowClientAuthHandler</span>
 
 <span class="c1"># Convert the pyarrow type to an xgt type.</span>
 <span class="k">def</span> <span class="nf">_pyarrow_type_to_xgt_type</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
@@ -471,16 +470,14 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">odbc_driver</span></div>
 
     <span class="k">def</span> <span class="nf">__arrow_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
-        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">FlightClient</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
-        <span class="n">arrow_conn</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">BasicArrowClientAuthHandler</span><span class="p">())</span>
+        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
         <span class="n">writer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_put</span><span class="p">(</span>
             <span class="n">pf</span><span class="o">.</span><span class="n">FlightDescriptor</span><span class="o">.</span><span class="n">for_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">),</span>
             <span class="n">schema</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">writer</span>
 
     <span class="k">def</span> <span class="nf">__arrow_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">):</span>
-        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">FlightClient</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
-        <span class="n">arrow_conn</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">BasicArrowClientAuthHandler</span><span class="p">())</span>
+        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
         <span class="k">return</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_get</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">Ticket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">frame_name</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ODBCConnector.get_xgt_schemas"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.get_xgt_schemas">[docs]</a>    <span class="k">def</span> <span class="nf">get_xgt_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
