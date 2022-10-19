@@ -61,9 +61,9 @@ class SQLODBCDriver(object):
             'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM {0} LIMIT 1"
-        self._data_query = "SELECT * FROM {0}"
-        self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
+        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
+        self._data_query = "SELECT * FROM {0};"
+        self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
 
     def _get_data_query(self, table, arrow_schema):
         return  self._data_query.format(table)
@@ -84,7 +84,7 @@ class MongoODBCDriver(object):
         Parameters
         ----------
         connection_string : str
-            Standard ODBC connection string used for connecting to the ODBC applications.
+            Standard ODBC connection string used for connecting to MongoDB.
             Example:
             'DSB=MongoDB;Database=test;Uid=test;Pwd=foo;'
         include_id : boolean
@@ -94,9 +94,9 @@ class MongoODBCDriver(object):
             By default false.
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM {0} LIMIT 1"
-        self._data_query = "SELECT {0} FROM {1}"
-        self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'"
+        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
+        self._data_query = "SELECT {0} FROM {1};"
+        self._estimate_query = "SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
         self._include_id = include_id
 
     def _get_data_query(self, table, arrow_schema):
@@ -116,6 +116,36 @@ class MongoODBCDriver(object):
             return pa.schema([field for field in schema if field.name != '_id'])
 
         return schema
+
+class OracleODBCDriver(object):
+    def __init__(self, connection_string):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to Oracle.
+            Example:
+            'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT * FROM \"{0}\" WHERE ROWNUM <= 1"
+        self._data_query = "SELECT * FROM \"{0}\""
+        self._estimate_query="SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = '{0}'"
+
+    def _get_data_query(self, table, arrow_schema):
+        return  self._data_query.format(table)
+
+    def _get_record_batch_schema(self, table):
+        print(self._schema_query.format(table))
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+        print(reader.schema)
+        return reader.schema
 
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
@@ -415,6 +445,8 @@ class ODBCConnector(object):
         -------
             None
         """
+        if isinstance(self._driver, OracleODBCDriver):
+            raise XgtNotImplementedError("Oracle not supported for transferring to.")
         xgt_server = self._xgt_server
         if namespace == None:
             namespace = self._default_namespace
