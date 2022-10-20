@@ -38,13 +38,12 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     # Create a connection to Trovares xGT
     cls.xgt = xgt.Connection()
     cls.xgt.set_default_namespace('test')
-    cls.neo4j_driver, cls.conn, cls.conn_arrow = cls._setup_connector(cls.driver)
+    cls.neo4j_driver, cls.conn = cls._setup_connector(cls.driver)
     return
 
   @classmethod
   def teardown_class(cls):
     del cls.conn
-    del cls.conn_arrow
     cls.xgt.drop_namespace('test', force_drop = True)
     del cls.xgt
 
@@ -55,13 +54,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
       else:
         driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
-      arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
       conn = Neo4jConnector(cls.xgt, driver)
-      conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
       # Validate the db can run queries.
       with conn._neo4j_driver.bolt.session() as session:
         session.run("call db.info()")
-      return (conn._neo4j_driver, conn, conn_arrow)
+      return (conn._neo4j_driver, conn)
     except (neo4j.exceptions.ServiceUnavailable):
       print(f"Neo4j Unavailable, retries = {retries}")
       if retries > 0:
@@ -71,10 +68,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
     else:
         driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
-    arrow_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver="neo4j-arrow")
     conn = Neo4jConnector(cls.xgt, driver)
-    conn_arrow = Neo4jConnector(cls.xgt, arrow_driver)
-    return (conn._neo4j_driver, conn, conn_arrow)
+    return (conn._neo4j_driver, conn)
 
   def setup_method(self, method):
     self._erase_neo4j_database()
@@ -385,20 +380,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     assert edge_frame.num_rows == 3
     self.xgt.drop_frame("Relationship")
 
-  def test_transfer_node_working_types_arrow(self):
-    self._populate_node_working_types_arrow()
-    c = self.conn_arrow
-    xgt_schema = c.get_xgt_schemas(vertices=['Node'])
-    c.create_xgt_schemas(xgt_schema)
-    for vertex, schema in xgt_schema['vertices'].items():
-      table_schema = schema['schema']
-      attributes = {_:t for _, t in table_schema}
-      print(f"\nAttributes: {attributes}")
-    c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
-    assert node_frame.num_rows == 1
-    print(node_frame.get_data())
-
   def test_append(self):
     c = self.conn
     self.neo4j_driver.query(
@@ -441,17 +422,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.get_vertex_frame('Node')
     with self.assertRaises(xgt.XgtNameError):
         self.xgt.get_edge_frame('Relationship')
-
-  def test_transfer_relationship_working_types_arrow(self):
-    self._populate_relationship_working_types_arrow()
-    c = self.conn_arrow
-    xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
-    c.create_xgt_schemas(xgt_schema)
-    c.copy_data_to_xgt(xgt_schema)
-    edge_frame = self.xgt.get_edge_frame('Relationship')
-    assert edge_frame.num_rows == 1
-    print(edge_frame.get_data())
-    self.xgt.drop_frame("Relationship")
 
   def test_multiple_node_labels_to(self):
     c = self.conn
@@ -785,13 +755,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       'point_array: [point({x:0.5, y:1.2}), point({x:0.5, y:1.2}), point({x:0.5, y:1.2})]}), ' +
       '(:Node{})').finalize()
 
-  def _populate_node_working_types_arrow(self):
-    self.neo4j_driver.query(
-      # Integer, Float, String.
-      'CREATE (:Node{int: 343, str: "string"})').finalize()
-      # TODO(someone) : none values don't work in arrow and float64 don't work in xGT 10.1.
-      #'CREATE (:Node{int: 343, real: 3.14, str: "string"}), (:Node{})')
-
   # Point not working for bolt.
   def _populate_relationship_working_types_bolt(self):
     self.neo4j_driver.query(
@@ -820,17 +783,6 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       'duration_array: [duration({days: 14, hours:16, minutes: 12}), duration({days: 5, hours:5, minutes: 5}), duration({days: 0, hours:6, minutes: 1})], ' +
       'point_array: [point({x:0.5, y:1.2}), point({x:0.5, y:1.2}), point({x:0.5, y:1.2})]}]' +
       '->(:Node{int: 1}), (:Node{int: 1})-[:Relationship{}]->(:Node{int: 1})').finalize()
-
-  def _populate_relationship_working_types_arrow(self):
-    self.neo4j_driver.query(
-      # Integer, String.
-      'CREATE (:Node{})-' +
-      '[:Relationship{int: 343, str: "string"}]' +
-      '->(:Node{})', True).finalize()
-      # TODO(someone) : float64 in xGT 10.1 aren't supported in arrow.
-      #'[:Relationship{int: 343, real: 3.14, str: "string"}]' +
-      # TODO(someone) : none values don't work in arrow.
-      #'->(:Node{}), (:Node{})-[:Relationship{}]->(:Node{})')
 
   def _erase_neo4j_database(self):
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()

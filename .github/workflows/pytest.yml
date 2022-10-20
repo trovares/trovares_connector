@@ -60,7 +60,6 @@ jobs:
         pip install py2neo parameterized pyodbc
         pip install pytest
         pip install './[odbc]'
-        wget https://raw.githubusercontent.com/neo4j-field/neo4j-arrow/main/python/neo4j_arrow.py -P ./test
 
         sudo apt-get install odbc-mariadb
         # FIXME(plugin has a bug on ubuntu 20), so we manually install.
@@ -79,19 +78,17 @@ jobs:
     - name: Setup ODBC Driver
       run: |
         ls /usr/lib/x86_64-linux-gnu/odbc/
-        #echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
         echo -e '[MariaDB]\nDescription = ODBC Driver for MariaDB\nDriver = /usr/lib/libmaodbc.so\nFileUsage = 1' | sudo tee -a /etc/odbcinst.ini > /dev/null
 
     - name: Launch neo4j
       run: |
         mkdir -p neo4j/plugins
-        wget -O neo4j/plugins/neo4j-arrow-4.1-all.jar https://github.com/neo4j-field/neo4j-arrow/releases/download/v4.1/neo4j-arrow-4.1-all.jar
         docker run --rm -d --name neo4j -p7474:7474 -p7687:7687 -p 9999:9999 \
             --user=$(id -u):$(id -g) -v $PWD/neo4j/plugins:/var/lib/neo4j/plugins \
             --env NEO4J_AUTH=neo4j/foo --env NEO4J_EDITION=community \
             --env NEO4JLABS_PLUGINS='["graph-data-science"]' \
             --env HOST=0.0.0.0  --env NEO4J_dbms_default__listen__address=0.0.0.0 \
-            neo4j:4.4.4
+            neo4j:4.4.12
 
     - name: Launch mariadb
       run: |

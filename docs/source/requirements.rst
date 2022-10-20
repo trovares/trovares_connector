@@ -50,12 +50,6 @@ Optional
    Alternative Neo4j driver that provides http or bolt connections.
    Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
    This can be selected via the driver parameter in the Trovares Neo4jDriver class.
-* `Neo4j-arrow plugin and Python package <https://github.com/neo4j-field/neo4j-arrow>`_
-   Alternative driver for transfers that is very experimental.
-   This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
-   In addition it requires the neo4j-arrow python package found in the above link.
-   At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
-   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 
 ODBC
 ^^^^
@@ -64,3 +58,4 @@ To use the optional ODBC connection features, the following packages are require
 
 * `Arrow ODBC <https://pypi.org/project/arrow_odbc/>`_
 * `Pandas <https://pypi.org/project/pandas/>`_
+* ODBC Driver for your database and an ODBC Driver manager such unixODBC.
