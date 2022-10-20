@@ -682,10 +682,6 @@ These additional drivers can provide much faster performance than the default ne
 <span class="c1"># Using the Trovares Neo4j driver with py2neo http.</span>
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;py2neo-http&#39;</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
-
-<span class="c1"># Using the Trovares Neo4j driver with arrow.</span>
-<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;neo4j-arrow&#39;</span><span class="p">)</span>
-<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.</p>
