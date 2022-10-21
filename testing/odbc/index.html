@@ -405,6 +405,11 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">
+     Executing and transferring SQL commands
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#appending-data">
      Appending data
     </a>
@@ -417,6 +422,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#connecting-to-mongodb">
      Connecting to MongoDB
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-oracle">
+     Connecting to Oracle
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -491,6 +501,11 @@ title="Print to PDF"
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">
+     Executing and transferring SQL commands
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#appending-data">
      Appending data
     </a>
@@ -503,6 +518,11 @@ title="Print to PDF"
    <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#connecting-to-mongodb">
      Connecting to MongoDB
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#connecting-to-oracle">
+     Connecting to Oracle
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -643,6 +663,27 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">))],</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The easy_edges parameter would automatically create the Person vertices with a single column using the keys from the Friend edges.</p>
+</section>
+<section id="executing-and-transferring-sql-commands">
+<h3>Executing and transferring SQL commands<a class="headerlink" href="#executing-and-transferring-sql-commands" title="Permalink to this headline">#</a></h3>
+<p>This example shows executing a SQL command and transferring the results to xGT.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_query_to_xgt</span><span class="p">(</span><span class="s1">&#39;SELECT * From SqlTable&#39;</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Friend&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;src_key&#39;</span><span class="p">,</span> <span class="s1">&#39;trg_key&#39;</span><span class="p">),</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This would transfer the whole SqlTable to the xGT Friend edges.
+Similar to above the Person vertices would be automatically created.
+The mapping parameter is similar to the examples above except it takes single mapping instead of a list.
+This specifies the frame and type you want the table to map to.</p>
 </section>
 <section id="appending-data">
 <h3>Appending data<a class="headerlink" href="#appending-data" title="Permalink to this headline">#</a></h3>
@@ -689,6 +730,30 @@ The driver provides an parameter, include_id, that by default is false.
 This parameter removes the _id field returned by the driver.
 If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.</p>
 </section>
+<section id="connecting-to-oracle">
+<h3>Connecting to Oracle<a class="headerlink" href="#connecting-to-oracle" title="Permalink to this headline">#</a></h3>
+<p>This example uses Oracle XE with their ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">OracleODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">OracleODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>test_table</cite>, to the xGT table named <cite>test_table</cite>.
+The driver provides two parameters, upper_case_names and ansi_conversion.
+The upper_case_names parameter will treat names of tables like unquoted Oracle SQL does.
+By default this is false.
+And the ansi_conversion parameter, will convert Number(38,0) Oracle types into int64.
+By default this is true.</p>
+<p>The Oracle driver only support transferring data from Oracle to xGT.
+It doesn’t support transferring data from xGT to Oracle.</p>
+</section>
 <section id="transferring-data-from-xgt-to-odbc">
 <h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Permalink to this headline">#</a></h3>
 <p>This example copies test_table from xGT to a test database.</p>
@@ -726,6 +791,7 @@ See below for more details.</p>
 <ul class="simple">
 <li><p>When transferring to a database, the table must already be created.</p></li>
 <li><p>Transfer sizes/times are estimates and may not be available.</p></li>
+<li><p>The Oracle driver doesn’t support uploading to Oracle.</p></li>
 </ul>
 </section>
 <section id="api-details">

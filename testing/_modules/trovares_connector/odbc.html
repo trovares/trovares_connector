@@ -356,27 +356,35 @@ title="Open an issue"
 
 <span class="c1"># Convert the pyarrow type to an xgt type.</span>
 <span class="k">def</span> <span class="nf">_pyarrow_type_to_xgt_type</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-  <span class="k">if</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">BOOLEAN</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_timestamp</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_date64</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">DATETIME</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_date</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">DATE</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_time</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">TIME</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_integer</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">INT</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float32</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> \
-       <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float64</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> \
-       <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_decimal</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">FLOAT</span>
-  <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_string</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">TEXT</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="n">XgtTypeError</span><span class="p">(</span><span class="s2">&quot;Cannot convert pyarrow type &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; to xGT type.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_boolean</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">BOOLEAN</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_timestamp</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_date64</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">DATETIME</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_date</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">DATE</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_time</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">TIME</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_integer</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">INT</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float32</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> \
+         <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float64</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="ow">or</span> \
+         <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_decimal</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">FLOAT</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_string</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xgt</span><span class="o">.</span><span class="n">TEXT</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">xgt</span><span class="o">.</span><span class="n">XgtTypeError</span><span class="p">(</span><span class="s2">&quot;Cannot convert pyarrow type &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyarrow_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; to xGT type.&quot;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">pyarrow_schema</span><span class="p">):</span>
-  <span class="k">return</span> <span class="p">[[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_pyarrow_type_to_xgt_type</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">type</span><span class="p">)]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pyarrow_schema</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">pyarrow_schema</span><span class="p">,</span> <span class="n">conversions</span><span class="p">):</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">pyarrow_schema</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">conversions</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">conversions</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">],</span> <span class="n">field</span><span class="o">.</span><span class="n">nullable</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">schema</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[[</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_pyarrow_type_to_xgt_type</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">type</span><span class="p">)]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SQLODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.SQLODBCDriver.html#trovares_connector.SQLODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">SQLODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="SQLODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.SQLODBCDriver.html#trovares_connector.SQLODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
@@ -397,6 +405,9 @@ title="Open an issue"
 
     <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
         <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conversions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_get_record_batch_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
@@ -433,6 +444,9 @@ title="Open an issue"
         <span class="n">cols</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arrow_schema</span><span class="p">])</span>
         <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_conversions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
+
     <span class="k">def</span> <span class="nf">_get_record_batch_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
             <span class="n">query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">),</span>
@@ -448,7 +462,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">schema</span></div>
 
 <span class="k">class</span> <span class="nc">OracleODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">upper_case_names</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ansi_conversion</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
@@ -458,23 +472,38 @@ title="Open an issue"
 <span class="sd">            Standard ODBC connection string used for connecting to Oracle.</span>
 <span class="sd">            Example:</span>
 <span class="sd">            &#39;DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;&#39;</span>
+<span class="sd">        upper_case_names : bool</span>
+<span class="sd">          Convert table names to uppercase similar to unqouted names behavior in Oracle queries.</span>
+<span class="sd">          By default false.</span>
+<span class="sd">        ansi_conversion : bool</span>
+<span class="sd">          Convert Number(38,0) into int64s in xGT if true. Otherwise, they are stored as floats.</span>
+<span class="sd">          This based on the ANSI int conversion Oracle does and reverses that. By default true.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">upper_case_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span> <span class="o">=</span> <span class="n">ansi_conversion</span>
 
     <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
-        <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conversions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="n">pa</span><span class="o">.</span><span class="n">decimal128</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span> <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_get_record_batch_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
             <span class="n">query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">),</span>
             <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
 
 <div class="viewcode-block" id="ODBCConnector"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector">[docs]</a><span class="k">class</span> <span class="nc">ODBCConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -492,17 +521,6 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span> <span class="o">=</span> <span class="n">xgt_server</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span> <span class="o">=</span> <span class="n">xgt_server</span><span class="o">.</span><span class="n">get_default_namespace</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">odbc_driver</span></div>
-
-    <span class="k">def</span> <span class="nf">__arrow_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
-        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
-        <span class="n">writer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_put</span><span class="p">(</span>
-            <span class="n">pf</span><span class="o">.</span><span class="n">FlightDescriptor</span><span class="o">.</span><span class="n">for_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">),</span>
-            <span class="n">schema</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">writer</span>
-
-    <span class="k">def</span> <span class="nf">__arrow_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">):</span>
-        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
-        <span class="k">return</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_get</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">Ticket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">frame_name</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ODBCConnector.get_xgt_schemas"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.get_xgt_schemas">[docs]</a>    <span class="k">def</span> <span class="nf">get_xgt_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -528,40 +546,7 @@ title="Open an issue"
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vertices&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;edges&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;tables&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
 
         <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">}</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                <span class="c1"># (&#39;table&#39;, X, ...)</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="c1"># (&#39;table&#39;, (...), ...)</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                        <span class="c1"># (&#39;table&#39;, (), ...)</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                            <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
-                        <span class="c1"># (&#39;table&#39;, (,), ...)</span>
-                        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                            <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                                                     <span class="s1">&#39;target&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
-                                                     <span class="s1">&#39;target_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]}</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                    <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;source&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                                             <span class="s1">&#39;target&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
-                                             <span class="s1">&#39;target_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]}</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                        <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-                        <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dictionary format incorrect for &quot;</span> <span class="o">+</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Argument format incorrect for &quot;</span> <span class="o">+</span> <span class="n">val</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_mapping</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">,</span> <span class="n">mapping_vertices</span><span class="p">,</span> <span class="n">mapping_edges</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_tables</span><span class="p">:</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__extract_xgt_table_schema</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">)</span>
@@ -601,7 +586,7 @@ title="Open an issue"
 <span class="sd">        force : boolean</span>
 <span class="sd">            Set to true to force xGT to drop edges when a vertex frame has dependencies.</span>
 <span class="sd">        easy_edges : boolean</span>
-<span class="sd">            Set to true to create a basic vertex class wtih key column for any edges</span>
+<span class="sd">            Set to true to create a basic vertex class with key column for any edges</span>
 <span class="sd">            without corresponding vertex frames.</span>
 
 <span class="sd">        Returns</span>
@@ -616,7 +601,7 @@ title="Open an issue"
                     <span class="k">if</span> <span class="n">src</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">]:</span>
                         <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">src</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;xgt_schema&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">]],</span> <span class="s1">&#39;temp_creation&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">src</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="s1">&#39;key&#39;</span> <span class="p">}</span> <span class="p">}</span>
                     <span class="k">if</span> <span class="n">trg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">]:</span>
-                        <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">trg</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;xgt_schema&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">]],</span> <span class="s1">&#39;temp_creation&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">trg</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="s1">&#39;key&#39;</span> <span class="p">}</span> <span class="p">}</span>
+                        <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">trg</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;xgt_schema&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">]],</span> <span class="s1">&#39;temp_creation&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">trg</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="s1">&#39;key&#39;</span> <span class="p">}</span> <span class="p">}</span>
             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">drop_frame</span><span class="p">(</span><span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">])</span>
 
@@ -663,7 +648,7 @@ title="Open an issue"
                 <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">create_edge_frame</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;xgt_schema&#39;</span><span class="p">],</span>
                                                    <span class="n">source</span> <span class="o">=</span> <span class="n">src</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">trg</span><span class="p">,</span> <span class="n">source_key</span> <span class="o">=</span> <span class="n">src_key</span><span class="p">,</span> <span class="n">target_key</span> <span class="o">=</span> <span class="n">trg_key</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ODBCConnector.transfer_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">append</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ODBCConnector.transfer_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">append</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from the ODBC application to Trovares xGT.</span>
 
@@ -675,11 +660,9 @@ title="Open an issue"
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        xgt_schemas : dict</span>
-<span class="sd">            Dictionary containing schema information for vertex and edge frames</span>
-<span class="sd">            to create in xGT.</span>
-<span class="sd">            This dictionary can be the value returned from the</span>
-<span class="sd">            :py:meth:`~ODBCConnector.get_xgt_schemas` method.</span>
+<span class="sd">        tables : list</span>
+<span class="sd">            List of requested tables names.</span>
+<span class="sd">            May be a tuple specify a mapping to xGT types. See documentation.</span>
 <span class="sd">        append : boolean</span>
 <span class="sd">            Set to true when the xGT frames are already created and holding data</span>
 <span class="sd">            that should be appended to.</span>
@@ -690,6 +673,8 @@ title="Open an issue"
 <span class="sd">        easy_edges : boolean</span>
 <span class="sd">            Set to true to create a basic vertex class wtih key column for any edges</span>
 <span class="sd">            without corresponding vertex frames.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            Number of rows to transfer at once. Defaults to 10000.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -697,9 +682,42 @@ title="Open an issue"
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xgt_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xgt_schemas</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_xgt_schemas</span><span class="p">(</span><span class="n">xgt_schema</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">copy_data_to_xgt</span><span class="p">(</span><span class="n">xgt_schema</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_data_to_xgt</span><span class="p">(</span><span class="n">xgt_schema</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ODBCConnector.copy_data_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.copy_data_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">copy_data_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_schemas</span><span class="p">):</span>
+<div class="viewcode-block" id="ODBCConnector.transfer_query_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_query_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_query_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copies data from the ODBC application to Trovares xGT.</span>
+
+<span class="sd">        This function first infers the schemas for the query.</span>
+<span class="sd">        Then it maps to the type specificed in mapping.</span>
+<span class="sd">        Finally, the data is copied from the ODBC application to xGT.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : string</span>
+<span class="sd">            SQL query to execute and insert into xGT. Syntax depends on the SQL syntax of the database you are connecting to.</span>
+<span class="sd">        mapping :</span>
+<span class="sd">            May be a tuple specify a mapping to xGT types. See documentation.</span>
+<span class="sd">        append : boolean</span>
+<span class="sd">            Set to true when the xGT frames are already created and holding data</span>
+<span class="sd">            that should be appended to.</span>
+<span class="sd">            Set to false when the xGT frames are to be newly created (removing</span>
+<span class="sd">            any existing frames with the same names prior to creation).</span>
+<span class="sd">        force : boolean</span>
+<span class="sd">            Set to true to force xGT to drop edges when a vertex frame has dependencies.</span>
+<span class="sd">        easy_edges : boolean</span>
+<span class="sd">            Set to true to create a basic vertex class with key column for any edges</span>
+<span class="sd">            without corresponding vertex frames.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            Number of rows to transfer at once. Defaults to 10000.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__copy_query_data_to_xgt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ODBCConnector.copy_data_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.copy_data_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">copy_data_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_schemas</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from the ODBC application to the requested table, vertex and/or edge frames</span>
 <span class="sd">        in Trovares xGT.</span>
@@ -714,6 +732,8 @@ title="Open an issue"
 <span class="sd">            to create in xGT.</span>
 <span class="sd">            This dictionary can be the value returned from the</span>
 <span class="sd">            :py:meth:`~ODBCConnector.get_xgt_schemas` method.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            Number of rows to transfer at once. Defaults to 10000.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -725,7 +745,7 @@ title="Open an issue"
             <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
                 <span class="n">query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">),</span>
                 <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
-                <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">to_pydict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -745,14 +765,15 @@ title="Open an issue"
 
         <span class="k">with</span> <span class="n">ProgressDisplay</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span> <span class="k">as</span> <span class="n">progress_bar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">table</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">xgt_schemas</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_data_query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">]),</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">],</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;arrow_schema&#39;</span><span class="p">],</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ODBCConnector.transfer_to_odbc"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_odbc">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_odbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                         <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">namespace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ODBCConnector.transfer_to_odbc"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_odbc">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_odbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">tables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from Trovares xGT to an ODBC application.</span>
 
@@ -770,6 +791,8 @@ title="Open an issue"
 <span class="sd">        namespace : str</span>
 <span class="sd">            Namespace for the selected frames.</span>
 <span class="sd">            If none will use the default namespace.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            Number of rows to transfer at once. Defaults to 10000.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -844,16 +867,27 @@ title="Open an issue"
                 <span class="n">final_reader</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">RecordBatchReader</span><span class="o">.</span><span class="n">from_batches</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">iter_record_batches</span><span class="p">())</span>
                 <span class="n">insert_into_table</span><span class="p">(</span>
                     <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
-                    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                    <span class="n">chunk_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
                     <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
                     <span class="n">reader</span><span class="o">=</span><span class="n">final_reader</span><span class="p">,</span>
                 <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_for_extract</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__arrow_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
+        <span class="n">writer</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_put</span><span class="p">(</span>
+            <span class="n">pf</span><span class="o">.</span><span class="n">FlightDescriptor</span><span class="o">.</span><span class="n">for_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">),</span>
+            <span class="n">schema</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">writer</span>
+
+    <span class="k">def</span> <span class="nf">__arrow_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">):</span>
+        <span class="n">arrow_conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xgt_server</span><span class="o">.</span><span class="n">arrow_conn</span>
+        <span class="k">return</span> <span class="n">arrow_conn</span><span class="o">.</span><span class="n">do_get</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">Ticket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_namespace</span> <span class="o">+</span> <span class="s1">&#39;__&#39;</span> <span class="o">+</span> <span class="n">frame_name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__copy_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_for_extract</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
             <span class="n">query</span><span class="o">=</span><span class="n">query_for_extract</span><span class="p">,</span>
             <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
@@ -864,11 +898,86 @@ title="Open an issue"
 
     <span class="k">def</span> <span class="nf">__get_xgt_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_record_batch_schema</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">),</span> <span class="n">schema</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_conversions</span><span class="p">()),</span> <span class="n">schema</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__extract_xgt_table_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
         <span class="n">xgt_schema</span><span class="p">,</span> <span class="n">arrow_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_xgt_schema</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+
+    <span class="k">def</span> <span class="nf">__get_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">,</span> <span class="n">mapping_vertices</span><span class="p">,</span> <span class="n">mapping_edges</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># (&#39;table&#39;, X, ...)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># (&#39;table&#39;, (...), ...)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="c1"># (&#39;table&#39;, (), ...)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
+                    <span class="c1"># (&#39;table&#39;, (,), ...)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                                 <span class="s1">&#39;target&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                                 <span class="s1">&#39;target_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;source&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                         <span class="s1">&#39;target&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;source_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span>
+                                         <span class="s1">&#39;target_key&#39;</span> <span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">mapping_tables</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">mapping_edges</span><span class="p">[</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dictionary format incorrect for &quot;</span> <span class="o">+</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Argument format incorrect for &quot;</span> <span class="o">+</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy_query_data_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">estimate</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mapping_vertices</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">mapping_edges</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">mapping_tables</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vertices&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;edges&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">(),</span> <span class="s1">&#39;tables&#39;</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="n">mapping_tables</span><span class="p">,</span> <span class="n">mapping_vertices</span><span class="p">,</span> <span class="n">mapping_edges</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">ProgressDisplay</span><span class="p">(</span><span class="n">estimate</span><span class="p">)</span> <span class="k">as</span> <span class="n">progress_bar</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">arrow_schema</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+            <span class="n">xgt_schema</span> <span class="o">=</span> <span class="n">_infer_xgt_schema_from_pyarrow_schema</span><span class="p">(</span><span class="n">arrow_schema</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_conversions</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_tables</span><span class="p">:</span>
+                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_tables</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_vertices</span><span class="p">:</span>
+                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_vertices</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;vertices&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">mapping_edges</span><span class="p">:</span>
+                <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgt_schema&#39;</span> <span class="p">:</span> <span class="n">xgt_schema</span><span class="p">,</span> <span class="s1">&#39;arrow_schema&#39;</span> <span class="p">:</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span> <span class="p">:</span> <span class="n">mapping_edges</span><span class="p">[</span><span class="n">table</span><span class="p">]}</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">][</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">][</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_xgt_schemas</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">)</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="c1"># Process arrow batches</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 </pre></div>
 

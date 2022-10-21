@@ -405,7 +405,7 @@ title="Print to PDF"
 <tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="trovares_connector.ODBCConnector.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(xgt_server, odbc_driver)</p></td>
 <td><p>Initializes the connector class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="trovares_connector.ODBCConnector.copy_data_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_to_xgt</span></code></a>(xgt_schemas)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="trovares_connector.ODBCConnector.copy_data_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_data_to_xgt</span></code></a>(xgt_schemas[, batch_size])</p></td>
 <td><p>Copies data from the ODBC application to the requested table, vertex and/or edge frames in Trovares xGT.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.create_xgt_schemas" title="trovares_connector.ODBCConnector.create_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code></a>(xgt_schemas[, append, ...])</p></td>
@@ -414,10 +414,13 @@ title="Print to PDF"
 <tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schemas</span></code></a>([tables])</p></td>
 <td><p>Retrieve a dictionary containing the schema information for all of the tables requested and their mappings.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_to_odbc" title="trovares_connector.ODBCConnector.transfer_to_odbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_odbc</span></code></a>([vertices, edges, tables, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="trovares_connector.ODBCConnector.transfer_query_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_query_to_xgt</span></code></a>([query, mapping, ...])</p></td>
+<td><p>Copies data from the ODBC application to Trovares xGT.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_to_odbc" title="trovares_connector.ODBCConnector.transfer_to_odbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_odbc</span></code></a>([vertices, edges, tables, ...])</p></td>
 <td><p>Copies data from Trovares xGT to an ODBC application.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="trovares_connector.ODBCConnector.transfer_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_xgt</span></code></a>([tables, append, force, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="trovares_connector.ODBCConnector.transfer_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_to_xgt</span></code></a>([tables, append, force, ...])</p></td>
 <td><p>Copies data from the ODBC application to Trovares xGT.</p></td>
 </tr>
 </tbody>
@@ -438,17 +441,20 @@ title="Print to PDF"
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.copy_data_to_xgt">
-<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.copy_data_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.copy_data_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from the ODBC application to the requested table, vertex and/or edge frames
 in Trovares xGT.</p>
 <p>This function copies data from the ODBC application to xGT for all of the tables, vertices
 and edges, one frame at a time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for table, vertex and edge frames
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for table, vertex and edge frames
 to create in xGT.
 This dictionary can be the value returned from the
-<a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p>
+<a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of rows to transfer at once. Defaults to 10000.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
@@ -475,7 +481,7 @@ that should be appended to.
 Set to false when the xGT frames are to be newly created (removing
 any existing frames with the same names prior to creation).</p></li>
 <li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
-<li><p><strong>easy_edges</strong> (<em>boolean</em>) – Set to true to create a basic vertex class wtih key column for any edges
+<li><p><strong>easy_edges</strong> (<em>boolean</em>) – Set to true to create a basic vertex class with key column for any edges
 without corresponding vertex frames.</p></li>
 </ul>
 </dd>
@@ -505,8 +511,36 @@ vertices, and edges requested.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="trovares_connector.ODBCConnector.transfer_query_to_xgt">
+<span class="sig-name descname"><span class="pre">transfer_query_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_query_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="Permalink to this definition">#</a></dt>
+<dd><p>Copies data from the ODBC application to Trovares xGT.</p>
+<p>This function first infers the schemas for the query.
+Then it maps to the type specificed in mapping.
+Finally, the data is copied from the ODBC application to xGT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>string</em>) – SQL query to execute and insert into xGT. Syntax depends on the SQL syntax of the database you are connecting to.</p></li>
+<li><p><strong>mapping</strong> – May be a tuple specify a mapping to xGT types. See documentation.</p></li>
+<li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
+that should be appended to.
+Set to false when the xGT frames are to be newly created (removing
+any existing frames with the same names prior to creation).</p></li>
+<li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
+<li><p><strong>easy_edges</strong> (<em>boolean</em>) – Set to true to create a basic vertex class with key column for any edges
+without corresponding vertex frames.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of rows to transfer at once. Defaults to 10000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.transfer_to_odbc">
-<span class="sig-name descname"><span class="pre">transfer_to_odbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_odbc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_odbc" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_to_odbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_odbc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_odbc" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from Trovares xGT to an ODBC application.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -519,6 +553,7 @@ May be a tuple specifying: (xgt_frame_name, database_table_name).</p></li>
 May be a tuple specifying: (xgt_frame_name, database_table_name).</p></li>
 <li><p><strong>namespace</strong> (<em>str</em>) – Namespace for the selected frames.
 If none will use the default namespace.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of rows to transfer at once. Defaults to 10000.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -529,7 +564,7 @@ If none will use the default namespace.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.transfer_to_xgt">
-<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from the ODBC application to Trovares xGT.</p>
 <p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
@@ -539,10 +574,8 @@ one frame at a time, from the ODBC application to xGT.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xgt_schemas</strong> (<em>dict</em>) – Dictionary containing schema information for vertex and edge frames
-to create in xGT.
-This dictionary can be the value returned from the
-<a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xgt_schemas()</span></code></a> method.</p></li>
+<li><p><strong>tables</strong> (<em>list</em>) – List of requested tables names.
+May be a tuple specify a mapping to xGT types. See documentation.</p></li>
 <li><p><strong>append</strong> (<em>boolean</em>) – Set to true when the xGT frames are already created and holding data
 that should be appended to.
 Set to false when the xGT frames are to be newly created (removing
@@ -550,6 +583,7 @@ any existing frames with the same names prior to creation).</p></li>
 <li><p><strong>force</strong> (<em>boolean</em>) – Set to true to force xGT to drop edges when a vertex frame has dependencies.</p></li>
 <li><p><strong>easy_edges</strong> (<em>boolean</em>) – Set to true to create a basic vertex class wtih key column for any edges
 without corresponding vertex frames.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of rows to transfer at once. Defaults to 10000.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
