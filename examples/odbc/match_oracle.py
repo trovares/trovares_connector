@@ -17,10 +17,10 @@
 #
 #===----------------------------------------------------------------------===#
 
-# This example creates a graph in SQL, transfers it to xGT, and
+# This example creates a graph in Oracle SQL, transfers it to xGT, and
 # runs a query on it in xGT.
 
-from trovares_connector import ODBCConnector, SQLODBCDriver
+from trovares_connector import ODBCConnector, OracleODBCDriver
 import pyodbc
 import xgt
 
@@ -28,37 +28,37 @@ xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('odbc_test')
 xgt_server.drop_namespace('odbc_test', force_drop=True)
 
-connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
-odbc_driver = SQLODBCDriver(connection_string)
+connection_string = 'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
+odbc_driver = OracleODBCDriver(connection_string)
 c = ODBCConnector(xgt_server, odbc_driver)
 pyodbc_driver = pyodbc.connect(connection_string)
 cursor = pyodbc_driver.cursor()
 
-# Uncomment to delete the tables 
+# Uncomment to delete the tables
 """
-cursor.execute('DROP TABLE IF EXISTS Knows')
-cursor.execute('DROP TABLE IF EXISTS Person')
+cursor.execute('DROP TABLE "Person"')
+cursor.execute('DROP TABLE "Knows"')
 pyodbc_driver.commit()
 """
 
 # Create a chain with with a loop in SQL. 
-cursor.execute('CREATE TABLE Person (id INT)')
-cursor.execute('CREATE TABLE Knows (Person1 INT, Person2 INT)')
-cursor.execute('INSERT INTO Person VALUES (0)')
+cursor.execute('CREATE TABLE "Person" ("id" INT)')
+cursor.execute('CREATE TABLE "Knows" ("Person1" INT, "Person2" INT)')
+cursor.execute('INSERT INTO "Person" VALUES (0)')
 for i in range(0, 10):
-    cursor.execute(f'INSERT INTO Person VALUES ({i + 1})')
-    cursor.execute(f'INSERT INTO Knows VALUES ({i}, {i + 1})')
-cursor.execute('INSERT INTO Knows VALUES (2, 0)')
+    cursor.execute(f'INSERT INTO "Person" VALUES ({i + 1})')
+    cursor.execute(f'INSERT INTO "Knows" VALUES ({i}, {i + 1})')
+cursor.execute('INSERT INTO "Knows" VALUES (2, 0)')
 pyodbc_driver.commit()
 pyodbc_driver.close()
 
-# Transfer edges from SQL to xGT
-#c.transfer_to_xgt(tables=[('Person', ('id',)), ('Knows', ('Person', 'Person', 'Person1', 'Person2'))])
+# Transfer vertices/edges from SQL to xGT
+c.transfer_to_xgt(tables=[('Person', ('id',)), ('Knows', ('Person', 'Person', 'Person1', 'Person2'))])
 
 # Alternatively these can be transfered via arbitrary queries:
 """
-c.transfer_query_to_xgt('SELECT * FROM Person', mapping=('XgtPerson', ('id',)))
-c.transfer_query_to_xgt('SELECT * FROM Knows', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')))
+c.transfer_query_to_xgt('SELECT * FROM "Person"', mapping=('XgtPerson', ('id',)))
+c.transfer_query_to_xgt('SELECT * FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')))
 """
 
 # Look for the loop

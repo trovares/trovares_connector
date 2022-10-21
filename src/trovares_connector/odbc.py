@@ -26,27 +26,35 @@ from .common import ProgressDisplay
 
 # Convert the pyarrow type to an xgt type.
 def _pyarrow_type_to_xgt_type(pyarrow_type):
-  if pa.types.is_boolean(pyarrow_type):
-    return xgt.BOOLEAN
-  elif pa.types.is_timestamp(pyarrow_type) or pa.types.is_date64(pyarrow_type):
-    return xgt.DATETIME
-  elif pa.types.is_date(pyarrow_type):
-    return xgt.DATE
-  elif pa.types.is_time(pyarrow_type):
-    return xgt.TIME
-  elif pa.types.is_integer(pyarrow_type):
-    return xgt.INT
-  elif pa.types.is_float32(pyarrow_type) or \
-       pa.types.is_float64(pyarrow_type) or \
-       pa.types.is_decimal(pyarrow_type):
-    return xgt.FLOAT
-  elif pa.types.is_string(pyarrow_type):
-    return xgt.TEXT
-  else:
-    raise XgtTypeError("Cannot convert pyarrow type " + str(pyarrow_type) + " to xGT type.")
+    if pa.types.is_boolean(pyarrow_type):
+        return xgt.BOOLEAN
+    elif pa.types.is_timestamp(pyarrow_type) or pa.types.is_date64(pyarrow_type):
+        return xgt.DATETIME
+    elif pa.types.is_date(pyarrow_type):
+        return xgt.DATE
+    elif pa.types.is_time(pyarrow_type):
+        return xgt.TIME
+    elif pa.types.is_integer(pyarrow_type):
+        return xgt.INT
+    elif pa.types.is_float32(pyarrow_type) or \
+         pa.types.is_float64(pyarrow_type) or \
+         pa.types.is_decimal(pyarrow_type):
+        return xgt.FLOAT
+    elif pa.types.is_string(pyarrow_type):
+        return xgt.TEXT
+    else:
+        raise xgt.XgtTypeError("Cannot convert pyarrow type " + str(pyarrow_type) + " to xGT type.")
 
-def _infer_xgt_schema_from_pyarrow_schema(pyarrow_schema):
-  return [[c.name, _pyarrow_type_to_xgt_type(c.type)] for c in pyarrow_schema]
+def _infer_xgt_schema_from_pyarrow_schema(pyarrow_schema, conversions):
+    schema = []
+    for field in pyarrow_schema:
+        if field.type in conversions:
+            field = pa.field(field.name, conversions[field.type], field.nullable, field.metadata)
+        schema.append(field)
+
+    schema = pa.schema(schema)
+
+    return [[c.name, _pyarrow_type_to_xgt_type(c.type)] for c in schema]
 
 class SQLODBCDriver(object):
     def __init__(self, connection_string):
@@ -67,6 +75,9 @@ class SQLODBCDriver(object):
 
     def _get_data_query(self, table, arrow_schema):
         return  self._data_query.format(table)
+
+    def _conversions(self):
+       return { }
 
     def _get_record_batch_schema(self, table):
         reader = read_arrow_batches_from_odbc(
@@ -103,6 +114,9 @@ class MongoODBCDriver(object):
         cols = ','.join([x.name for x in arrow_schema])
         return  self._data_query.format(cols, table)
 
+    def _conversions(self):
+       return { }
+
     def _get_record_batch_schema(self, table):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
@@ -118,7 +132,7 @@ class MongoODBCDriver(object):
         return schema
 
 class OracleODBCDriver(object):
-    def __init__(self, connection_string):
+    def __init__(self, connection_string, upper_case_names = False, ansi_conversion = True):
         """
         Initializes the driver class.
 
@@ -128,23 +142,38 @@ class OracleODBCDriver(object):
             Standard ODBC connection string used for connecting to Oracle.
             Example:
             'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
+        upper_case_names : bool
+          Convert table names to uppercase similar to unqouted names behavior in Oracle queries.
+          By default false.
+        ansi_conversion : bool
+          Convert Number(38,0) into int64s in xGT if true. Otherwise, they are stored as floats.
+          This based on the ANSI int conversion Oracle does and reverses that. By default true.
         """
         self._connection_string = connection_string
-        self._schema_query = "SELECT * FROM \"{0}\" WHERE ROWNUM <= 1"
-        self._data_query = "SELECT * FROM \"{0}\""
+        if upper_case_names:
+            self._schema_query = "SELECT * FROM {0} WHERE ROWNUM <= 1"
+            self._data_query = "SELECT * FROM {0}"
+        else:
+            self._schema_query = "SELECT * FROM \"{0}\" WHERE ROWNUM <= 1"
+            self._data_query = "SELECT * FROM \"{0}\""
         self._estimate_query="SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = '{0}'"
+        self._ansi_conversion = ansi_conversion
 
     def _get_data_query(self, table, arrow_schema):
-        return  self._data_query.format(table)
+        return self._data_query.format(table)
+
+    def _conversions(self):
+        if self._ansi_conversion:
+            return { pa.decimal128(38, 0) : pa.int64() }
+        else:
+            return { }
 
     def _get_record_batch_schema(self, table):
-        print(self._schema_query.format(table))
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
         )
-        print(reader.schema)
         return reader.schema
 
 class ODBCConnector(object):
@@ -162,17 +191,6 @@ class ODBCConnector(object):
         self._xgt_server = xgt_server
         self._default_namespace = xgt_server.get_default_namespace()
         self._driver = odbc_driver
-
-    def __arrow_writer(self, frame_name, schema):
-        arrow_conn = self._xgt_server.arrow_conn
-        writer, _ = arrow_conn.do_put(
-            pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
-            schema)
-        return writer
-
-    def __arrow_reader(self, frame_name):
-        arrow_conn = self._xgt_server.arrow_conn
-        return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def get_xgt_schemas(self, tables = None):
         """
@@ -198,40 +216,7 @@ class ODBCConnector(object):
         result = {'vertices' : dict(), 'edges' : dict(), 'tables' : dict()}
 
         for val in tables:
-            if isinstance(val, str):
-                mapping_tables[val] = {'frame' : val}
-            elif isinstance(val, tuple):
-                # ('table', X, ...)
-                if isinstance(val[1], str):
-                    # ('table', (...), ...)
-                    if len(val) == 3:
-                        # ('table', (), ...)
-                        if len(val[2]) == 1:
-                            mapping_vertices[val[0]] = {'frame' : val[1], 'key' : val[2][0]}
-                        # ('table', (,), ...)
-                        elif len(val[2]) == 4:
-                            mapping_edges[val[0]] = {'frame' : val[1], 'source' : val[2][0],
-                                                     'target' : val[2][1], 'source_key' : val[2][2],
-                                                     'target_key' : val[2][3]}
-                    else:
-                        mapping_tables[val[0]] = {'frame' : val[1]}
-                elif isinstance(val[1], tuple) and len(val[1]) == 1:
-                    mapping_vertices[val[0]] = {'frame' : val[0], 'key' : val[1][0]}
-                elif isinstance(val[1], tuple) and len(val[1]) == 4:
-                    mapping_edges[val[0]] = {'frame' : val[0], 'source' : val[1][0],
-                                             'target' : val[1][1], 'source_key' : val[1][2],
-                                             'target_key' : val[1][3]}
-                elif isinstance(val[1], dict):
-                    if len(val[1]) == 1:
-                        mapping_tables[val[0]] = val[1]
-                    elif len(val[1]) == 2:
-                        mapping_vertices[val[0]] = val[1]
-                    elif len(val[1]) == 5:
-                        mapping_edges[val[0]] = val[1]
-                    else:
-                        raise ValueError("Dictionary format incorrect for " + val[0])
-                else:
-                    raise ValueError("Argument format incorrect for " + val)
+            self.__get_mapping(val, mapping_tables, mapping_vertices, mapping_edges)
 
         for table in mapping_tables:
             schema = self.__extract_xgt_table_schema(table, mapping_tables)
@@ -271,7 +256,7 @@ class ODBCConnector(object):
         force : boolean
             Set to true to force xGT to drop edges when a vertex frame has dependencies.
         easy_edges : boolean
-            Set to true to create a basic vertex class wtih key column for any edges
+            Set to true to create a basic vertex class with key column for any edges
             without corresponding vertex frames.
 
         Returns
@@ -286,7 +271,7 @@ class ODBCConnector(object):
                     if src not in xgt_schemas['vertices']:
                         xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
                     if trg not in xgt_schemas['vertices']:
-                        xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : {'frame' : trg, 'key' : 'key' } }
+                        xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : trg, 'key' : 'key' } }
             for _, schema in xgt_schemas['tables'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
 
@@ -333,7 +318,7 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False) -> None:
+    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False, batch_size=10000) -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -345,11 +330,9 @@ class ODBCConnector(object):
 
         Parameters
         ----------
-        xgt_schemas : dict
-            Dictionary containing schema information for vertex and edge frames
-            to create in xGT.
-            This dictionary can be the value returned from the
-            :py:meth:`~ODBCConnector.get_xgt_schemas` method.
+        tables : list
+            List of requested tables names.
+            May be a tuple specify a mapping to xGT types. See documentation.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
@@ -360,6 +343,8 @@ class ODBCConnector(object):
         easy_edges : boolean
             Set to true to create a basic vertex class wtih key column for any edges
             without corresponding vertex frames.
+        batch_size : int
+            Number of rows to transfer at once. Defaults to 10000.
 
         Returns
         -------
@@ -367,9 +352,42 @@ class ODBCConnector(object):
         """
         xgt_schema = self.get_xgt_schemas(tables)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
-        self.copy_data_to_xgt(xgt_schema)
+        self.copy_data_to_xgt(xgt_schema, batch_size)
 
-    def copy_data_to_xgt(self, xgt_schemas):
+    def transfer_query_to_xgt(self, query=None, mapping=None, append=False, force=False, easy_edges=False, batch_size=10000) -> None:
+        """
+        Copies data from the ODBC application to Trovares xGT.
+
+        This function first infers the schemas for the query.
+        Then it maps to the type specificed in mapping.
+        Finally, the data is copied from the ODBC application to xGT.
+
+        Parameters
+        ----------
+        query : string
+            SQL query to execute and insert into xGT. Syntax depends on the SQL syntax of the database you are connecting to.
+        mapping :
+            May be a tuple specify a mapping to xGT types. See documentation.
+        append : boolean
+            Set to true when the xGT frames are already created and holding data
+            that should be appended to.
+            Set to false when the xGT frames are to be newly created (removing
+            any existing frames with the same names prior to creation).
+        force : boolean
+            Set to true to force xGT to drop edges when a vertex frame has dependencies.
+        easy_edges : boolean
+            Set to true to create a basic vertex class with key column for any edges
+            without corresponding vertex frames.
+        batch_size : int
+            Number of rows to transfer at once. Defaults to 10000.
+
+        Returns
+        -------
+            None
+        """
+        self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges, batch_size)
+
+    def copy_data_to_xgt(self, xgt_schemas, batch_size=10000):
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
         in Trovares xGT.
@@ -384,6 +402,8 @@ class ODBCConnector(object):
             to create in xGT.
             This dictionary can be the value returned from the
             :py:meth:`~ODBCConnector.get_xgt_schemas` method.
+        batch_size : int
+            Number of rows to transfer at once. Defaults to 10000.
 
         Returns
         -------
@@ -395,7 +415,7 @@ class ODBCConnector(object):
             reader = read_arrow_batches_from_odbc(
                 query=self._driver._estimate_query.format(table),
                 connection_string=self._driver._connection_string,
-                batch_size=10000,
+                batch_size=batch_size,
             )
             for batch in reader:
                 for _, row in batch.to_pydict().items():
@@ -415,14 +435,15 @@ class ODBCConnector(object):
 
         with ProgressDisplay(estimate) as progress_bar:
             for table, schema in xgt_schemas['tables'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
             for table, schema in xgt_schemas['vertices'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
             for table, schema in xgt_schemas['edges'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar)
+                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
 
-    def transfer_to_odbc(self, vertices = None, edges = None,
-                         tables = None, namespace = None) -> None:
+    def transfer_to_odbc(self, vertices=None, edges=None,
+                         tables=None, namespace=None,
+                         batch_size=10000) -> None:
         """
         Copies data from Trovares xGT to an ODBC application.
 
@@ -440,6 +461,8 @@ class ODBCConnector(object):
         namespace : str
             Namespace for the selected frames.
             If none will use the default namespace.
+        batch_size : int
+            Number of rows to transfer at once. Defaults to 10000.
 
         Returns
         -------
@@ -514,16 +537,27 @@ class ODBCConnector(object):
                 final_reader = pa.ipc.RecordBatchReader.from_batches(schema, iter_record_batches())
                 insert_into_table(
                     connection_string=self._driver._connection_string,
-                    chunk_size=10000,
+                    chunk_size=batch_size,
                     table=table,
                     reader=final_reader,
                 )
 
-    def __copy_data(self, query_for_extract, frame, schema, progress_bar):
+    def __arrow_writer(self, frame_name, schema):
+        arrow_conn = self._xgt_server.arrow_conn
+        writer, _ = arrow_conn.do_put(
+            pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
+            schema)
+        return writer
+
+    def __arrow_reader(self, frame_name):
+        arrow_conn = self._xgt_server.arrow_conn
+        return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
+
+    def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,
             connection_string=self._driver._connection_string,
-            batch_size=10000,
+            batch_size=batch_size,
         )
         writer = self.__arrow_writer(frame, schema)
         for batch in reader:
@@ -534,9 +568,84 @@ class ODBCConnector(object):
 
     def __get_xgt_schema(self, table):
         schema = self._driver._get_record_batch_schema(table)
-        return (_infer_xgt_schema_from_pyarrow_schema(schema), schema)
+        return (_infer_xgt_schema_from_pyarrow_schema(schema, self._driver._conversions()), schema)
 
     def __extract_xgt_table_schema(self, table, mapping):
         xgt_schema, arrow_schema = self.__get_xgt_schema(table)
         return {'xgt_schema' : xgt_schema, 'arrow_schema' : arrow_schema, 'mapping' : mapping[table]}
+
+    def __get_mapping(self, val, mapping_tables, mapping_vertices, mapping_edges):
+        if isinstance(val, str):
+            mapping_tables[val] = {'frame' : val}
+        elif isinstance(val, tuple):
+            # ('table', X, ...)
+            if isinstance(val[1], str):
+                # ('table', (...), ...)
+                if len(val) == 3:
+                    # ('table', (), ...)
+                    if len(val[2]) == 1:
+                        mapping_vertices[val[0]] = {'frame' : val[1], 'key' : val[2][0]}
+                    # ('table', (,), ...)
+                    elif len(val[2]) == 4:
+                        mapping_edges[val[0]] = {'frame' : val[1], 'source' : val[2][0],
+                                                 'target' : val[2][1], 'source_key' : val[2][2],
+                                                 'target_key' : val[2][3]}
+                else:
+                    mapping_tables[val[0]] = {'frame' : val[1]}
+            elif isinstance(val[1], tuple) and len(val[1]) == 1:
+                mapping_vertices[val[0]] = {'frame' : val[0], 'key' : val[1][0]}
+            elif isinstance(val[1], tuple) and len(val[1]) == 4:
+                mapping_edges[val[0]] = {'frame' : val[0], 'source' : val[1][0],
+                                         'target' : val[1][1], 'source_key' : val[1][2],
+                                         'target_key' : val[1][3]}
+            elif isinstance(val[1], dict):
+                if len(val[1]) == 1:
+                    mapping_tables[val[0]] = val[1]
+                elif len(val[1]) == 2:
+                    mapping_vertices[val[0]] = val[1]
+                elif len(val[1]) == 5:
+                    mapping_edges[val[0]] = val[1]
+                else:
+                    raise ValueError("Dictionary format incorrect for " + val[0])
+            else:
+                raise ValueError("Argument format incorrect for " + val)
+
+    def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges, batch_size):
+        estimate = 0
+        mapping_vertices = { }
+        mapping_edges = { }
+        mapping_tables = { }
+        result = {'vertices' : dict(), 'edges' : dict(), 'tables' : dict()}
+        self.__get_mapping(mapping, mapping_tables, mapping_vertices, mapping_edges)
+
+        with ProgressDisplay(estimate) as progress_bar:
+            reader = read_arrow_batches_from_odbc(
+                query=query,
+                connection_string=self._driver._connection_string,
+                batch_size=batch_size,
+            )
+            arrow_schema = reader.schema
+            xgt_schema = _infer_xgt_schema_from_pyarrow_schema(arrow_schema, self._driver._conversions())
+            for table in mapping_tables:
+                schema = {'xgt_schema' : xgt_schema, 'arrow_schema' : arrow_schema, 'mapping' : mapping_tables[table]}
+                result['tables'][table] = schema
+                frame = schema['mapping']['frame']
+
+            for table in mapping_vertices:
+                schema = {'xgt_schema' : xgt_schema, 'arrow_schema' : arrow_schema, 'mapping' : mapping_vertices[table]}
+                result['vertices'][table] = schema
+                frame = schema['mapping']['frame']
+
+            for table in mapping_edges:
+                schema = {'xgt_schema' : xgt_schema, 'arrow_schema' : arrow_schema, 'mapping' : mapping_edges[table]}
+                result['edges'][table] = schema
+                frame = schema['mapping']['frame']
+
+            self.create_xgt_schemas(result, append, force, easy_edges)
+            writer = self.__arrow_writer(frame, arrow_schema)
+            for batch in reader:
+                # Process arrow batches
+                writer.write(batch)
+                progress_bar.show_progress(batch.num_rows)
+            writer.close()
 
