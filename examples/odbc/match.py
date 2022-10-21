@@ -53,7 +53,7 @@ pyodbc_driver.commit()
 pyodbc_driver.close()
 
 # Transfer edges from SQL to xGT
-#c.transfer_to_xgt(tables=[('Person', ('id',)), ('Knows', ('Person', 'Person', 'Person1', 'Person2'))])
+c.transfer_to_xgt(tables=[('Person', ('id',)), ('Knows', ('Person', 'Person', 'Person1', 'Person2'))])
 
 # Alternatively these can be transfered via arbitrary queries:
 """

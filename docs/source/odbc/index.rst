@@ -260,6 +260,8 @@ By default this is true.
 
 The Oracle driver only support transferring data from Oracle to xGT.
 It doesn't support transferring data from xGT to Oracle.
+Binary types are no supported for Oracle.
+Interval types likely don't work through ODBC as well.
 
 Transferring data from xGT to ODBC
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -303,6 +305,7 @@ Limitations
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
 * The Oracle driver doesn't support uploading to Oracle.
+* Binary data types not supported.
 
 API Details
 -----------
@@ -315,3 +318,4 @@ API Details
   ODBCConnector
   SQLODBCDriver
   MongoODBCDriver
+  OracleODBCDriver
