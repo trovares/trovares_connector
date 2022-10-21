@@ -169,6 +169,11 @@
      trovares_connector.MongoODBCDriver
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../odbc/trovares_connector.OracleODBCDriver.html">
+     trovares_connector.OracleODBCDriver
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1">
@@ -461,8 +466,8 @@ title="Open an issue"
 
         <span class="k">return</span> <span class="n">schema</span></div>
 
-<span class="k">class</span> <span class="nc">OracleODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">upper_case_names</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ansi_conversion</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="OracleODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">OracleODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="OracleODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">upper_case_names</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ansi_conversion</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
@@ -487,7 +492,7 @@ title="Open an issue"
             <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2"> WHERE ROWNUM &lt;= 1&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="se">\&quot;</span><span class="si">{0}</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT NUM_ROWS FROM ALL_TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span> <span class="o">=</span> <span class="n">ansi_conversion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ansi_conversion</span> <span class="o">=</span> <span class="n">ansi_conversion</span></div>
 
     <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -504,7 +509,7 @@ title="Open an issue"
             <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
 <div class="viewcode-block" id="ODBCConnector"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector">[docs]</a><span class="k">class</span> <span class="nc">ODBCConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="ODBCConnector.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_driver</span><span class="p">):</span>

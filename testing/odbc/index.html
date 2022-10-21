@@ -172,6 +172,11 @@
      trovares_connector.MongoODBCDriver
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="trovares_connector.OracleODBCDriver.html">
+     trovares_connector.OracleODBCDriver
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toctree-l1">
@@ -752,7 +757,9 @@ By default this is false.
 And the ansi_conversion parameter, will convert Number(38,0) Oracle types into int64.
 By default this is true.</p>
 <p>The Oracle driver only support transferring data from Oracle to xGT.
-It doesn’t support transferring data from xGT to Oracle.</p>
+It doesn’t support transferring data from xGT to Oracle.
+Binary types are no supported for Oracle.
+Interval types likely don’t work through ODBC as well.</p>
 </section>
 <section id="transferring-data-from-xgt-to-odbc">
 <h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Permalink to this headline">#</a></h3>
@@ -792,6 +799,7 @@ See below for more details.</p>
 <li><p>When transferring to a database, the table must already be created.</p></li>
 <li><p>Transfer sizes/times are estimates and may not be available.</p></li>
 <li><p>The Oracle driver doesn’t support uploading to Oracle.</p></li>
+<li><p>Binary data types not supported.</p></li>
 </ul>
 </section>
 <section id="api-details">
@@ -809,6 +817,9 @@ See below for more details.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver" title="trovares_connector.MongoODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MongoODBCDriver</span></code></a>(connection_string[, include_id])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver" title="trovares_connector.OracleODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OracleODBCDriver</span></code></a>(connection_string[, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
