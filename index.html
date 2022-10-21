@@ -22,8 +22,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
     
@@ -36,12 +35,7 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script>let toggleHintShow = 'Click to show';</script>
-    <script>let toggleHintHide = 'Click to hide';</script>
-    <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Quick Start" href="quick_start.html" />
@@ -175,6 +169,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">
      trovares_connector.MongoODBCDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="odbc/trovares_connector.OracleODBCDriver.html">
+     trovares_connector.OracleODBCDriver
     </a>
    </li>
   </ul>
@@ -688,10 +687,6 @@ These additional drivers can provide much faster performance than the default ne
 <span class="c1"># Using the Trovares Neo4j driver with py2neo http.</span>
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;py2neo-http&#39;</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
-
-<span class="c1"># Using the Trovares Neo4j driver with arrow.</span>
-<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;neo4j-arrow&#39;</span><span class="p">)</span>
-<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.</p>
@@ -783,16 +778,17 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">1.5.2 (08-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">1.5.1 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id3">1.5.0 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">1.4.0 (07-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id8">1.3.1 (07-11-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">1.3.0 (07-08-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">1.2.1 (07-01-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id14">1.2.0 (06-24-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">1.1.0 (06-17-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id21">1.0.0 (06-13-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id3">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id11">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id13">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id20">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.0.0 (06-13-2022)</a></li>
 </ul>
 </li>
 </ul>

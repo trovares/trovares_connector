@@ -155,6 +155,30 @@ This example will create the corresponding vertex frame for the source and targe
 
    conn.transfer_to_xgt([('Friend', ('Person', 'Person', 'src_key', 'trg_key'))], easy_edges=True)
 
+The easy_edges parameter would automatically create the Person vertices with a single column using the keys from the Friend edges.
+
+Executing and transferring SQL commands
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This example shows executing a SQL command and transferring the results to xGT.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
+   connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = SQLODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_query_to_xgt('SELECT * From SqlTable', mapping = ('Friend', ('Person', 'Person', 'src_key', 'trg_key'), easy_edges=True)
+
+This would transfer the whole SqlTable to the xGT Friend edges.
+Similar to above the Person vertices would be automatically created.
+The mapping parameter is similar to the examples above except it takes single mapping instead of a list.
+This specifies the frame and type you want the table to map to.
 
 Appending data
 ^^^^^^^^^^^^^^
@@ -209,6 +233,36 @@ The driver provides an parameter, include_id, that by default is false.
 This parameter removes the _id field returned by the driver.
 If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.
 
+Connecting to Oracle
+^^^^^^^^^^^^^^^^^^^^
+
+This example uses Oracle XE with their ODBC driver.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, OracleODBCDriver
+
+   connection_string = 'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = OracleODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('test_table')])
+
+This would transfer the table, `test_table`, to the xGT table named `test_table`.
+The driver provides two parameters, upper_case_names and ansi_conversion.
+The upper_case_names parameter will treat names of tables like unquoted Oracle SQL does.
+By default this is false.
+And the ansi_conversion parameter, will convert Number(38,0) Oracle types into int64.
+By default this is true.
+
+The Oracle driver only support transferring data from Oracle to xGT.
+It doesn't support transferring data from xGT to Oracle.
+Binary types are no supported for Oracle.
+Interval types likely don't work through ODBC as well.
+
 Transferring data from xGT to ODBC
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -250,6 +304,8 @@ Limitations
 
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
+* The Oracle driver doesn't support uploading to Oracle.
+* Binary data types not supported.
 
 API Details
 -----------
@@ -262,3 +318,4 @@ API Details
   ODBCConnector
   SQLODBCDriver
   MongoODBCDriver
+  OracleODBCDriver

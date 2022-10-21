@@ -22,8 +22,7 @@
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
     
@@ -36,16 +35,11 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script>let toggleHintShow = 'Click to show';</script>
-    <script>let toggleHintHide = 'Click to hide';</script>
-    <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Release Notes" href="RELEASE.html" />
-    <link rel="prev" title="trovares_connector.MongoODBCDriver" href="odbc/trovares_connector.MongoODBCDriver.html" />
+    <link rel="prev" title="trovares_connector.OracleODBCDriver" href="odbc/trovares_connector.OracleODBCDriver.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -176,6 +170,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">
      trovares_connector.MongoODBCDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="odbc/trovares_connector.OracleODBCDriver.html">
+     trovares_connector.OracleODBCDriver
     </a>
    </li>
   </ul>
@@ -466,15 +465,6 @@ This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt><a class="reference external" href="https://github.com/neo4j-field/neo4j-arrow">Neo4j-arrow plugin and Python package</a></dt><dd><p>Alternative driver for transfers that is very experimental.
-This requires GDS and the jar plugin found in the above link to be installed as part of Neo4j.
-In addition it requires the neo4j-arrow python package found in the above link.
-At the moment, this provides very fast transfer speeds, but is limited to only int and string data types (Nulls do not work for these types).
-This can be selected via the driver parameter in the Trovares Neo4jDriver class.</p>
-</dd>
-</dl>
-</li>
 </ul>
 <section id="odbc">
 <h3>ODBC<a class="headerlink" href="#odbc" title="Permalink to this headline">#</a></h3>
@@ -482,6 +472,7 @@ This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 <ul class="simple">
 <li><p><a class="reference external" href="https://pypi.org/project/arrow_odbc/">Arrow ODBC</a></p></li>
 <li><p><a class="reference external" href="https://pypi.org/project/pandas/">Pandas</a></p></li>
+<li><p>ODBC Driver for your database and an ODBC Driver manager such unixODBC.</p></li>
 </ul>
 </section>
 </section>
@@ -495,11 +486,11 @@ This can be selected via the driver parameter in the Trovares Neo4jDriver class.
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="odbc/trovares_connector.MongoODBCDriver.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="odbc/trovares_connector.OracleODBCDriver.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">trovares_connector.MongoODBCDriver</p>
+            <p class="prev-next-title">trovares_connector.OracleODBCDriver</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="RELEASE.html" title="next page">

@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+1.6.0 (10-21-2022)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added Oracle driver that supports downloading from Oracle.
+  - Added support for transferring arbitrary queries to xGT.
+
+Fixed
+^^^^^
+  - Documentation errors.
+
 1.5.2 (08-26-2022)
 ------------------
 
