@@ -75,15 +75,15 @@ xgt_server.drop_frame('Person')
 # This is the same as above except it is transferring via an SQL match where it can select any number of columns.
 # Here only 1 mapping is specified per match and it will map from the SQL query to mapping.
 # The mapping here is given as (XGT_FRAME_NAME, (XGT_TYPE)) where (XGT_TYPE) is the same format above.
-# Transfer Person to Person.
+# Transfer Person to XgtPerson.
 c.transfer_query_to_xgt('SELECT * FROM "Person"', mapping=('XgtPerson', ('key',)))
 
-# Transfer Knows to Knows. This will transfer all the columns returned by the query.
+# Transfer Knows to XgtKnows. This will transfer all the columns returned by the query.
 # So Person1, Person2, and Relationship.
 c.transfer_query_to_xgt('SELECT * FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')))
 
-xgt_server.drop_frame('Knows')
-xgt_server.drop_frame('Person')
+xgt_server.drop_frame('XgtKnows')
+xgt_server.drop_frame('XgtPerson')
 
 # Alternatively you can create the vertices and vertex frames by specifying easy_edges.
 # The key column for the vertex frames will be called key.
