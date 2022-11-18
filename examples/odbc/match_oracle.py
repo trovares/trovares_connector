@@ -44,13 +44,13 @@ pyodbc_driver.commit()
 # Create some ORACLE tables in Oracle SQL.
 # The table Person has 1 column called key.
 cursor.execute('CREATE TABLE "Person" ("key" INT)')
-# The table Knows has 3 columns: Person1, Person2, and Relationship.
-cursor.execute('CREATE TABLE "Knows" ("Person1" INT, "Person2" INT, "Relationship" VARCHAR(50))')
+# The table Knows has 5 columns: Person1, Person2, Relationship, Prop1, and Prop2.
+cursor.execute('CREATE TABLE "Knows" ("Person1" INT, "Person2" INT, "Relationship" VARCHAR(50), "Prop1" INT, "Prop2" INT)')
 cursor.execute('INSERT INTO "Person" VALUES (0)')
 for i in range(0, 10):
     cursor.execute(f'INSERT INTO "Person" VALUES ({i + 1})')
-    cursor.execute(f'INSERT INTO "Knows" VALUES ({i}, {i + 1}, \'FRIENDS\')')
-cursor.execute('INSERT INTO "Knows" VALUES (2, 0, \'PARTNERS\')')
+    cursor.execute(f'INSERT INTO "Knows" VALUES ({i}, {i + 1}, \'FRIENDS\', {i + 2}, 0)')
+cursor.execute('INSERT INTO "Knows" VALUES (2, 0, \'PARTNERS\', 4, 1)')
 pyodbc_driver.commit()
 pyodbc_driver.close()
 
@@ -79,18 +79,32 @@ xgt_server.drop_frame('Person')
 c.transfer_query_to_xgt('SELECT * FROM "Person"', mapping=('XgtPerson', ('key',)))
 
 # Transfer Knows to XgtKnows. This will transfer all the columns returned by the query.
-# So Person1, Person2, and Relationship.
+# So Person1, Person2, Relationship, Prop1, and Prop2.
 c.transfer_query_to_xgt('SELECT * FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')))
 
 xgt_server.drop_frame('XgtKnows')
 xgt_server.drop_frame('XgtPerson')
 
-# Alternatively you can create the vertices and vertex frames by specifying easy_edges.
+# Alternatively you can create the vertices and vertex frames by specifying easy_edges when transferring edges.
 # The key column for the vertex frames will be called key.
+# Like before this will transfer all the columns.
+print('\n')
 c.transfer_query_to_xgt('SELECT * FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')), easy_edges=True)
 
-print("The follow table data was transferred for the Edges: ")
+print('The follow table data was transferred for the Edges with query, SELECT * FROM "Knows":')
 print(xgt_server.get_edge_frame('XgtKnows').get_data())
+print('\n')
+
+xgt_server.drop_frame('XgtKnows')
+xgt_server.drop_frame('XgtPerson')
+
+# You can run any query, so you can pull data from Oracle whatever way you wish.
+# For instance, this would transfer 3 of the columns and change their order stored in Oracle:
+c.transfer_query_to_xgt('SELECT "Relationship", "Person1", "Person2" FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')), easy_edges=True)
+
+print('The follow table data was transferred for the Edges with query, SELECT "Relationship", "Person1", "Person2" FROM "Knows":')
+print(xgt_server.get_edge_frame('XgtKnows').get_data())
+print('\n')
 
 # Look for a loop
 query = 'match(a)-->()-->()-->(a) return a.key'
