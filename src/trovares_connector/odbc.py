@@ -176,6 +176,37 @@ class OracleODBCDriver(object):
         )
         return reader.schema
 
+class SAPODBCDriver(object):
+    def __init__(self, connection_string):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to the ODBC applications.
+            Example:
+            'Driver={AES};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT TOP 1 * FROM {0};"
+        self._data_query = "SELECT * FROM {0};"
+        self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
+
+    def _get_data_query(self, table, arrow_schema):
+        return  self._data_query.format(table)
+
+    def _conversions(self):
+       return { }
+
+    def _get_record_batch_schema(self, table):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+        )
+        return reader.schema
+
 class ODBCConnector(object):
     def __init__(self, xgt_server, odbc_driver):
         """

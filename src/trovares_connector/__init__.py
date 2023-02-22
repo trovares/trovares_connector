@@ -30,5 +30,6 @@ try:
     from .odbc import SQLODBCDriver
     from .odbc import MongoODBCDriver
     from .odbc import OracleODBCDriver
+    from .odbc import SAPODBCDriver
 except ImportError:
     pass
