@@ -103,7 +103,7 @@ autosummary_generate = True
 # Since we auto-generated these with autosummary directives, they're useless.
 html_show_sourcelink = False
 
-# These options are specific to the 'agogo' theme currently used. If/when
+# These options are specific to the 'sphinx_book_theme' currently used. If/when
 # we switch to a custom theme, this will change or may go away entirely.
 html_theme_options = {
   'home_page_in_toc' : True,
