@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2022 Trovares Inc.
+#  Copyright 2022-2023 Trovares Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -37,11 +37,11 @@ print(f"Sys.path: {sys.path}")
 # -- Project information -----------------------------------------------------
 
 project = 'trovares_connector'
-copyright = '2022, Trovares, Inc.'
+copyright = '2022-2023, Trovares, Inc.'
 author = 'trovares.com'
 
 # The full version, including alpha/beta/rc tags
-release = '1.6.0'
+release = '1.7.0'
 
 # -- General configuration ---------------------------------------------------
 

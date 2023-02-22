@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2022 Trovares Inc.
+#  Copyright 2022-2023 Trovares Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('odbc_test')
 xgt_server.drop_namespace('odbc_test', force_drop=True)
 
-connection_string = 'Driver={ASE};Database=test;Uid=sa;Pwd=adminadmin;Server=ip-172-31-35-248.us-west-2.compute.internal;Port=5001;'
+connection_string = 'Driver={ASE};Database=test;Uid=sa;Pwd=test;Server=localhost;Port=5000;'
 odbc_driver = SAPODBCDriver(connection_string)
 c = ODBCConnector(xgt_server, odbc_driver)
 pyodbc_driver = pyodbc.connect(connection_string, autocommit=True)
