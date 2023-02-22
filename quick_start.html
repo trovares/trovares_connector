@@ -433,12 +433,12 @@ title="Print to PDF"
 <section id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">#</a></h2>
 <p>In a seperate terminal install the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a> and run it:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull trovares/xgt
-docker run --publish<span class="o">=</span><span class="m">4367</span>:4367 trovares/xgt
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>trovares/xgt
+docker<span class="w"> </span>run<span class="w"> </span>--publish<span class="o">=</span><span class="m">4367</span>:4367<span class="w"> </span>trovares/xgt
 </pre></div>
 </div>
 <p>In another terminal install the connector:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install trovares_connector
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>trovares_connector
 </pre></div>
 </div>
 </section>
@@ -501,7 +501,7 @@ docker run --publish<span class="o">=</span><span class="m">4367</span>:4367 tro
   
     By trovares.com<br/>
   
-      &copy; Copyright 2022, Trovares, Inc..<br/>
+      &copy; Copyright 2022-2023, Trovares, Inc..<br/>
 </p>
         </footer>
     </div>

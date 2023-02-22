@@ -336,7 +336,7 @@ title="Open an issue"
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*- --------------------------------------------------===#</span>
 <span class="c1">#</span>
-<span class="c1">#  Copyright 2022 Trovares Inc.</span>
+<span class="c1">#  Copyright 2022-2023 Trovares Inc.</span>
 <span class="c1">#</span>
 <span class="c1">#  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
 <span class="c1">#  you may not use this file except in compliance with the License.</span>
@@ -393,7 +393,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="SQLODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.SQLODBCDriver.html#trovares_connector.SQLODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">SQLODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="SQLODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.SQLODBCDriver.html#trovares_connector.SQLODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
 <span class="sd">        Parameters</span>
@@ -424,7 +424,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="MongoODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">MongoODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="MongoODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.MongoODBCDriver.html#trovares_connector.MongoODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">include_id</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
 <span class="sd">        Parameters</span>
@@ -468,7 +468,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="OracleODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">OracleODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="OracleODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">upper_case_names</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ansi_conversion</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
 <span class="sd">        Parameters</span>
@@ -511,9 +511,40 @@ title="Open an issue"
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
+<span class="k">class</span> <span class="nc">SAPODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the driver class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        connection_string : str</span>
+<span class="sd">            Standard ODBC connection string used for connecting to the ODBC applications.</span>
+<span class="sd">            Example:</span>
+<span class="sd">            &#39;Driver={AES};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT TOP 1 * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
+        <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conversions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_get_record_batch_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">read_arrow_batches_from_odbc</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">),</span>
+            <span class="n">connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+
 <div class="viewcode-block" id="ODBCConnector"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector">[docs]</a><span class="k">class</span> <span class="nc">ODBCConnector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <div class="viewcode-block" id="ODBCConnector.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_driver</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the connector class.</span>
 
 <span class="sd">        Parameters</span>
@@ -528,7 +559,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">odbc_driver</span></div>
 
 <div class="viewcode-block" id="ODBCConnector.get_xgt_schemas"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.get_xgt_schemas">[docs]</a>    <span class="k">def</span> <span class="nf">get_xgt_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve a dictionary containing the schema information for all of</span>
 <span class="sd">        the tables requested and their mappings.</span>
 
@@ -569,7 +600,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="ODBCConnector.create_xgt_schemas"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.create_xgt_schemas">[docs]</a>    <span class="k">def</span> <span class="nf">create_xgt_schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_schemas</span><span class="p">,</span> <span class="n">append</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                            <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates table, vertex and/or edge frames in Trovares xGT.</span>
 
 <span class="sd">        This function first infers the schemas for all of the needed frames in xGT to</span>
@@ -654,7 +685,7 @@ title="Open an issue"
                                                    <span class="n">source</span> <span class="o">=</span> <span class="n">src</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">trg</span><span class="p">,</span> <span class="n">source_key</span> <span class="o">=</span> <span class="n">src_key</span><span class="p">,</span> <span class="n">target_key</span> <span class="o">=</span> <span class="n">trg_key</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ODBCConnector.transfer_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">append</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from the ODBC application to Trovares xGT.</span>
 
 <span class="sd">        This function first infers the schemas for all of the needed frames in xGT to</span>
@@ -690,7 +721,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">copy_data_to_xgt</span><span class="p">(</span><span class="n">xgt_schema</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ODBCConnector.transfer_query_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_query_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_query_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">easy_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from the ODBC application to Trovares xGT.</span>
 
 <span class="sd">        This function first infers the schemas for the query.</span>
@@ -723,7 +754,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="o">.</span><span class="n">__copy_query_data_to_xgt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ODBCConnector.copy_data_to_xgt"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.copy_data_to_xgt">[docs]</a>    <span class="k">def</span> <span class="nf">copy_data_to_xgt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xgt_schemas</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from the ODBC application to the requested table, vertex and/or edge frames</span>
 <span class="sd">        in Trovares xGT.</span>
 
@@ -779,7 +810,7 @@ title="Open an issue"
 <div class="viewcode-block" id="ODBCConnector.transfer_to_odbc"><a class="viewcode-back" href="../../odbc/trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_odbc">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_to_odbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                          <span class="n">tables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                          <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copies data from Trovares xGT to an ODBC application.</span>
 
 <span class="sd">        Parameters</span>
@@ -1002,7 +1033,7 @@ title="Open an issue"
   
     By trovares.com<br/>
   
-      &copy; Copyright 2022, Trovares, Inc..<br/>
+      &copy; Copyright 2022-2023, Trovares, Inc..<br/>
 </p>
         </footer>
     </div>

@@ -535,7 +535,7 @@ title="Print to PDF"
 <span class="s2">    WHERE v1 &lt;&gt; v2 AND v1 &lt;&gt; v3 AND v2 &lt;&gt; v3</span>
 <span class="s2">      AND e1.timestamp &lt;= e2.timestamp</span>
 <span class="s2">      AND e2.timestamp &lt;= e3.timestamp</span>
-<span class="s2">      AND e3.timestamp - e1.timestamp &lt; </span><span class="si">{:d}</span><span class="s2"></span>
+<span class="s2">      AND e3.timestamp - e1.timestamp &lt; </span><span class="si">{:d}</span>
 <span class="s2">    RETURN v1.key as v1id,</span>
 <span class="s2">           e1.timestamp as e1_timestamp,</span>
 <span class="s2">           v2.key as v2id,</span>
@@ -577,7 +577,7 @@ Transfer to xgt time: 0.85
 <span class="n">q_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query to xgt time: </span><span class="si">{</span><span class="n">q_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total xgt time including transfer: </span><span class="si">{</span><span class="n">t_duration</span> <span class="o">+</span> <span class="n">q_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total xgt time including transfer: </span><span class="si">{</span><span class="n">t_duration</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q_duration</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -623,7 +623,7 @@ Total xgt time including transfer: 1.43
   
     By trovares.com<br/>
   
-      &copy; Copyright 2022, Trovares, Inc..<br/>
+      &copy; Copyright 2022-2023, Trovares, Inc..<br/>
 </p>
         </footer>
     </div>

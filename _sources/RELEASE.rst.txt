@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+1.7.0 (02-22-2023)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added SAP driver that supports downloading from SAP ASE.
+
 1.6.0 (10-21-2022)
 ------------------
 
