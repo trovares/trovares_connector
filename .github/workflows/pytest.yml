@@ -57,7 +57,7 @@ jobs:
       run: |
         sudo apt-get update
         python -m pip install --upgrade pip
-        pip install py2neo parameterized pyodbc
+        pip install py2neo parameterized pyodbc pandas
         pip install pytest
         pip install './[odbc]'
 

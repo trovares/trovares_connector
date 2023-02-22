@@ -1,9 +1,10 @@
 furo>=2021.11.16
-sphinx-book-theme
+sphinx-book-theme>=0.4.0rc1
 sphinx-copybutton
 myst-nb
 pyarrow
 neo4j
 xgt
+pandas
 arrow_odbc==0.2.0
 antlr4-python3-runtime
