@@ -367,6 +367,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sap-ase">Connecting to SAP ASE</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from xGT to ODBC</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
@@ -494,7 +495,8 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 </section>
 <section id="executing-and-transferring-sql-commands">
 <h3>Executing and transferring SQL commands<a class="headerlink" href="#executing-and-transferring-sql-commands" title="Permalink to this heading">#</a></h3>
-<p>This example shows executing a SQL command and transferring the results to xGT.</p>
+<p>This example shows executing a SQL command and transferring the results to xGT.
+This functionality allows xGT to connect to any ODBC database and read data from it using their flavor of SQL.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
 
@@ -582,6 +584,24 @@ By default this is true.</p>
 It doesn’t support transferring data from xGT to Oracle.
 Binary types are no supported for Oracle.
 Interval types likely don’t work through ODBC as well.</p>
+</section>
+<section id="connecting-to-sap-ase">
+<h3>Connecting to SAP ASE<a class="headerlink" href="#connecting-to-sap-ase" title="Permalink to this heading">#</a></h3>
+<p>This example uses SAP ASE with their ODBC driver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">OracleODBCDriver</span>
+
+<span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN=</span><span class="si">{ASE}</span><span class="s1">;Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;&#39;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SAPODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>test_table</cite>, to the xGT table named <cite>test_table</cite>.
+Transferring data from xGT to SAP ASE works, but through the default provided ODBC driver or perhaps with ASE in general, the performance can stall on larger data sizes due the transaction system.</p>
 </section>
 <section id="transferring-data-from-xgt-to-odbc">
 <h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Permalink to this heading">#</a></h3>
@@ -698,6 +718,7 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sap-ase">Connecting to SAP ASE</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from xGT to ODBC</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
@@ -727,7 +748,7 @@ By trovares.com
     
   <p class="copyright">
     
-      © Copyright 2022, Trovares, Inc..
+      © Copyright 2022-2023, Trovares, Inc..
       <br/>
     
   </p>

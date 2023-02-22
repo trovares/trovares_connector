@@ -1,7 +1,7 @@
 ..
    # -*- coding: utf-8 -*- --------------------------------------------------===#
    #
-   #  Copyright 2022 Trovares Inc.
+   #  Copyright 2022-2023 Trovares Inc.
    #
    #  Licensed under the Apache License, Version 2.0 (the "License");
    #  you may not use this file except in compliance with the License.
@@ -161,6 +161,7 @@ Executing and transferring SQL commands
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example shows executing a SQL command and transferring the results to xGT.
+This functionality allows xGT to connect to any ODBC database and read data from it using their flavor of SQL.
 
 .. code-block:: python
 
@@ -262,6 +263,27 @@ The Oracle driver only support transferring data from Oracle to xGT.
 It doesn't support transferring data from xGT to Oracle.
 Binary types are no supported for Oracle.
 Interval types likely don't work through ODBC as well.
+
+Connecting to SAP ASE
+^^^^^^^^^^^^^^^^^^^^^
+
+This example uses SAP ASE with their ODBC driver.
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, OracleODBCDriver
+
+   connection_string = 'DSN={ASE};Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;'
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = SAPODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('test_table')])
+
+This would transfer the table, `test_table`, to the xGT table named `test_table`.
+Transferring data from xGT to SAP ASE works, but through the default provided ODBC driver or perhaps with ASE in general, the performance can stall on larger data sizes due the transaction system.
 
 Transferring data from xGT to ODBC
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
