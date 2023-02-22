@@ -1,5 +1,5 @@
 furo>=2021.11.16
-sphinx-book-theme>=4.5.0
+sphinx-book-theme>=0.4.0rc1
 sphinx-copybutton
 myst-nb
 pyarrow
