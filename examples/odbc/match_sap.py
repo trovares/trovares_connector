@@ -41,7 +41,7 @@ cursor.execute('DROP TABLE Knows')
 pyodbc_driver.commit()
 """
 
-# Create some ORACLE tables in SAP ASE SQL.
+# Create some tables in SAP ASE SQL.
 # The table Person has 1 column called key.
 cursor.execute('CREATE TABLE Person (KeyID INT)')
 # The table Knows has 5 columns: Person1, Person2, Relationship, Prop1, and Prop2.
