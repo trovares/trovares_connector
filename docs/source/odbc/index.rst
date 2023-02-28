@@ -264,10 +264,10 @@ It doesn't support transferring data from xGT to Oracle.
 Binary types are no supported for Oracle.
 Interval types likely don't work through ODBC as well.
 
-Connecting to SAP ASE
-^^^^^^^^^^^^^^^^^^^^^
+Connecting to SAP ASE/IQ
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-This example uses SAP ASE with their ODBC driver.
+This example uses SAP ASE/IQ with their ODBC driver.
 
 .. code-block:: python
 
@@ -283,7 +283,7 @@ This example uses SAP ASE with their ODBC driver.
    conn.transfer_to_xgt([('test_table')])
 
 This would transfer the table, `test_table`, to the xGT table named `test_table`.
-Transferring data from xGT to SAP ASE works, but through the default provided ODBC driver or perhaps with ASE in general, the performance can stall on larger data sizes due the transaction system.
+Transferring data from xGT to SAP ASE/IQ also works.
 
 Transferring data from xGT to ODBC
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

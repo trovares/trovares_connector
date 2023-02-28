@@ -17,7 +17,7 @@
 #
 #===----------------------------------------------------------------------===#
 
-# This example creates a graph in SAP ASE SQL, transfers it to xGT, and
+# This example creates a graph in SAP ASE/IQ SQL, transfers it to xGT, and
 # runs a query on it in xGT.
 
 from trovares_connector import ODBCConnector, SAPODBCDriver
@@ -28,6 +28,7 @@ xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('odbc_test')
 xgt_server.drop_namespace('odbc_test', force_drop=True)
 
+# This could be either your ASE or IQ driver.
 connection_string = 'Driver={ASE};Database=test;Uid=sa;Pwd=test;Server=localhost;Port=5000;'
 odbc_driver = SAPODBCDriver(connection_string)
 c = ODBCConnector(xgt_server, odbc_driver)
@@ -41,7 +42,7 @@ cursor.execute('DROP TABLE Knows')
 pyodbc_driver.commit()
 """
 
-# Create some tables in SAP ASE SQL.
+# Create some tables in SAP ASE/IQ SQL.
 # The table Person has 1 column called key.
 cursor.execute('CREATE TABLE Person (KeyID INT)')
 # The table Knows has 5 columns: Person1, Person2, Relationship, Prop1, and Prop2.
@@ -98,8 +99,8 @@ print('\n')
 xgt_server.drop_frame('XgtKnows')
 xgt_server.drop_frame('XgtPerson')
 
-# You can run any query, so you can pull data from SAP ASE whatever way you wish.
-# For instance, this would transfer 3 of the columns and change their order stored in ASE:
+# You can run any query, so you can pull data from SAP ASE/IQ whatever way you wish.
+# For instance, this would transfer 3 of the columns and change their order stored in ASE/IQ:
 c.transfer_query_to_xgt('SELECT Relationship, Person1, Person2 FROM Knows', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')), easy_edges=True)
 
 print('The follow table data was transferred for the Edges with query, SELECT Relationship, Person1, Person2 FROM Knows:')
