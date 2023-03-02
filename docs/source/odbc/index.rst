@@ -29,7 +29,7 @@ The ODBC driver has been tested against MySQL, MariaDB, Oracle, Snowflake, SAP A
 The driver regularly runs unit tests against MariaDB.
 Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren't guaranteed to work.
-However, transfer_query_to_xgt will likely work any vendor with the generic SQLODBCDriver.
+However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.
 
 Installation
 ------------

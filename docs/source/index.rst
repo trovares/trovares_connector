@@ -33,7 +33,7 @@ The connector `source code <http://github.com/trovares/trovares_connector/>`_ is
 A basic guide is provided below.
 For a quick start see :ref:`quick_start`.
 
-The default connector provided is for connecting to Neo4j.
+The default connector provided is for connecting to Neo4j or AuraDB.
 The package also provides an optional :ref:`odbc` for connecting to databases or applications that support ODBC.
 
 Installation
@@ -157,6 +157,22 @@ In addition the unlabeled nodes in Neo4j are named '' and this can be used to ma
 .. code-block:: python
 
    conn.transfer_to_xgt(vertices=[('', 'my_empty_type')])
+
+Connecting to AuraDB
+^^^^^^^^^^^^^^^^^^^^
+The connector can connect to AuraDB instances by setting the hostname and appropriate protocol:
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from neo4j import GraphDatabase
+
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('neo4j')
+   # The protocol would be the part before ://. Usually this is neo4j+s.
+   neo4j_server = Neo4jDriver(protocol='neo4j+s', hostname='hostname <something like ashdjs43.databases.neo4j.io>', auth=('neo4j', 'foo'))
+   conn = Neo4jConnector(xgt_server, neo4j_server)
 
 
 Using various Neo4j drivers
