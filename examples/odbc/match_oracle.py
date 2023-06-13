@@ -92,7 +92,7 @@ print('\n')
 c.transfer_query_to_xgt('SELECT * FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')), easy_edges=True)
 
 print('The follow table data was transferred for the Edges with query, SELECT * FROM "Knows":')
-print(xgt_server.get_edge_frame('XgtKnows').get_data())
+print(xgt_server.get_frame('XgtKnows').get_data())
 print('\n')
 
 xgt_server.drop_frame('XgtKnows')
@@ -103,7 +103,7 @@ xgt_server.drop_frame('XgtPerson')
 c.transfer_query_to_xgt('SELECT "Relationship", "Person1", "Person2" FROM "Knows"', mapping=('XgtKnows', ('XgtPerson', 'XgtPerson', 'Person1', 'Person2')), easy_edges=True)
 
 print('The follow table data was transferred for the Edges with query, SELECT "Relationship", "Person1", "Person2" FROM "Knows":')
-print(xgt_server.get_edge_frame('XgtKnows').get_data())
+print(xgt_server.get_frame('XgtKnows').get_data())
 print('\n')
 
 # Look for a loop

@@ -595,7 +595,7 @@ class Neo4jConnector(object):
             vname = schema['xgt_name']
             if append:
                 try:
-                    frame = self._xgt_server.get_vertex_frame(vname)
+                    frame = self._xgt_server.get_frame(vname)
                     if frame.schema != table_schema:
                         raise ValueError(
                             f"Vertex Frame {vname} has a schema {frame.schema}"
@@ -817,8 +817,8 @@ class Neo4jConnector(object):
         if namespace == None:
             namespace = self._default_namespace
         if vertices == None and edges == None:
-            vertices = [frame.name for frame in xgt_server.get_vertex_frames(namespace=namespace)]
-            edges = [frame.name for frame in xgt_server.get_edge_frames(namespace=namespace)]
+            vertices = [frame.name for frame in xgt_server.get_frames(namespace=namespace, frame_type='vertex')]
+            edges = [frame.name for frame in xgt_server.get_frames(namespace=namespace, frame_type='edge')]
             namespace = None
         elif vertices == None:
             vertices = []
@@ -828,7 +828,7 @@ class Neo4jConnector(object):
         id_neo4j_map = { }
 
         for edge in edges:
-            edge_frame = xgt_server.get_edge_frame(edge)
+            edge_frame = xgt_server.get_frame(edge)
             vertices.append(edge_frame.source_name)
             vertices.append(edge_frame.target_name)
 
@@ -875,16 +875,16 @@ class Neo4jConnector(object):
             if vertex in count_map:
                 continue
             count_map[vertex] = True
-            estimated_counts += xgt_server.get_vertex_frame(vertex).num_rows
+            estimated_counts += xgt_server.get_frame(vertex).num_rows
         for edge in edges:
-            estimated_counts += xgt_server.get_edge_frame(edge).num_rows
+            estimated_counts += xgt_server.get_frame(edge).num_rows
 
         with ProgressDisplay(estimated_counts) as progress_bar:
             for vertex in vertices:
                 if vertex in id_neo4j_map:
                     continue
                 id_neo4j_map[vertex] = { }
-                vertex_frame = xgt_server.get_vertex_frame(vertex)
+                vertex_frame = xgt_server.get_frame(vertex)
                 create_string = 'create (a:' + vertex + '{{{0}}}) return ID(a)'
 
                 schema = vertex_frame.schema
@@ -922,11 +922,11 @@ class Neo4jConnector(object):
                             break
 
             for edge in edges:
-                edge_frame = xgt_server.get_edge_frame(edge)
+                edge_frame = xgt_server.get_frame(edge)
                 source = edge_frame.source_name
                 target = edge_frame.target_name
-                source_frame = xgt_server.get_vertex_frame(source)
-                target_frame = xgt_server.get_vertex_frame(target)
+                source_frame = xgt_server.get_frame(source)
+                target_frame = xgt_server.get_frame(target)
                 source_map = id_neo4j_map[source]
                 target_map = id_neo4j_map[target]
                 create_string = 'match (a:' + source + '), (b:' + target + ') where ID(a) = {0} and ID(b) = {1} create (a)-[:' + edge + '{{{2}}}]->(b)'

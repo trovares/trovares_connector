@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+2.0.0 (06-14-2023)
+------------------
+
+Changed
+^^^^^^^
+  - Require xGT 1.14.
+
+Fixed
+^^^^^
+  - Warnings about deprecated functions.
+
 1.7.0 (02-22-2023)
 ------------------
 

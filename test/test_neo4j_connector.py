@@ -234,7 +234,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       attributes = {_:t for _, t in table_schema}
       print(f"\nAttributes: {attributes}")
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 1
 
   def test_transfer_node_working_types_bolt(self):
@@ -247,7 +247,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
       attributes = {_:t for _, *t  in table_schema}
       print(f"\nAttributes: {attributes}")
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 3
     print(node_frame.get_data())
 
@@ -255,14 +255,14 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self._populate_node_working_types_bolt()
     c = self.conn
     c.transfer_to_xgt(vertices=['Node'])
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 3
     expected = [row[1:] for row in node_frame.get_data()]
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     c.transfer_to_neo4j(vertices=['Node'])
     self.xgt.drop_frame("Node")
     c.transfer_to_xgt(vertices=['Node'])
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 3
     result = [row[1:] for row in node_frame.get_data()]
     # The column ordering can change when uploading to neo4j
@@ -285,8 +285,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self._populate_relationship_working_types_bolt()
     c = self.conn
     c.transfer_to_xgt(edges=['Relationship'])
-    node_frame = self.xgt.get_vertex_frame('Node')
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    node_frame = self.xgt.get_frame('Node')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert edge_frame.num_rows == 3
     node_expected = [row[1:] for row in node_frame.get_data()]
     edge_expected = [row[2:] for row in edge_frame.get_data()]
@@ -295,8 +295,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.xgt.drop_frame("Relationship")
     self.xgt.drop_frame("Node")
     c.transfer_to_xgt(edges=['Relationship'])
-    node_frame = self.xgt.get_vertex_frame('Node')
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    node_frame = self.xgt.get_frame('Node')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert edge_frame.num_rows == 3
     node_result = [row[1:] for row in node_frame.get_data()]
     edge_result = [row[2:] for row in edge_frame.get_data()]
@@ -323,7 +323,7 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schemas(vertices=['Node'], edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert edge_frame.num_rows == 3
     print(edge_frame.get_data())
     self.xgt.drop_frame("Relationship")
@@ -334,8 +334,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schemas(vertices=[('Node', 'n')], edges=[('Relationship', 'r')])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('n')
-    edge_frame = self.xgt.get_edge_frame('r')
+    node_frame = self.xgt.get_frame('n')
+    edge_frame = self.xgt.get_frame('r')
     assert node_frame.num_rows == 6
     assert edge_frame.num_rows == 3
     print(edge_frame.get_data())
@@ -347,8 +347,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schemas(edges=['Relationship'])
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    node_frame = self.xgt.get_frame('Node')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert node_frame.num_rows == 6
     assert edge_frame.num_rows == 3
     assert node_frame.get_data(length=1)[0][1] == 1
@@ -361,8 +361,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schemas(edges=['Relationship'], import_edge_nodes=False)
     c.create_xgt_schemas(xgt_schema, append=True)
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    node_frame = self.xgt.get_frame('Node')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert node_frame.num_rows == 6
     assert edge_frame.num_rows == 3
     assert node_frame.get_data(length=1)[0][1] == 1
@@ -374,8 +374,8 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema = c.get_xgt_schemas()
     c.create_xgt_schemas(xgt_schema)
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
-    edge_frame = self.xgt.get_edge_frame('Relationship')
+    node_frame = self.xgt.get_frame('Node')
+    edge_frame = self.xgt.get_frame('Relationship')
     assert node_frame.num_rows == 6
     assert edge_frame.num_rows == 3
     self.xgt.drop_frame("Relationship")
@@ -394,11 +394,11 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
         'CREATE (:Node{int: 344, str: "string"})').finalize()
     c.copy_data_to_xgt(xgt_schema)
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 2
 
     c.create_xgt_schemas(xgt_schema, append=False)
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 0
 
   def test_dropping(self):
@@ -409,19 +409,19 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     xgt_schema2 = c.get_xgt_schemas(vertices=['Node'])
 
     c.create_xgt_schemas(xgt_schema1)
-    self.xgt.get_vertex_frame('Node')
-    self.xgt.get_edge_frame('Relationship')
+    self.xgt.get_frame('Node')
+    self.xgt.get_frame('Relationship')
 
     c.create_xgt_schemas(xgt_schema1)
-    self.xgt.get_vertex_frame('Node')
-    self.xgt.get_edge_frame('Relationship')
+    self.xgt.get_frame('Node')
+    self.xgt.get_frame('Relationship')
 
     with self.assertRaises(xgt.XgtFrameDependencyError):
         c.create_xgt_schemas(xgt_schema2)
     c.create_xgt_schemas(xgt_schema2, force=True)
-    self.xgt.get_vertex_frame('Node')
+    self.xgt.get_frame('Node')
     with self.assertRaises(xgt.XgtNameError):
-        self.xgt.get_edge_frame('Relationship')
+        self.xgt.get_frame('Relationship')
 
   def test_multiple_node_labels_to(self):
     c = self.conn
@@ -431,9 +431,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.create_xgt_schemas(schema)
     c.copy_data_to_xgt(schema)
 
-    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
+    node_frame = self.xgt.get_frame('Node1_Relationship_Node1')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node2')
+    node_frame = self.xgt.get_frame('Node1_Relationship_Node2')
     assert node_frame.num_rows == 1
     self.xgt.drop_frame("Node1_Relationship_Node1")
     self.xgt.drop_frame("Node1_Relationship_Node2")
@@ -446,9 +446,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c.create_xgt_schemas(schema)
     c.copy_data_to_xgt(schema)
 
-    node_frame = self.xgt.get_edge_frame('Node1_Relationship_Node1')
+    node_frame = self.xgt.get_frame('Node1_Relationship_Node1')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('Node2_Relationship_Node1')
+    node_frame = self.xgt.get_frame('Node2_Relationship_Node1')
     assert node_frame.num_rows == 1
     self.xgt.drop_frame("Node1_Relationship_Node1")
     self.xgt.drop_frame("Node2_Relationship_Node1")
@@ -500,30 +500,30 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     c = self.conn
     self.neo4j_driver.query('CREATE ()').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     assert node_frame.num_rows == 1
 
   def test_map_empty_labels(self):
     c = self.conn
     self.neo4j_driver.query('CREATE ()').finalize()
     c.transfer_to_xgt(vertices=[('', 'custom_name')])
-    node_frame = self.xgt.get_vertex_frame('custom_name')
+    node_frame = self.xgt.get_frame('custom_name')
     assert node_frame.num_rows == 1
     with self.assertRaises(xgt.XgtNameError):
-        node_frame = self.xgt.get_vertex_frame('unlabeled')
+        node_frame = self.xgt.get_frame('unlabeled')
 
   def test_empty_labels_schema(self):
     c = self.conn
     self.neo4j_driver.query('CREATE ({int:2})').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     res = self.xgt.run_job('match (v) return v.int')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 2
     self.neo4j_driver.query("MATCH (n) DETACH DELETE n").finalize()
     self.neo4j_driver.query('CREATE ({str:"bbb"})').finalize()
     c.transfer_to_xgt(vertices=[''])
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     res = self.xgt.run_job('match (v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "bbb"
@@ -533,15 +533,15 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
         'CREATE ()-[:e1]->(), (:Node)-[:e2]->(), ()-[:e3]->(:Node)').finalize()
     c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
-    node_frame = self.xgt.get_edge_frame('e1')
+    node_frame = self.xgt.get_frame('e1')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('e2')
+    node_frame = self.xgt.get_frame('e2')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('e3')
+    node_frame = self.xgt.get_frame('e3')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     assert node_frame.num_rows == 4
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 2
 
   def test_edge_empty_labels_schema(self):
@@ -549,21 +549,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
         'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({str:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
     c.transfer_to_xgt(edges=['e1', 'e2', 'e3'])
-    node_frame = self.xgt.get_edge_frame('e1')
+    node_frame = self.xgt.get_frame('e1')
     res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 1
-    node_frame = self.xgt.get_edge_frame('e2')
+    node_frame = self.xgt.get_frame('e2')
     res = self.xgt.run_job('match ()-[:e2]->(v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "aaa"
-    node_frame = self.xgt.get_edge_frame('e3')
+    node_frame = self.xgt.get_frame('e3')
     res = self.xgt.run_job('match (v)-[:e3]->() return v.bool')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == True
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     assert node_frame.num_rows == 4
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 2
 
   def test_map_edge_empty_labels(self):
@@ -571,20 +571,20 @@ class TestXgtNeo4jConnector(unittest.TestCase):
     self.neo4j_driver.query(
         'CREATE ()-[:e1]->(), (:Node)-[:e2]->(), ()-[:e3]->(:Node)').finalize()
     c.transfer_to_xgt(vertices=[('', 'custom_empty'), ('Node', 'custom_Node')], edges=[('e1', 'edge1'), ('e2', 'edge2'), 'e3'])
-    node_frame = self.xgt.get_edge_frame('edge1')
+    node_frame = self.xgt.get_frame('edge1')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('edge2')
+    node_frame = self.xgt.get_frame('edge2')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_edge_frame('e3')
+    node_frame = self.xgt.get_frame('e3')
     assert node_frame.num_rows == 1
-    node_frame = self.xgt.get_vertex_frame('custom_empty')
+    node_frame = self.xgt.get_frame('custom_empty')
     assert node_frame.num_rows == 4
-    node_frame = self.xgt.get_vertex_frame('custom_Node')
+    node_frame = self.xgt.get_frame('custom_Node')
     assert node_frame.num_rows == 2
     with self.assertRaises(xgt.XgtNameError):
-        node_frame = self.xgt.get_vertex_frame('unlabeled')
+        node_frame = self.xgt.get_frame('unlabeled')
     with self.assertRaises(xgt.XgtNameError):
-        node_frame = self.xgt.get_vertex_frame('Node')
+        node_frame = self.xgt.get_frame('Node')
 
   def test_edge_empty_labels_schema_no_implicit(self):
     c = self.conn
@@ -592,21 +592,21 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         'CREATE ()-[:e1]->({int:1}), (:Node)-[:e2]->({str:"aaa"}), ({bool:True})-[:e3]->(:Node)').finalize()
     c.transfer_to_xgt(vertices=['', 'Node'])
     c.transfer_to_xgt(edges=['e1', 'e2', 'e3'], append=True, import_edge_nodes=False)
-    node_frame = self.xgt.get_edge_frame('e1')
+    node_frame = self.xgt.get_frame('e1')
     res = self.xgt.run_job('match ()-[:e1]->(v) return v.int')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == 1
-    node_frame = self.xgt.get_edge_frame('e2')
+    node_frame = self.xgt.get_frame('e2')
     res = self.xgt.run_job('match ()-[:e2]->(v) return v.str')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == "aaa"
-    node_frame = self.xgt.get_edge_frame('e3')
+    node_frame = self.xgt.get_frame('e3')
     res = self.xgt.run_job('match (v)-[:e3]->() return v.bool')
     assert node_frame.num_rows == 1
     assert res.get_data()[0][0] == True
-    node_frame = self.xgt.get_vertex_frame('unlabeled')
+    node_frame = self.xgt.get_frame('unlabeled')
     assert node_frame.num_rows == 4
-    node_frame = self.xgt.get_vertex_frame('Node')
+    node_frame = self.xgt.get_frame('Node')
     assert node_frame.num_rows == 2
 
   def test_query_translator_loop_data(self):
