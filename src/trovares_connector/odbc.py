@@ -505,9 +505,9 @@ class ODBCConnector(object):
         if namespace == None:
             namespace = self._default_namespace
         if vertices == None and edges == None and tables == None:
-            vertices = [(frame.name, frame.name) for frame in xgt_server.get_vertex_frames(namespace=namespace)]
-            edges = [(frame.name, frame.name) for frame in xgt_server.get_edge_frames(namespace=namespace)]
-            tables = [(frame.name, frame.name) for frame in xgt_server.get_table_frames(namespace=namespace)]
+            vertices = [(frame.name, frame.name) for frame in xgt_server.get_frames(namespace=namespace, frame_type='vertex')]
+            edges = [(frame.name, frame.name) for frame in xgt_server.get_frames(namespace=namespace, frame_type='edge')]
+            tables = [(frame.name, frame.name) for frame in xgt_server.get_frames(namespace=namespace, frame_type='table')]
             namespace = None
         if vertices == None:
             vertices = []
@@ -539,11 +539,11 @@ class ODBCConnector(object):
         estimate = 0
 
         for vertex in final_vertices:
-            estimate += xgt_server.get_vertex_frame(vertex[0]).num_rows
+            estimate += xgt_server.get_frame(vertex[0]).num_rows
         for edge in final_edges:
-            estimate += xgt_server.get_edge_frame(edge[0]).num_rows
+            estimate += xgt_server.get_frame(edge[0]).num_rows
         for table in final_tables:
-            estimate += xgt_server.get_table_frame(table[0]).num_rows
+            estimate += xgt_server.get_frame(table[0]).num_rows
 
         with ProgressDisplay(estimate) as progress_bar:
             for table in final_vertices + final_edges + final_tables:
