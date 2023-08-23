@@ -349,7 +349,7 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False, batch_size=10000) -> None:
+    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False, batch_size=10000, transaction_size=0) -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -376,16 +376,24 @@ class ODBCConnector(object):
             without corresponding vertex frames.
         batch_size : int
             Number of rows to transfer at once. Defaults to 10000.
+        transaction_size : int
+            Number of rows to treat as a single transaction to xGT. Defaults to 0.
+            Should be a multiple of the batch size and greater than the batch size.
+            0 means treat all rows as a single transaction.
 
         Returns
         -------
             None
         """
+        if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
+            raise ValueError("Transaction size needs to be a multiple of the batch size and >= the batch size of " + str(batch_size))
         xgt_schema = self.get_xgt_schemas(tables)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
-        self.copy_data_to_xgt(xgt_schema, batch_size)
+        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size)
 
-    def transfer_query_to_xgt(self, query=None, mapping=None, append=False, force=False, easy_edges=False, batch_size=10000) -> None:
+    def transfer_query_to_xgt(self, query=None, mapping=None, append=False,
+                              force=False, easy_edges=False, batch_size=10000,
+                              transaction_size=0) -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -411,14 +419,21 @@ class ODBCConnector(object):
             without corresponding vertex frames.
         batch_size : int
             Number of rows to transfer at once. Defaults to 10000.
+        transaction_size : int
+            Number of rows to treat as a single transaction to xGT. Defaults to 0.
+            Should be a multiple of the batch size and greater than the batch size.
+            0 means treat all rows as a single transaction.
 
         Returns
         -------
             None
         """
-        self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges, batch_size)
+        if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
+            raise ValueError("Transaction size needs to be a multiple of batch size and >= the batch size of " + str(batch_size))
+        self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
+                                      batch_size, transaction_size)
 
-    def copy_data_to_xgt(self, xgt_schemas, batch_size=10000):
+    def copy_data_to_xgt(self, xgt_schemas, batch_size=10000, transaction_size=0):
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
         in Trovares xGT.
@@ -435,6 +450,10 @@ class ODBCConnector(object):
             :py:meth:`~ODBCConnector.get_xgt_schemas` method.
         batch_size : int
             Number of rows to transfer at once. Defaults to 10000.
+        transaction_size : int
+            Number of rows to treat as a single transaction to xGT. Defaults to 0.
+            Should be a multiple of the batch size and greater than the batch size.
+            0 means treat all rows as a single transaction.
 
         Returns
         -------
@@ -466,11 +485,20 @@ class ODBCConnector(object):
 
         with ProgressDisplay(estimate) as progress_bar:
             for table, schema in xgt_schemas['tables'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
+                self.__copy_data(self._driver._get_data_query(
+                    table, schema['arrow_schema']), schema['mapping']['frame'],
+                    schema['arrow_schema'], progress_bar, batch_size,
+                    transaction_size)
             for table, schema in xgt_schemas['vertices'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
+                self.__copy_data(self._driver._get_data_query(
+                    table, schema['arrow_schema']), schema['mapping']['frame'],
+                    schema['arrow_schema'], progress_bar, batch_size,
+                    transaction_size)
             for table, schema in xgt_schemas['edges'].items():
-                self.__copy_data(self._driver._get_data_query(table, schema['arrow_schema']), schema['mapping']['frame'], schema['arrow_schema'], progress_bar, batch_size)
+                self.__copy_data(self._driver._get_data_query(
+                    table, schema['arrow_schema']), schema['mapping']['frame'],
+                    schema['arrow_schema'], progress_bar, batch_size,
+                    transaction_size)
 
     def transfer_to_odbc(self, vertices=None, edges=None,
                          tables=None, namespace=None,
@@ -584,17 +612,25 @@ class ODBCConnector(object):
         arrow_conn = self._xgt_server.arrow_conn
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
-    def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size):
+    def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size,
+                    transaction_size):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,
             connection_string=self._driver._connection_string,
             batch_size=batch_size,
         )
+        count = 0
         writer = self.__arrow_writer(frame, schema)
         for batch in reader:
             # Process arrow batches
             writer.write(batch)
             progress_bar.show_progress(batch.num_rows)
+            count += batch.num_rows
+            # Start a new transaction
+            if transaction_size > 0 and count >= transaction_size:
+                count = 0
+                writer.close()
+                writer = self.__arrow_writer(frame, schema)
         writer.close()
 
     def __get_xgt_schema(self, table):
@@ -637,11 +673,11 @@ class ODBCConnector(object):
                 elif len(val[1]) == 5:
                     mapping_edges[val[0]] = val[1]
                 else:
-                    raise ValueError("Dictionary format incorrect for " + val[0])
+                    raise ValueError("Dictionary format incorrect for " + str(val[0]))
             else:
-                raise ValueError("Argument format incorrect for " + val)
+                raise ValueError("Argument format incorrect for " + str(val))
 
-    def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges, batch_size):
+    def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges, batch_size, transaction_size):
         estimate = 0
         mapping_vertices = { }
         mapping_edges = { }
@@ -674,9 +710,17 @@ class ODBCConnector(object):
 
             self.create_xgt_schemas(result, append, force, easy_edges)
             writer = self.__arrow_writer(frame, arrow_schema)
+            count = 0
             for batch in reader:
                 # Process arrow batches
                 writer.write(batch)
                 progress_bar.show_progress(batch.num_rows)
+                count += batch.num_rows
+                # Start a new transaction
+                if transaction_size > 0 and count >= transaction_size:
+                    count = 0
+                    writer.close()
+                    writer = self.__arrow_writer(frame, arrow_schema)
+
             writer.close()
 
