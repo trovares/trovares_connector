@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.1.0 (08-23-2023)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added support to change transaction size when transferring from ODBC to xGT.
+
 2.0.0 (06-14-2023)
 ------------------
 
