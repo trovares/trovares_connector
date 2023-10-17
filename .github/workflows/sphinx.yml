@@ -31,17 +31,21 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.11']
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build HTML
-      uses: ammaraskar/sphinx-action@0.4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v2
       with:
-         pre-build-command: "apt-get -y update && apt-get -y install unixodbc"
+        python-version: '3.11'
+    - name: Upgrade pip, install package, install requirements, build docs
+      run: |
+        apt-get -y update && apt-get -y install unixodbc
+        pip install --upgrade pip
+        pip install .
+        pip install -r ./docs/requirements.txt
+        pip install sphinx
+        sphinx-build docs ./docs/_build/html/
     - name: Upload artifacts
       uses: actions/upload-artifact@v1
       with:
