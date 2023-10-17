@@ -25,6 +25,7 @@ import neo4j
 import xgt
 import os
 import time
+import warnings
 from enum import Enum
 from ..common import ProgressDisplay
 from ..common import BasicArrowClientAuthHandler
@@ -109,16 +110,19 @@ class Neo4jDriver(object):
             pass
         elif driver == 'py2neo-bolt':
             from py2neo import Graph
+            warnings.warn("Py2neo support will be dropped in next major release.", FutureWarning)
             self._py2neo_driver = Graph(
                 self._protocol + "://" + self._host + ":" +str(bolt_port),
                 auth=auth, name=database)
         elif driver == 'py2neo-http':
             from py2neo import Graph
+            warnings.warn("Py2neo support will be dropped in next major release.", FutureWarning)
             self._py2neo_driver = Graph(
                 self._http_protocol + "://" + self._host + ":" +str(http_port),
                 auth=auth, name=database)
         elif driver == 'neo4j-arrow':
             import neo4j_arrow as na
+            warnings.warn("Neo4j arrow support will be dropped in next major release.", FutureWarning)
             self._arrow_driver = na.Neo4jArrow(self._auth[0],
                                                self._auth[1])
         else:

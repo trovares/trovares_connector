@@ -27,7 +27,7 @@ xgt_server = xgt.Connection()
 xgt_server.set_default_namespace('neo4j')
 database = "test"
 
-neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), database=database, driver="py2neo-bolt")
+neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), database=database)
 c = Neo4jConnector(xgt_server, neo4j_driver)
 
 # Uncomment to delete the database

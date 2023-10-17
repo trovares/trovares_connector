@@ -28,7 +28,6 @@ from trovares_connector import Neo4jConnector, Neo4jDriver
 @parameterized_class([
    { "driver": "neo4j" },
    { "driver": "neo4j-bolt" },
-   { "driver": "py2neo-bolt" },
 ])
 class TestXgtNeo4jConnector(unittest.TestCase):
   # Print all diffs on failure.
