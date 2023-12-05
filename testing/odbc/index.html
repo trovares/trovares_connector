@@ -598,7 +598,7 @@ Interval types likely don’t work through ODBC as well.</p>
 <h3>Connecting to SAP ASE/IQ<a class="headerlink" href="#connecting-to-sap-ase-iq" title="Permalink to this heading">#</a></h3>
 <p>This example uses SAP ASE/IQ with their ODBC driver.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">OracleODBCDriver</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SAPODBCDriver</span>
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN=</span><span class="si">{ASE}</span><span class="s1">;Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
