@@ -278,7 +278,7 @@ This example uses SAP ASE/IQ with their ODBC driver.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, OracleODBCDriver
+   from trovares_connector import ODBCConnector, SAPODBCDriver
 
    connection_string = 'DSN={ASE};Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;'
    xgt_server = xgt.Connection()
