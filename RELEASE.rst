@@ -1,8 +1,9 @@
 Release Notes
 =============
 
-2.2.0 (XX-XX-XX)
+2.2.0 (12-07-23)
 ------------------
+  - Expand ODBC support to Databricks.
   - py2neo support deprecated.
   - Warn about using deprecated connectors.
 
