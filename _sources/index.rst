@@ -205,10 +205,6 @@ Some examples of connecting:
    neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_driver, database='my_database')
 
-   # Using the Trovares Neo4j driver with py2neo http.
-   neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'), driver='py2neo-http')
-   conn = Neo4jConnector(xgt_server, neo4j_driver)
-
 These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.
 
 Additional Examples

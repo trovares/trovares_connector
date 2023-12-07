@@ -23,9 +23,9 @@ ODBC Connector
 ==============
 
 The extra ODBC connector module allows for connecting to databases that support ODBC.
-The ODBC connector requires at least xGT 1.11.0.
+The ODBC connector requires at least xGT 1.14.0.
 
-The ODBC driver has been tested against MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
+The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
 The driver regularly runs unit tests against MariaDB.
 Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren't guaranteed to work.
@@ -74,6 +74,8 @@ Or as a dictionary:
 .. code-block:: python
 
    conn.transfer_to_xgt([('test_table', {'frame' : 'xgt_table'} )])
+
+The parameter `batch_size` can be used to set the amount of rows to transfer at once.
 
 Copy a SQL table to vertices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -197,6 +199,26 @@ To append to a frame, set `append` to True on the transfer.
 
    conn.transfer_to_xgt(['Person'], append=True)
 
+Connecting to Databricks
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+After installing `their ODBC driver <https://www.databricks.com/spark/odbc-drivers-download>`_, connect like so:
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
+   connection_string="DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;"
+   xgt_server = xgt.Connection()
+   xgt_server.set_default_namespace('odbc')
+   odbc_server = SQLODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_table', 'test_table')])
+
+This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
+
 Connecting to Snowflake
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -278,7 +300,7 @@ This example uses SAP ASE/IQ with their ODBC driver.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, OracleODBCDriver
+   from trovares_connector import ODBCConnector, SAPODBCDriver
 
    connection_string = 'DSN={ASE};Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;'
    xgt_server = xgt.Connection()
@@ -315,6 +337,7 @@ To map to a specific xGT table type pass a tuple of (xGT frame, SQL table):
 
    conn.transfer_to_odbc(tables=[('xgt_table', 'sql_table')])
 
+The parameter `batch_size` can be used to set the amount of rows to transfer at once.
 Parameters for transferring edges and vertices exist as well.
 Some limitations exist.
 See below for more details.
@@ -332,7 +355,7 @@ Limitations
 
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
-* The Oracle driver doesn't support uploading to Oracle.
+* The Databricks and Oracle drivers don't support transferring from xGT to them.
 * Binary data types not supported.
 
 API Details

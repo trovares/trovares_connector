@@ -46,10 +46,6 @@ Optional
 * `APOC <https://github.com/neo4j-contrib/neo4j-apoc-procedures>`_
    Improves schema querying.
    Available as an option to be turned on with the connector.
-* `Py2neo Python package <https://pypi.org/project/py2neo/>`_
-   Alternative Neo4j driver that provides http or bolt connections.
-   Transfers are 2X faster, but the memory requirements can be excessive for large transfers.
-   This can be selected via the driver parameter in the Trovares Neo4jDriver class.
 
 ODBC
 ^^^^
