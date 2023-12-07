@@ -23,7 +23,7 @@ ODBC Connector
 ==============
 
 The extra ODBC connector module allows for connecting to databases that support ODBC.
-The ODBC connector requires at least xGT 1.11.0.
+The ODBC connector requires at least xGT 1.14.0.
 
 The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
 The driver regularly runs unit tests against MariaDB.
