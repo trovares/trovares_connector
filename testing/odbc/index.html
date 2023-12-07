@@ -368,6 +368,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
@@ -393,7 +394,7 @@ document.write(`
 <span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Permalink to this heading">#</a></h1>
 <p>The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.11.0.</p>
-<p>The ODBC driver has been tested against MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
+<p>The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
 The driver regularly runs unit tests against MariaDB.
 Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren’t guaranteed to work.
@@ -431,6 +432,7 @@ However, transfer_query_to_xgt will likely work with any vendor using the generi
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="s1">&#39;xgt_table&#39;</span><span class="p">}</span> <span class="p">)])</span>
 </pre></div>
 </div>
+<p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p>
 </section>
 <section id="copy-a-sql-table-to-vertices">
 <h3>Copy a SQL table to vertices<a class="headerlink" href="#copy-a-sql-table-to-vertices" title="Permalink to this heading">#</a></h3>
@@ -530,6 +532,23 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="connecting-to-databricks">
+<h3>Connecting to Databricks<a class="headerlink" href="#connecting-to-databricks" title="Permalink to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://www.databricks.com/spark/odbc-drivers-download">their ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
 </section>
 <section id="connecting-to-snowflake">
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this heading">#</a></h3>
@@ -631,7 +650,8 @@ Transferring data from xGT to SAP ASE/IQ also works.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_odbc</span><span class="p">(</span><span class="n">tables</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;xgt_table&#39;</span><span class="p">,</span> <span class="s1">&#39;sql_table&#39;</span><span class="p">)])</span>
 </pre></div>
 </div>
-<p>Parameters for transferring edges and vertices exist as well.
+<p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.
+Parameters for transferring edges and vertices exist as well.
 Some limitations exist.
 See below for more details.</p>
 </section>
@@ -649,7 +669,7 @@ See below for more details.</p>
 <ul class="simple">
 <li><p>When transferring to a database, the table must already be created.</p></li>
 <li><p>Transfer sizes/times are estimates and may not be available.</p></li>
-<li><p>The Oracle driver doesn’t support uploading to Oracle.</p></li>
+<li><p>The Databricks and Oracle drivers don’t support transferring from xGT to them.</p></li>
 <li><p>Binary data types not supported.</p></li>
 </ul>
 </section>
@@ -726,6 +746,7 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
