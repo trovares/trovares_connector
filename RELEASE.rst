@@ -1,15 +1,14 @@
 Release Notes
 =============
 
-2.2.0 (12-07-23)
+2.2.0 (12-07-2023)
 ------------------
+
+Changed
+^^^^^^^
   - Expand ODBC support to Databricks.
   - py2neo support deprecated.
   - Warn about using deprecated connectors.
-
-New Features
-^^^^^^^^^^^^
-  - Added support to change transaction size when transferring from ODBC to xGT.
 
 2.1.0 (08-23-2023)
 ------------------
