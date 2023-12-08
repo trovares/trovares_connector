@@ -202,7 +202,7 @@ To append to a frame, set `append` to True on the transfer.
 Connecting to Databricks
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-After installing `their ODBC driver <https://www.databricks.com/spark/odbc-drivers-download>`_, connect like so:
+After installing `Databricks' ODBC driver <https://www.databricks.com/spark/odbc-drivers-download>`_, connect like so:
 
 .. code-block:: python
 
@@ -222,7 +222,7 @@ This would transfer the table, `my_table`, under the `test` database to the xGT 
 Connecting to Snowflake
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-After installing `their ODBC driver <https://docs.snowflake.com/en/user-guide/odbc.html>`_, connect like so:
+After installing `Snowflake's ODBC driver <https://docs.snowflake.com/en/user-guide/odbc.html>`_, connect like so:
 
 .. code-block:: python
 

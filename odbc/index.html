@@ -50,7 +50,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="trovares_connector.ODBCConnector" href="trovares_connector.ODBCConnector.html" />
-    <link rel="prev" title="Jupyter Notebooks" href="../jupyter/index.html" />
+    <link rel="prev" title="Temporal Triangles ODBC" href="../jupyter/odbc/temporal_triangles.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -149,7 +149,13 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter/index.html">Jupyter Notebooks</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter/index.html">Jupyter Notebooks</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/neo4j/hello_world.html">Hello World Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/neo4j/temporal_triangles.html">Temporal Triangles Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/odbc/cypher_with_sql.html">Non-Graph analytics ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/odbc/hello_world.html">Hello World ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/odbc/save_to_mysql.html">Transfer or backup data to MySQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter/odbc/temporal_triangles.html">Temporal Triangles ODBC</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">ODBC Connector</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -160,6 +166,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../RELEASE.html">Release Notes</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python API</span></p>
 <ul class="nav bd-sidenav">
@@ -535,7 +542,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 </section>
 <section id="connecting-to-databricks">
 <h3>Connecting to Databricks<a class="headerlink" href="#connecting-to-databricks" title="Permalink to this heading">#</a></h3>
-<p>After installing <a class="reference external" href="https://www.databricks.com/spark/odbc-drivers-download">their ODBC driver</a>, connect like so:</p>
+<p>After installing <a class="reference external" href="https://www.databricks.com/spark/odbc-drivers-download">Databricks’ ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
 
@@ -552,7 +559,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 </section>
 <section id="connecting-to-snowflake">
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this heading">#</a></h3>
-<p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">their ODBC driver</a>, connect like so:</p>
+<p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">Snowflake’s ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
 
@@ -706,12 +713,12 @@ See below for more details.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../jupyter/index.html"
+       href="../jupyter/odbc/temporal_triangles.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Jupyter Notebooks</p>
+        <p class="prev-next-title">Temporal Triangles ODBC</p>
       </div>
     </a>
     <a class="right-next"
