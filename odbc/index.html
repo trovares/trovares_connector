@@ -163,6 +163,7 @@
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.SQLODBCDriver.html">trovares_connector.SQLODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.MongoODBCDriver.html">trovares_connector.MongoODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.OracleODBCDriver.html">trovares_connector.OracleODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trovares_connector.SAPODBCDriver.html">trovares_connector.SAPODBCDriver</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements</a></li>
@@ -561,12 +562,12 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this heading">#</a></h3>
 <p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">Snowflake’s ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SnowflakeODBCDriver</span>
 
-<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Uid=test;Pwd=test;&quot;</span>
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;&quot;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
-<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SnowflakeODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
 <span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_schema.my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
@@ -694,6 +695,9 @@ See below for more details.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.OracleODBCDriver.html#trovares_connector.OracleODBCDriver" title="trovares_connector.OracleODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OracleODBCDriver</span></code></a>(connection_string[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.SAPODBCDriver.html#trovares_connector.SAPODBCDriver" title="trovares_connector.SAPODBCDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAPODBCDriver</span></code></a>(connection_string)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>

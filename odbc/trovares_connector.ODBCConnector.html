@@ -163,6 +163,7 @@
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.SQLODBCDriver.html">trovares_connector.SQLODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.MongoODBCDriver.html">trovares_connector.MongoODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trovares_connector.OracleODBCDriver.html">trovares_connector.OracleODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trovares_connector.SAPODBCDriver.html">trovares_connector.SAPODBCDriver</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../requirements.html">Requirements</a></li>
@@ -420,7 +421,7 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.create_xgt_schemas" title="trovares_connector.ODBCConnector.create_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_xgt_schemas</span></code></a>(xgt_schemas[, append, ...])</p></td>
 <td><p>Creates table, vertex and/or edge frames in Trovares xGT.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schemas</span></code></a>([tables])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="trovares_connector.ODBCConnector.get_xgt_schemas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xgt_schemas</span></code></a>([tables, max_text_size, ...])</p></td>
 <td><p>Retrieve a dictionary containing the schema information for all of the tables requested and their mappings.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="trovares_connector.ODBCConnector.transfer_query_to_xgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_query_to_xgt</span></code></a>([query, mapping, ...])</p></td>
@@ -450,7 +451,7 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.copy_data_to_xgt">
-<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.copy_data_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">copy_data_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgt_schemas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_text_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_binary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.copy_data_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.copy_data_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from the ODBC application to the requested table, vertex and/or edge frames
 in Trovares xGT.</p>
 <p>This function copies data from the ODBC application to xGT for all of the tables, vertices
@@ -466,6 +467,18 @@ This dictionary can be the value returned from the
 <li><p><strong>transaction_size</strong> (<em>int</em>) – Number of rows to treat as a single transaction to xGT. Defaults to 0.
 Should be a multiple of the batch size and greater than the batch size.
 0 means treat all rows as a single transaction.</p></li>
+<li><p><strong>max_text_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length text fields.
+When using VARCHAR from a database, if a limit isn’t set for the length of the strings
+like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+each string length when transferring. Default is determined by the database.</p></li>
+<li><p><strong>max_binary_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+When using VARBINARY from a database, if a limit isn’t set for the length of binary data
+like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+each binary field length when transferring. Default is determined by the database.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -505,7 +518,7 @@ without corresponding vertex frames.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.get_xgt_schemas">
-<span class="sig-name descname"><span class="pre">get_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.get_xgt_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_xgt_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_text_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_binary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.get_xgt_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.get_xgt_schemas" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a dictionary containing the schema information for all of
 the tables requested and their mappings.</p>
 <dl class="field-list simple">
@@ -524,7 +537,7 @@ vertices, and edges requested.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.transfer_query_to_xgt">
-<span class="sig-name descname"><span class="pre">transfer_query_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_query_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_query_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_text_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_binary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_query_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from the ODBC application to Trovares xGT.</p>
 <p>This function first infers the schemas for the query.
 Then it maps to the type specificed in mapping.
@@ -545,6 +558,18 @@ without corresponding vertex frames.</p></li>
 <li><p><strong>transaction_size</strong> (<em>int</em>) – Number of rows to treat as a single transaction to xGT. Defaults to 0.
 Should be a multiple of the batch size and greater than the batch size.
 0 means treat all rows as a single transaction.</p></li>
+<li><p><strong>max_text_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length text fields.
+When using VARCHAR from a database, if a limit isn’t set for the length of the strings
+like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+each string length when transferring. Default is determined by the database.</p></li>
+<li><p><strong>max_binary_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+When using VARBINARY from a database, if a limit isn’t set for the length of binary data
+like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+each binary field length when transferring. Default is determined by the database.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -579,7 +604,7 @@ If none will use the default namespace.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="trovares_connector.ODBCConnector.transfer_to_xgt">
-<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_to_xgt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">easy_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transaction_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_text_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_binary_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/trovares_connector/odbc.html#ODBCConnector.transfer_to_xgt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trovares_connector.ODBCConnector.transfer_to_xgt" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies data from the ODBC application to Trovares xGT.</p>
 <p>This function first infers the schemas for all of the needed frames in xGT to
 store the requested data.
@@ -602,6 +627,18 @@ without corresponding vertex frames.</p></li>
 <li><p><strong>transaction_size</strong> (<em>int</em>) – Number of rows to treat as a single transaction to xGT. Defaults to 0.
 Should be a multiple of the batch size and greater than the batch size.
 0 means treat all rows as a single transaction.</p></li>
+<li><p><strong>max_text_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length text fields.
+When using VARCHAR from a database, if a limit isn’t set for the length of the strings
+like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+each string length when transferring. Default is determined by the database.</p></li>
+<li><p><strong>max_binary_size</strong> (<em>int</em>) – The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+When using VARBINARY from a database, if a limit isn’t set for the length of binary data
+like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+each binary field length when transferring. Default is determined by the database.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
