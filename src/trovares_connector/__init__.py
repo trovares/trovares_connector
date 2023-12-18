@@ -31,5 +31,6 @@ try:
     from .odbc import MongoODBCDriver
     from .odbc import OracleODBCDriver
     from .odbc import SAPODBCDriver
+    from .odbc import SnowflakeODBCDriver
 except ImportError:
     pass
