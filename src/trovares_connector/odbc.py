@@ -363,7 +363,6 @@ class ODBCConnector(object):
                                 v_type = element[1]
                         xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', v_type]], 'temp_creation' : True, 'mapping' : { 'frame' : trg, 'key' : 'key' } }
             for _, schema in xgt_schemas['tables'].items():
-            for _, schema in xgt_schemas['tables'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
 
             for _, schema in xgt_schemas['edges'].items():
