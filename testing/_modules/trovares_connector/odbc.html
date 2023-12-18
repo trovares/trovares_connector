@@ -160,6 +160,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../odbc/trovares_connector.SQLODBCDriver.html">trovares_connector.SQLODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../odbc/trovares_connector.MongoODBCDriver.html">trovares_connector.MongoODBCDriver</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../odbc/trovares_connector.OracleODBCDriver.html">trovares_connector.OracleODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../odbc/trovares_connector.SAPODBCDriver.html">trovares_connector.SAPODBCDriver</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../requirements.html">Requirements</a></li>
@@ -503,8 +504,8 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
-<span class="k">class</span> <span class="nc">SAPODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
+<div class="viewcode-block" id="SAPODBCDriver"><a class="viewcode-back" href="../../odbc/trovares_connector.SAPODBCDriver.html#trovares_connector.SAPODBCDriver">[docs]</a><span class="k">class</span> <span class="nc">SAPODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SAPODBCDriver.__init__"><a class="viewcode-back" href="../../odbc/trovares_connector.SAPODBCDriver.html#trovares_connector.SAPODBCDriver.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the driver class.</span>
 
@@ -518,7 +519,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection_string</span> <span class="o">=</span> <span class="n">connection_string</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_schema_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT TOP 1 * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM </span><span class="si">{0}</span><span class="s2">;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_query</span><span class="o">=</span><span class="s2">&quot;SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = &#39;</span><span class="si">{0}</span><span class="s2">&#39;;&quot;</span></div>
 
     <span class="k">def</span> <span class="nf">_get_data_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">):</span>
         <span class="k">return</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_data_query</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
@@ -534,7 +535,7 @@ document.write(`
             <span class="n">max_text_size</span><span class="o">=</span><span class="n">max_text_size</span><span class="p">,</span>
             <span class="n">max_binary_size</span><span class="o">=</span><span class="n">max_binary_size</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span>
+        <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">schema</span></div>
 
 <span class="k">class</span> <span class="nc">SnowflakeODBCDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_string</span><span class="p">,</span> <span class="n">ansi_conversion</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>

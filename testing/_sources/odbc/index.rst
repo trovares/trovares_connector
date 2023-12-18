@@ -370,3 +370,5 @@ API Details
   SQLODBCDriver
   MongoODBCDriver
   OracleODBCDriver
+  SAPODBCDriver
+  SnowflakeODBCDriver
