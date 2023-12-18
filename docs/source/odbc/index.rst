@@ -227,12 +227,12 @@ After installing `Snowflake's ODBC driver <https://docs.snowflake.com/en/user-gu
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from trovares_connector import ODBCConnector, SnowflakeODBCDriver
 
-   connection_string="DSN=snowflake;Database=test;Uid=test;Pwd=test;"
+   connection_string="DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
    xgt_server.set_default_namespace('odbc')
-   odbc_server = SQLODBCDriver(connection_string)
+   odbc_server = SnowflakeODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('my_schema.my_table', 'test_table')])

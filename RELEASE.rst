@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+2.3.0 (12-18-2023)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added Snowflake specific ODBC driver with ANSI int conversion.
+  - Add parameters for controlling max text/binary size when transferring from ODBC to xGT.
+
+Fixed
+^^^^^
+  - When using easy edges, the type of the vertex will now conform to the edge type instead of assuming it is an int.
+
 2.2.0 (12-07-2023)
 ------------------
 

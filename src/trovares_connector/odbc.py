@@ -79,11 +79,13 @@ class SQLODBCDriver(object):
     def _conversions(self):
        return { }
 
-    def _get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
         )
         return reader.schema
 
@@ -117,11 +119,13 @@ class MongoODBCDriver(object):
     def _conversions(self):
        return { }
 
-    def _get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
         )
 
         schema = reader.schema
@@ -168,11 +172,13 @@ class OracleODBCDriver(object):
         else:
             return { }
 
-    def _get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
         )
         return reader.schema
 
@@ -199,11 +205,53 @@ class SAPODBCDriver(object):
     def _conversions(self):
        return { }
 
-    def _get_record_batch_schema(self, table):
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
         reader = read_arrow_batches_from_odbc(
             query=self._schema_query.format(table),
             connection_string=self._connection_string,
             batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
+        )
+        return reader.schema
+
+class SnowflakeODBCDriver(object):
+    def __init__(self, connection_string, ansi_conversion = True):
+        """
+        Initializes the driver class.
+
+        Parameters
+        ----------
+        connection_string : str
+            Standard ODBC connection string used for connecting to Snowflake.
+            Example:
+            'DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;'
+        ansi_conversion : bool
+          Convert Number(38,0) into int64s in xGT if true. Otherwise, they are stored as floats.
+          This based on the ANSI int conversion Snowflake does and reverses that. By default true.
+        """
+        self._connection_string = connection_string
+        self._schema_query = "SELECT * FROM {0} LIMIT 1;"
+        self._data_query = "SELECT * FROM {0};"
+        self._estimate_query="SELECT TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}';"
+        self._ansi_conversion = ansi_conversion
+
+    def _get_data_query(self, table, arrow_schema):
+        return self._data_query.format(table)
+
+    def _conversions(self):
+        if self._ansi_conversion:
+            return { pa.decimal128(38, 0) : pa.int64() }
+        else:
+            return { }
+
+    def _get_record_batch_schema(self, table, max_text_size, max_binary_size):
+        reader = read_arrow_batches_from_odbc(
+            query=self._schema_query.format(table),
+            connection_string=self._connection_string,
+            batch_size=1,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
         )
         return reader.schema
 
@@ -223,7 +271,8 @@ class ODBCConnector(object):
         self._default_namespace = xgt_server.get_default_namespace()
         self._driver = odbc_driver
 
-    def get_xgt_schemas(self, tables = None):
+    def get_xgt_schemas(self, tables = None, max_text_size = None,
+                        max_binary_size = None):
         """
         Retrieve a dictionary containing the schema information for all of
         the tables requested and their mappings.
@@ -250,15 +299,15 @@ class ODBCConnector(object):
             self.__get_mapping(val, mapping_tables, mapping_vertices, mapping_edges)
 
         for table in mapping_tables:
-            schema = self.__extract_xgt_table_schema(table, mapping_tables)
+            schema = self.__extract_xgt_table_schema(table, mapping_tables, max_text_size, max_binary_size)
             result['tables'][table] = schema
 
         for table in mapping_vertices:
-            schema = self.__extract_xgt_table_schema(table, mapping_vertices)
+            schema = self.__extract_xgt_table_schema(table, mapping_vertices, max_text_size, max_binary_size)
             result['vertices'][table] = schema
 
         for table in mapping_edges:
-            schema = self.__extract_xgt_table_schema(table, mapping_edges)
+            schema = self.__extract_xgt_table_schema(table, mapping_edges, max_text_size, max_binary_size)
             result['edges'][table] = schema
 
         return result
@@ -300,9 +349,20 @@ class ODBCConnector(object):
                     src = schema['mapping']['source']
                     trg = schema['mapping']['target']
                     if src not in xgt_schemas['vertices']:
-                        xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
+                        v_key = schema['mapping']['source_key']
+                        v_type = 'int'
+                        for element in schema['xgt_schema']:
+                            if v_key == element[0]:
+                                v_type = element[1]
+                        xgt_schemas['vertices'][src] = { 'xgt_schema': [['key', v_type]], 'temp_creation' : True, 'mapping' : { 'frame' : src, 'key' : 'key' } }
                     if trg not in xgt_schemas['vertices']:
-                        xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', 'int']], 'temp_creation' : True, 'mapping' : { 'frame' : trg, 'key' : 'key' } }
+                        v_key = schema['mapping']['target_key']
+                        v_type = 'int'
+                        for element in schema['xgt_schema']:
+                            if v_key == element[0]:
+                                v_type = element[1]
+                        xgt_schemas['vertices'][trg] = { 'xgt_schema': [['key', v_type]], 'temp_creation' : True, 'mapping' : { 'frame' : trg, 'key' : 'key' } }
+            for _, schema in xgt_schemas['tables'].items():
             for _, schema in xgt_schemas['tables'].items():
                 self._xgt_server.drop_frame(schema['mapping']['frame'])
 
@@ -349,7 +409,9 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables = None, append = False, force = False, easy_edges = False, batch_size=10000, transaction_size=0) -> None:
+    def transfer_to_xgt(self, tables = None, append = False, force = False,
+                        easy_edges = False, batch_size = 10000, transaction_size = 0,
+                        max_text_size = None, max_binary_size = None) -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -380,6 +442,20 @@ class ODBCConnector(object):
             Number of rows to treat as a single transaction to xGT. Defaults to 0.
             Should be a multiple of the batch size and greater than the batch size.
             0 means treat all rows as a single transaction.
+        max_text_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length text fields.
+            When using VARCHAR from a database, if a limit isn't set for the length of the strings
+            like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+            has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+            batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+            each string length when transferring. Default is determined by the database.
+        max_binary_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+            When using VARBINARY from a database, if a limit isn't set for the length of binary data
+            like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+            each binary field length when transferring. Default is determined by the database.
 
         Returns
         -------
@@ -387,13 +463,14 @@ class ODBCConnector(object):
         """
         if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
             raise ValueError("Transaction size needs to be a multiple of the batch size and >= the batch size of " + str(batch_size))
-        xgt_schema = self.get_xgt_schemas(tables)
+        xgt_schema = self.get_xgt_schemas(tables, max_text_size, max_binary_size)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
-        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size)
+        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size, max_text_size, max_binary_size)
 
     def transfer_query_to_xgt(self, query=None, mapping=None, append=False,
                               force=False, easy_edges=False, batch_size=10000,
-                              transaction_size=0) -> None:
+                              transaction_size=0, max_text_size=None,
+                              max_binary_size=None) -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -423,6 +500,20 @@ class ODBCConnector(object):
             Number of rows to treat as a single transaction to xGT. Defaults to 0.
             Should be a multiple of the batch size and greater than the batch size.
             0 means treat all rows as a single transaction.
+        max_text_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length text fields.
+            When using VARCHAR from a database, if a limit isn't set for the length of the strings
+            like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+            has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+            batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+            each string length when transferring. Default is determined by the database.
+        max_binary_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+            When using VARBINARY from a database, if a limit isn't set for the length of binary data
+            like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+            each binary field length when transferring. Default is determined by the database.
 
         Returns
         -------
@@ -431,9 +522,10 @@ class ODBCConnector(object):
         if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
             raise ValueError("Transaction size needs to be a multiple of batch size and >= the batch size of " + str(batch_size))
         self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
-                                      batch_size, transaction_size)
+                                      batch_size, transaction_size, max_text_size, max_binary_size)
 
-    def copy_data_to_xgt(self, xgt_schemas, batch_size=10000, transaction_size=0):
+    def copy_data_to_xgt(self, xgt_schemas, batch_size = 10000, transaction_size = 0,
+                         max_text_size = None, max_binary_size = None):
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
         in Trovares xGT.
@@ -454,6 +546,20 @@ class ODBCConnector(object):
             Number of rows to treat as a single transaction to xGT. Defaults to 0.
             Should be a multiple of the batch size and greater than the batch size.
             0 means treat all rows as a single transaction.
+        max_text_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length text fields.
+            When using VARCHAR from a database, if a limit isn't set for the length of the strings
+            like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+            has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+            batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+            each string length when transferring. Default is determined by the database.
+        max_binary_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+            When using VARBINARY from a database, if a limit isn't set for the length of binary data
+            like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+            each binary field length when transferring. Default is determined by the database.
 
         Returns
         -------
@@ -466,6 +572,8 @@ class ODBCConnector(object):
                 query=self._driver._estimate_query.format(table),
                 connection_string=self._driver._connection_string,
                 batch_size=batch_size,
+                max_text_size=max_text_size,
+                max_binary_size=max_binary_size,
             )
             for batch in reader:
                 for _, row in batch.to_pydict().items():
@@ -488,17 +596,17 @@ class ODBCConnector(object):
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size)
+                    transaction_size, max_text_size, max_binary_size)
             for table, schema in xgt_schemas['vertices'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size)
+                    transaction_size, max_text_size, max_binary_size)
             for table, schema in xgt_schemas['edges'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size)
+                    transaction_size, max_text_size, max_binary_size)
 
     def transfer_to_odbc(self, vertices=None, edges=None,
                          tables=None, namespace=None,
@@ -613,11 +721,13 @@ class ODBCConnector(object):
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size,
-                    transaction_size):
+                    transaction_size, max_text_size, max_binary_size):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,
             connection_string=self._driver._connection_string,
             batch_size=batch_size,
+            max_text_size=max_text_size,
+            max_binary_size=max_binary_size,
         )
         count = 0
         writer = self.__arrow_writer(frame, schema)
@@ -633,12 +743,12 @@ class ODBCConnector(object):
                 writer = self.__arrow_writer(frame, schema)
         writer.close()
 
-    def __get_xgt_schema(self, table):
-        schema = self._driver._get_record_batch_schema(table)
+    def __get_xgt_schema(self, table, max_text_size = None, max_binary_size = None):
+        schema = self._driver._get_record_batch_schema(table, max_text_size, max_binary_size)
         return (_infer_xgt_schema_from_pyarrow_schema(schema, self._driver._conversions()), schema)
 
-    def __extract_xgt_table_schema(self, table, mapping):
-        xgt_schema, arrow_schema = self.__get_xgt_schema(table)
+    def __extract_xgt_table_schema(self, table, mapping, max_text_size, max_binary_size):
+        xgt_schema, arrow_schema = self.__get_xgt_schema(table, max_text_size, max_binary_size)
         return {'xgt_schema' : xgt_schema, 'arrow_schema' : arrow_schema, 'mapping' : mapping[table]}
 
     def __get_mapping(self, val, mapping_tables, mapping_vertices, mapping_edges):
@@ -677,7 +787,8 @@ class ODBCConnector(object):
             else:
                 raise ValueError("Argument format incorrect for " + str(val))
 
-    def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges, batch_size, transaction_size):
+    def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges,
+                                 batch_size, transaction_size, max_text_size, max_binary_size):
         estimate = 0
         mapping_vertices = { }
         mapping_edges = { }
@@ -690,6 +801,8 @@ class ODBCConnector(object):
                 query=query,
                 connection_string=self._driver._connection_string,
                 batch_size=batch_size,
+                max_text_size=max_text_size,
+                max_binary_size=max_binary_size,
             )
             arrow_schema = reader.schema
             xgt_schema = _infer_xgt_schema_from_pyarrow_schema(arrow_schema, self._driver._conversions())
