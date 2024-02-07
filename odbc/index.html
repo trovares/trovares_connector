@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>ODBC Connector &#8212; Trovares Connector</title>
   
@@ -19,33 +18,33 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/trovares.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=8bb39fa6"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'odbc/index';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -60,10 +59,9 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -104,11 +102,14 @@
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -136,7 +137,18 @@
     <p class="title logo__title">Trovares Connector</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -377,6 +389,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transffering-to-xgt">Other parameters when transffering to xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
@@ -397,10 +410,10 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section id="odbc-connector">
-<span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Permalink to this heading">#</a></h1>
+<span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Link to this heading">#</a></h1>
 <p>The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.</p>
 <p>The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
@@ -409,17 +422,17 @@ Some SQL specific drivers are available below for Oracle, Snowflake and SAP-base
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren’t guaranteed to work.
 However, transfer_query_to_xgt will likely work with any vendor using the generic SQLODBCDriver.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p>You can install the connector with dependencies for ODBC by executing this command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;trovares_connector[odbc]&#39;</span>
 </pre></div>
 </div>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>These examples show typical usage patterns.</p>
 <section id="copy-a-sql-table">
-<h3>Copy a SQL table<a class="headerlink" href="#copy-a-sql-table" title="Permalink to this heading">#</a></h3>
+<h3>Copy a SQL table<a class="headerlink" href="#copy-a-sql-table" title="Link to this heading">#</a></h3>
 <p>This example copies test_table from the test database into test_table on xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -441,10 +454,9 @@ However, transfer_query_to_xgt will likely work with any vendor using the generi
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;test_table&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;frame&#39;</span> <span class="p">:</span> <span class="s1">&#39;xgt_table&#39;</span><span class="p">}</span> <span class="p">)])</span>
 </pre></div>
 </div>
-<p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p>
 </section>
 <section id="copy-a-sql-table-to-vertices">
-<h3>Copy a SQL table to vertices<a class="headerlink" href="#copy-a-sql-table-to-vertices" title="Permalink to this heading">#</a></h3>
+<h3>Copy a SQL table to vertices<a class="headerlink" href="#copy-a-sql-table-to-vertices" title="Link to this heading">#</a></h3>
 <p>This example copy Person into the vertex frame Person.
 The simplest way is to pass the key column as tuple with the table name.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
@@ -471,7 +483,7 @@ To map to a specific xGT table type, pass a triple tuple of (SQL table, xGT vert
 <p>The frame may be omitted in the last example if the frame name is the same as SQL table.</p>
 </section>
 <section id="copy-a-sql-table-to-edges">
-<h3>Copy a SQL table to edges<a class="headerlink" href="#copy-a-sql-table-to-edges" title="Permalink to this heading">#</a></h3>
+<h3>Copy a SQL table to edges<a class="headerlink" href="#copy-a-sql-table-to-edges" title="Link to this heading">#</a></h3>
 <p>This example copy Person into the vertex frame Person and the edge Friend into the edge frame Friend.
 The simplest way is to pass the frames and source and target columns as tuple with the table name.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
@@ -497,7 +509,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 </div>
 </section>
 <section id="copy-a-sql-table-to-edges-without-a-vertex-table">
-<h3>Copy a SQL table to edges without a vertex table<a class="headerlink" href="#copy-a-sql-table-to-edges-without-a-vertex-table" title="Permalink to this heading">#</a></h3>
+<h3>Copy a SQL table to edges without a vertex table<a class="headerlink" href="#copy-a-sql-table-to-edges-without-a-vertex-table" title="Link to this heading">#</a></h3>
 <p>This example will create the corresponding vertex frame for the source and target with a key column named Key using the source and target keys when creating the edge.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -514,7 +526,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 <p>The easy_edges parameter would automatically create the Person vertices with a single column using the keys from the Friend edges.</p>
 </section>
 <section id="executing-and-transferring-sql-commands">
-<h3>Executing and transferring SQL commands<a class="headerlink" href="#executing-and-transferring-sql-commands" title="Permalink to this heading">#</a></h3>
+<h3>Executing and transferring SQL commands<a class="headerlink" href="#executing-and-transferring-sql-commands" title="Link to this heading">#</a></h3>
 <p>This example shows executing a SQL command and transferring the results to xGT.
 This functionality allows xGT to connect to any ODBC database and read data from it using their flavor of SQL.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
@@ -535,15 +547,37 @@ The mapping parameter is similar to the examples above except it takes single ma
 This specifies the frame and type you want the table to map to.</p>
 </section>
 <section id="appending-data">
-<h3>Appending data<a class="headerlink" href="#appending-data" title="Permalink to this heading">#</a></h3>
+<h3>Appending data<a class="headerlink" href="#appending-data" title="Link to this heading">#</a></h3>
 <p>By default a transfer will drop any associated frame on xGT.
 To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
+<section id="other-parameters-when-transffering-to-xgt">
+<h3>Other parameters when transffering to xGT<a class="headerlink" href="#other-parameters-when-transffering-to-xgt" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p></li>
+<li><p>The parameter <cite>transaction_size</cite> number of rows to treat as a single transaction to xGT.</p></li>
+<li><p>The parameter <cite>suppress_errors</cite> if True, will ingest all valid rows and return an error with rows not ingested.</p></li>
+<li><p>The parameter <cite>on_duplicate_keys</cite> changes the behavior how duplicate vertex keys are handles.</p></li>
+<li><p>The parameter <cite>row_filter</cite> takes a Cypher fragment that modifies incoming data.</p></li>
+</ul>
+<p>For details about the parameters see: <a class="reference internal" href="trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_xgt" title="trovares_connector.ODBCConnector.transfer_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_to_xgt()</span></code></a> or <a class="reference internal" href="trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="trovares_connector.ODBCConnector.transfer_query_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_query_to_xgt()</span></code></a>.</p>
+<p>For row filtering see the <a class="reference external" href="https://docs.trovares.com/user_ref/graphanalytics/tql_fragments.html">xGT Documentation</a>.
+The column names will correspond to the names of the columns coming from the database table.
+For instance the row filter would look something like <cite>WHERE a.key = 1 RETURN toString(a.key), a.name”</cite> where <cite>key</cite> and <cite>name</cite> are two columns from table.</p>
+<p>For error suppression, the first 10 errors are shown in the error message.
+Additional errors can be seen like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">xgt</span><span class="o">.</span><span class="n">XgtIOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+  <span class="n">error_rows</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">get_ingest_errors</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
 <section id="connecting-to-databricks">
-<h3>Connecting to Databricks<a class="headerlink" href="#connecting-to-databricks" title="Permalink to this heading">#</a></h3>
+<h3>Connecting to Databricks<a class="headerlink" href="#connecting-to-databricks" title="Link to this heading">#</a></h3>
 <p>After installing <a class="reference external" href="https://www.databricks.com/spark/odbc-drivers-download">Databricks’ ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -560,7 +594,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
 </section>
 <section id="connecting-to-snowflake">
-<h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Permalink to this heading">#</a></h3>
+<h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Link to this heading">#</a></h3>
 <p>After installing <a class="reference external" href="https://docs.snowflake.com/en/user-guide/odbc.html">Snowflake’s ODBC driver</a>, connect like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SnowflakeODBCDriver</span>
@@ -577,7 +611,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <p>This would transfer the table, <cite>my_table</cite>, in the <cite>my_schema</cite> schema, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
 </section>
 <section id="connecting-to-mongodb">
-<h3>Connecting to MongoDB<a class="headerlink" href="#connecting-to-mongodb" title="Permalink to this heading">#</a></h3>
+<h3>Connecting to MongoDB<a class="headerlink" href="#connecting-to-mongodb" title="Link to this heading">#</a></h3>
 <p>This example uses MongoDB 5 with CData’s MongoDB ODBC driver.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">MongoODBCDriver</span>
@@ -597,7 +631,7 @@ This parameter removes the _id field returned by the driver.
 If this field is present when saving to MongoDB, it will replace documents with corresponding _ids in the database.</p>
 </section>
 <section id="connecting-to-oracle">
-<h3>Connecting to Oracle<a class="headerlink" href="#connecting-to-oracle" title="Permalink to this heading">#</a></h3>
+<h3>Connecting to Oracle<a class="headerlink" href="#connecting-to-oracle" title="Link to this heading">#</a></h3>
 <p>This example uses Oracle XE with their ODBC driver.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">OracleODBCDriver</span>
@@ -623,7 +657,7 @@ Binary types are no supported for Oracle.
 Interval types likely don’t work through ODBC as well.</p>
 </section>
 <section id="connecting-to-sap-ase-iq">
-<h3>Connecting to SAP ASE/IQ<a class="headerlink" href="#connecting-to-sap-ase-iq" title="Permalink to this heading">#</a></h3>
+<h3>Connecting to SAP ASE/IQ<a class="headerlink" href="#connecting-to-sap-ase-iq" title="Link to this heading">#</a></h3>
 <p>This example uses SAP ASE/IQ with their ODBC driver.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SAPODBCDriver</span>
@@ -641,7 +675,7 @@ Interval types likely don’t work through ODBC as well.</p>
 Transferring data from xGT to SAP ASE/IQ also works.</p>
 </section>
 <section id="transferring-data-from-xgt-to-odbc">
-<h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Permalink to this heading">#</a></h3>
+<h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Link to this heading">#</a></h3>
 <p>This example copies test_table from xGT to a test database.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -665,7 +699,7 @@ Some limitations exist.
 See below for more details.</p>
 </section>
 <section id="additional-examples">
-<h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this heading">#</a></h3>
+<h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading">#</a></h3>
 <p>More detailed examples can be found in <a class="reference internal" href="../jupyter/index.html#jupyter"><span class="std std-ref">Jupyter Notebooks</span></a> or on github:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/trovares/trovares_connector/tree/main/examples/odbc">Python Examples</a></p></li>
@@ -674,7 +708,7 @@ See below for more details.</p>
 </section>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">#</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>When transferring to a database, the table must already be created.</p></li>
 <li><p>Transfer sizes/times are estimates and may not be available.</p></li>
@@ -683,7 +717,7 @@ See below for more details.</p>
 </ul>
 </section>
 <section id="api-details">
-<h2>API Details<a class="headerlink" href="#api-details" title="Permalink to this heading">#</a></h2>
+<h2>API Details<a class="headerlink" href="#api-details" title="Link to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector" title="trovares_connector.ODBCConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ODBCConnector</span></code></a>(xgt_server, odbc_driver)</p></td>
@@ -747,6 +781,7 @@ See below for more details.</p>
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> Contents
@@ -761,6 +796,7 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transffering-to-xgt">Other parameters when transffering to xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
@@ -796,7 +832,7 @@ By trovares.com
 
   <p class="copyright">
     
-      © Copyright 2022-2023, Trovares, Inc..
+      © Copyright 2022-2024, Trovares, Inc..
       <br/>
     
   </p>
@@ -820,8 +856,8 @@ By trovares.com
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>

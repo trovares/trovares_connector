@@ -75,8 +75,6 @@ Or as a dictionary:
 
    conn.transfer_to_xgt([('test_table', {'frame' : 'xgt_table'} )])
 
-The parameter `batch_size` can be used to set the amount of rows to transfer at once.
-
 Copy a SQL table to vertices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -198,6 +196,31 @@ To append to a frame, set `append` to True on the transfer.
 .. code-block:: python
 
    conn.transfer_to_xgt(['Person'], append=True)
+
+Other parameters when transffering to xGT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* The parameter `batch_size` can be used to set the amount of rows to transfer at once.
+* The parameter `transaction_size` number of rows to treat as a single transaction to xGT.
+* The parameter `suppress_errors` if True, will ingest all valid rows and return an error with rows not ingested.
+* The parameter `on_duplicate_keys` changes the behavior how duplicate vertex keys are handles.
+* The parameter `row_filter` takes a Cypher fragment that modifies incoming data.
+
+For details about the parameters see: :py:meth:`~trovares_connector.ODBCConnector.transfer_to_xgt` or :py:meth:`~trovares_connector.ODBCConnector.transfer_query_to_xgt`.
+
+For row filtering see the `xGT Documentation <https://docs.trovares.com/user_ref/graphanalytics/tql_fragments.html>`_.
+The column names will correspond to the names of the columns coming from the database table.
+For instance the row filter would look something like `WHERE a.key = 1 RETURN toString(a.key), a.name"` where `key` and `name` are two columns from table.
+
+For error suppression, the first 10 errors are shown in the error message.
+Additional errors can be seen like so:
+
+.. code-block:: python
+
+  try:
+    c.transfer_to_xgt(..., suppress_errors=True)
+  except xgt.XgtIOError as e:
+    error_rows = e.job.get_ingest_errors()
 
 Connecting to Databricks
 ^^^^^^^^^^^^^^^^^^^^^^^^
