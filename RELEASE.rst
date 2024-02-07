@@ -6,7 +6,7 @@ Release Notes
 
 New Features
 ^^^^^^^^^^^^
-  - Add parameters error suppression, row filtering, and duplicate vertex handling.
+  - Added parameters for error suppression, row filtering, and duplicate vertex handling.
 
 2.3.0 (12-18-2023)
 ------------------
