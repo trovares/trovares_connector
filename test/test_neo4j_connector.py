@@ -50,9 +50,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
   def _setup_connector(cls, connector_type, retries = 20):
     try:
       if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foofoofoo'))
       else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
+        driver = Neo4jDriver(auth=('neo4j', 'foofoofoo'), driver=connector_type)
       conn = Neo4jConnector(cls.xgt, driver)
       # Validate the db can run queries.
       with conn._neo4j_driver.bolt.session() as session:
@@ -64,9 +64,9 @@ class TestXgtNeo4jConnector(unittest.TestCase):
         time.sleep(3)
         return cls._setup_connector(connector_type, retries - 1)
     if connector_type == "neo4j":
-        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foo'))
+        driver = neo4j.GraphDatabase.driver("neo4j://localhost", auth=('neo4j', 'foofoofoo'))
     else:
-        driver = Neo4jDriver(auth=('neo4j', 'foo'), driver=connector_type)
+        driver = Neo4jDriver(auth=('neo4j', 'foofoofoo'), driver=connector_type)
     conn = Neo4jConnector(cls.xgt, driver)
     return (conn._neo4j_driver, conn)
 

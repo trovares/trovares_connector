@@ -37,11 +37,11 @@ print(f"Sys.path: {sys.path}")
 # -- Project information -----------------------------------------------------
 
 project = 'trovares_connector'
-copyright = '2022-2023, Trovares, Inc.'
+copyright = '2022-2024, Trovares, Inc.'
 author = 'trovares.com'
 
 # The full version, including alpha/beta/rc tags
-release = '2.3.0'
+release = '2.4.0'
 
 # -- General configuration ---------------------------------------------------
 

@@ -22,6 +22,7 @@ import time
 
 import xgt
 import pyodbc
+import pyarrow
 from trovares_connector.odbc import ODBCConnector, SQLODBCDriver
 
 class TestXgtODBCConnector(unittest.TestCase):
@@ -118,6 +119,85 @@ class TestXgtODBCConnector(unittest.TestCase):
     assert self.xgt.get_frame('test4').num_rows == 2
     print(self.xgt.get_frame('test4').get_data())
 
+  def test_duplicate_keys(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    self.odbc_driver.commit()
+
+    with self.assertRaises(pyarrow.flight.FlightServerError):
+      self.conn.transfer_to_xgt(tables = [('test', (0,))])
+
+    with self.assertRaises(pyarrow.flight.FlightServerError):
+      self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)))
+
+    self.conn.transfer_to_xgt(tables = [('test', (0,))], on_duplicate_keys = 'skip')
+    assert self.xgt.get_frame('test').num_rows == 2
+    self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), on_duplicate_keys = 'skip')
+    assert self.xgt.get_frame('test').num_rows == 2
+
+    self.conn.transfer_to_xgt(tables = [('test', (0,))], on_duplicate_keys = 'skip_same')
+    assert self.xgt.get_frame('test').num_rows == 2
+    self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), on_duplicate_keys = 'skip_same')
+    assert self.xgt.get_frame('test').num_rows == 2
+
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adiosl')")
+    self.odbc_driver.commit()
+
+    with self.assertRaises(pyarrow.flight.FlightServerError):
+      self.conn.transfer_to_xgt(tables = [('test', (0,))], on_duplicate_keys = 'skip_same')
+    with self.assertRaises(pyarrow.flight.FlightServerError):
+      self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), on_duplicate_keys = 'skip_same')
+
+  def test_suppress_errors(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
+    self.odbc_driver.commit()
+
+    with self.assertRaises(xgt.XgtIOError):
+      self.conn.transfer_to_xgt(tables = [('test', (0,))], suppress_errors = True)
+    with self.assertRaises(xgt.XgtIOError):
+      self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), suppress_errors = True)
+
+    try:
+      self.conn.transfer_to_xgt(tables = [('test', (0,))], suppress_errors = True)
+    except xgt.XgtIOError as e:
+      error_rows = e.job.get_ingest_errors()
+      assert len(error_rows) == 1
+
+    try:
+      self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), suppress_errors = True)
+    except xgt.XgtIOError as e:
+      error_rows = e.job.get_ingest_errors()
+      assert len(error_rows) == 1
+
+  def test_row_filter(self):
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    assert self.xgt.get_frame('test').num_rows == 1
+    print(self.xgt.get_frame('test').get_data())
+
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute("CREATE TABLE test (Value1 varchar(255), Value2 varchar(255), Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES ('a0', 'a1', 'adios')")
+    self.odbc_driver.commit()
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append = True, row_filter = "return substring(a.Value1, 1, 1), substring(a.Value2, 1, 1), a.Value3")
+    assert self.xgt.get_frame('test').num_rows == 2
+    print(self.xgt.get_frame('test').get_data())
+
+    self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), append = True, row_filter = "return substring(a.Value1, 1, 1), substring(a.Value2, 1, 1), a.Value3")
+    assert self.xgt.get_frame('test').num_rows == 3
+    print(self.xgt.get_frame('test').get_data())
+
   def test_edge(self):
     cursor = self.odbc_driver.cursor()
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
@@ -125,7 +205,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     cursor.execute("INSERT INTO test VALUES (1, 0, 'adios')")
     self.odbc_driver.commit()
 
-    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges = True)
     assert self.xgt.get_frame('test').num_rows == 2
     print(self.xgt.get_frame('test').get_data())
 

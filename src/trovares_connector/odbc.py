@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- --------------------------------------------------===#
 #
-#  Copyright 2022-2023 Trovares Inc.
+#  Copyright 2022-2024 Trovares Inc.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 #
 #===----------------------------------------------------------------------===#
 
+import struct
 import xgt
 import pyarrow as pa
 import pyarrow.flight as pf
 from arrow_odbc import read_arrow_batches_from_odbc
 from arrow_odbc import insert_into_table
 from .common import ProgressDisplay
+from xgt import SchemaMessages_pb2 as sch_proto
 
 # Convert the pyarrow type to an xgt type.
 def _pyarrow_type_to_xgt_type(pyarrow_type):
@@ -410,7 +412,8 @@ class ODBCConnector(object):
 
     def transfer_to_xgt(self, tables = None, append = False, force = False,
                         easy_edges = False, batch_size = 10000, transaction_size = 0,
-                        max_text_size = None, max_binary_size = None) -> None:
+                        max_text_size = None, max_binary_size = None,
+                        suppress_errors = False, row_filter = None, on_duplicate_keys = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -455,6 +458,20 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        suppress_errors : bool
+            If true, will continue to insert data if an ingest error is encountered,
+            placing the first 1000 errors in the job history. If false, stops on
+            first error and raises.  Defaults to False.
+        row_filter : str
+            TQL fragment used to filter, modify and parameterize the raw data from
+            the input to produce the row data fed to the frame.
+        on_duplicate_keys : {‘error’, ‘skip’, 'skip_same'}, default 'error'
+            Specifies what to do upon encountering a duplicate vertex key.
+            Only works for vertex frames. Is ignored for table and edge frames.
+            Allowed values are :
+            - 'error', raise an Exception when a duplicate key is found.
+            - 'skip', skip duplicate keys without raising.
+            - 'skip_same', skip duplicate keys if the row is exactly the same without raising.
 
         Returns
         -------
@@ -464,12 +481,13 @@ class ODBCConnector(object):
             raise ValueError("Transaction size needs to be a multiple of the batch size and >= the batch size of " + str(batch_size))
         xgt_schema = self.get_xgt_schemas(tables, max_text_size, max_binary_size)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
-        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size, max_text_size, max_binary_size)
+        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size, max_text_size, max_binary_size, suppress_errors, row_filter, on_duplicate_keys)
 
     def transfer_query_to_xgt(self, query=None, mapping=None, append=False,
                               force=False, easy_edges=False, batch_size=10000,
                               transaction_size=0, max_text_size=None,
-                              max_binary_size=None) -> None:
+                              max_binary_size=None, suppress_errors = False,
+                              row_filter = None, on_duplicate_keys = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -513,6 +531,20 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        suppress_errors : bool
+            If true, will continue to insert data if an ingest error is encountered,
+            placing the first 1000 errors in the job history. If false, stops on
+            first error and raises.  Defaults to False.
+        row_filter : str
+            TQL fragment used to filter, modify and parameterize the raw data from
+            the input to produce the row data fed to the frame.
+        on_duplicate_keys : {‘error’, ‘skip’, 'skip_same'}, default 'error'
+            Specifies what to do upon encountering a duplicate vertex key.
+            Only works for vertex frames. Is ignored for table and edge frames.
+            Allowed values are :
+            - 'error', raise an Exception when a duplicate key is found.
+            - 'skip', skip duplicate keys without raising.
+            - 'skip_same', skip duplicate keys if the row is exactly the same without raising.
 
         Returns
         -------
@@ -521,10 +553,12 @@ class ODBCConnector(object):
         if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
             raise ValueError("Transaction size needs to be a multiple of batch size and >= the batch size of " + str(batch_size))
         self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
-                                      batch_size, transaction_size, max_text_size, max_binary_size)
+                                      batch_size, transaction_size, max_text_size, max_binary_size,
+                                      suppress_errors, row_filter, on_duplicate_keys)
 
     def copy_data_to_xgt(self, xgt_schemas, batch_size = 10000, transaction_size = 0,
-                         max_text_size = None, max_binary_size = None):
+                         max_text_size = None, max_binary_size = None,
+                         suppress_errors = False, row_filter = None, on_duplicate_keys = "error") -> None:
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
         in Trovares xGT.
@@ -559,6 +593,20 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        suppress_errors : bool
+            If true, will continue to insert data if an ingest error is encountered,
+            placing the first 1000 errors in the job history. If false, stops on
+            first error and raises.  Defaults to False.
+        row_filter : str
+            TQL fragment used to filter, modify and parameterize the raw data from
+            the input to produce the row data fed to the frame.
+        on_duplicate_keys : {‘error’, ‘skip’, 'skip_same'}, default 'error'
+            Specifies what to do upon encountering a duplicate vertex key.
+            Only works for vertex frames. Is ignored for table and edge frames.
+            Allowed values are :
+            - 'error', raise an Exception when a duplicate key is found.
+            - 'skip', skip duplicate keys without raising.
+            - 'skip_same', skip duplicate keys if the row is exactly the same without raising.
 
         Returns
         -------
@@ -595,17 +643,20 @@ class ODBCConnector(object):
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size, max_text_size, max_binary_size)
+                    transaction_size, max_text_size, max_binary_size,
+                    suppress_errors, row_filter, on_duplicate_keys)
             for table, schema in xgt_schemas['vertices'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size, max_text_size, max_binary_size)
+                    transaction_size, max_text_size, max_binary_size,
+                    suppress_errors, row_filter, on_duplicate_keys)
             for table, schema in xgt_schemas['edges'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
-                    transaction_size, max_text_size, max_binary_size)
+                    transaction_size, max_text_size, max_binary_size,
+                    suppress_errors, row_filter, on_duplicate_keys)
 
     def transfer_to_odbc(self, vertices=None, edges=None,
                          tables=None, namespace=None,
@@ -708,19 +759,36 @@ class ODBCConnector(object):
                     reader=final_reader,
                 )
 
-    def __arrow_writer(self, frame_name, schema):
+    def __build_flight_path(self, frame_name, suppress_errors = False,
+                            row_filter = None, on_duplicate_keys = 'error'):
+        path = (self._default_namespace, frame_name)
+
+        suppress_errors_option = ".suppress_errors=" + str(suppress_errors).lower()
+        on_duplicate_keys_option = ".on_duplicate_keys=" + str(on_duplicate_keys).lower()
+        path += (suppress_errors_option,)
+        path += (on_duplicate_keys_option,)
+
+        if row_filter is not None:
+            row_filter_value = f'.row_filter="{row_filter}"'
+            path += (row_filter_value,)
+
+        return path
+
+    def __arrow_writer(self, frame_name, schema, suppress_errors, row_filter, on_duplicate_keys):
         arrow_conn = self._xgt_server.arrow_conn
-        writer, _ = arrow_conn.do_put(
-            pf.FlightDescriptor.for_path(self._default_namespace, frame_name),
+        flight_path = self.__build_flight_path(frame_name, suppress_errors, row_filter, on_duplicate_keys)
+        writer, metadata = arrow_conn.do_put(
+            pf.FlightDescriptor.for_path(*flight_path),
             schema)
-        return writer
+        return (writer, metadata)
 
     def __arrow_reader(self, frame_name):
         arrow_conn = self._xgt_server.arrow_conn
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size,
-                    transaction_size, max_text_size, max_binary_size):
+                    transaction_size, max_text_size, max_binary_size,
+                    suppress_errors, row_filter, on_duplicate_keys):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,
             connection_string=self._driver._connection_string,
@@ -729,7 +797,7 @@ class ODBCConnector(object):
             max_binary_size=max_binary_size,
         )
         count = 0
-        writer = self.__arrow_writer(frame, schema)
+        writer, metadata = self.__arrow_writer(frame, schema, suppress_errors, row_filter, on_duplicate_keys)
         for batch in reader:
             # Process arrow batches
             writer.write(batch)
@@ -738,9 +806,90 @@ class ODBCConnector(object):
             # Start a new transaction
             if transaction_size > 0 and count >= transaction_size:
                 count = 0
+                if (suppress_errors):
+                    self.__check_for_error(frame, schema, writer, metadata)
                 writer.close()
-                writer = self.__arrow_writer(frame, schema)
+                writer, metadata = self.__arrow_writer(frame, schema, suppress_errors, row_filter, on_duplicate_keys)
+
+        if (suppress_errors):
+          self.__check_for_error(frame, schema, writer, metadata)
+
         writer.close()
+
+    def __check_for_error(self, frame, schema, writer, metadata):
+        # Write an empty batch with metadata to indicate we are done.
+        empty = [[]] * len(schema)
+        empty_batch = pa.RecordBatch.from_arrays(empty, schema)
+        metadata_end = struct.pack('<i', 0)
+        writer.write_with_metadata(empty_batch, metadata_end)
+        buf = metadata.read()
+        job_proto = sch_proto.JobStatus()
+        if buf is not None:
+          job_proto.ParseFromString(buf.to_pybytes())
+
+        job = xgt.Job(self._xgt_server, job_proto)
+        job_data = job.get_ingest_errors()
+
+        if job_data is not None and len(job_data) > 0:
+          raise xgt.XgtIOError(self.__create_ingest_error_message(frame, job), job = job)
+
+    def __create_ingest_error_message(self, name, job):
+        num_errors = job.total_ingest_errors
+
+        error_string = ('Errors occurred when inserting data into frame '
+                        f'{name}.\n')
+
+        error_string += f'  {num_errors} line'
+        if num_errors > 1:
+          error_string += 's'
+
+        error_string += (' had insertion errors.\n'
+                         '  Lines without errors were inserted into the frame.\n'
+                         '  To see the number of rows in the frame, run "'
+                         f'{name}.num_rows".\n'
+                         '  To see the data in the frame, run "'
+                         f'{name}.get_data()".\n'
+                         '  To see additional errors:\n'
+                         '    try:\n'
+                         '      foo.transfer_to_xgt(...)\n'
+                         '    except xgt.XgtIOError as e:\n'
+                         '      error_rows = e.job.get_ingest_errors()\n'
+                         '      print(error_rows)\n')
+
+        extra_text = ''
+        if num_errors > 10:
+          extra_text = ' first 10'
+
+        error_string += (f'Errors associated with the{extra_text} lines '
+                         'that could not be inserted are shown below:')
+
+        # Only print the first 10 messages.
+        for error in job.get_ingest_errors(0, 10):
+          delim = ','
+
+          # Will process a list of strings. Convert to this format.
+          if isinstance(error, str):
+            error_cols = error.split(delim)
+          elif isinstance(error, list):
+            error_cols = [str(elem) for elem in error]
+          else:
+            raise xgt.XgtIOError("Error processing ingest error message.")
+
+          # The first comma separated fields of the error string are the error
+          # description, file name, and line number.
+          error_explanation = "" if len(error_cols) < 1 else error_cols[0]
+          error_file_name = "odbc_transfer"
+          error_line_number = "" if len(error_cols) < 3 else error_cols[2]
+
+          # The second part of the error string contains the line that caused the
+          # error. The line contains comma separated fields so we need to re-join
+          # these comma separated portions to get back the line.
+          line_with_error = \
+              "" if len(error_cols) < 4 else delim.join(error_cols[3:])
+
+          error_string += f"\n {error_explanation}"
+
+        return error_string
 
     def __get_xgt_schema(self, table, max_text_size = None, max_binary_size = None):
         schema = self._driver._get_record_batch_schema(table, max_text_size, max_binary_size)
@@ -787,7 +936,8 @@ class ODBCConnector(object):
                 raise ValueError("Argument format incorrect for " + str(val))
 
     def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges,
-                                 batch_size, transaction_size, max_text_size, max_binary_size):
+                                 batch_size, transaction_size, max_text_size, max_binary_size,
+                                 suppress_errors, row_filter, on_duplicate_keys):
         estimate = 0
         mapping_vertices = { }
         mapping_edges = { }
@@ -821,7 +971,7 @@ class ODBCConnector(object):
                 frame = schema['mapping']['frame']
 
             self.create_xgt_schemas(result, append, force, easy_edges)
-            writer = self.__arrow_writer(frame, arrow_schema)
+            writer, metadata = self.__arrow_writer(frame, arrow_schema, suppress_errors, row_filter, on_duplicate_keys)
             count = 0
             for batch in reader:
                 # Process arrow batches
@@ -831,8 +981,11 @@ class ODBCConnector(object):
                 # Start a new transaction
                 if transaction_size > 0 and count >= transaction_size:
                     count = 0
+                    if (suppress_errors):
+                        self.__check_for_error(frame, arrow_schema, writer, metadata)
                     writer.close()
-                    writer = self.__arrow_writer(frame, arrow_schema)
+                    writer, metadata = self.__arrow_writer(frame, arrow_schema, suppress_errors, row_filter, on_duplicate_keys)
 
+            if (suppress_errors):
+                self.__check_for_error(frame, arrow_schema, writer, metadata)
             writer.close()
-

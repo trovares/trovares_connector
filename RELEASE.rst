@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.4.0 (02-06-2024)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Add parameters error suppression, row filtering, and duplicate vertex handling.
+
 2.3.0 (12-18-2023)
 ------------------
 
