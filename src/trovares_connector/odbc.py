@@ -18,13 +18,34 @@
 #===----------------------------------------------------------------------===#
 
 import struct
+import sys
 import xgt
 import pyarrow as pa
 import pyarrow.flight as pf
+
+from collections.abc import Iterable, Mapping, Sequence
+
+# In Python 3.9 and above, the abstract base classes (ABCs) from collections.abc
+# can be used directly as type hints. This includes Iterable, Mapping, and
+# Sequence, among others. For compatibility with versions below 3.9, we define
+# aliases using the typing module, which has equivalent types with the same
+# names. This ensures our code can use consistent type hints across different
+# Python versions.
+if sys.version_info >= (3, 9):
+  # Directly use the ABCs from collections.abc in type hints since it is
+  # supported. List and Dict type hints are directly available as built-in types
+  # in Python 3.9+.
+  Iter, Map, Seq, List, Dict = Iterable, Mapping, Sequence, list, dict
+else:
+   # For Python versions below 3.9, use the typing module for type hints.
+  from typing import (Iterable as Iter, Mapping as Map, Sequence as Seq, List,
+                                  Dict)
+
 from arrow_odbc import read_arrow_batches_from_odbc
 from arrow_odbc import insert_into_table
-from .common import ProgressDisplay
+from typing import Optional, Union, TYPE_CHECKING
 from xgt import SchemaMessages_pb2 as sch_proto
+from .common import ProgressDisplay
 
 # Convert the pyarrow type to an xgt type.
 def _pyarrow_type_to_xgt_type(pyarrow_type):
@@ -59,7 +80,7 @@ def _infer_xgt_schema_from_pyarrow_schema(pyarrow_schema, conversions):
     return [[c.name, _pyarrow_type_to_xgt_type(c.type)] for c in schema]
 
 class SQLODBCDriver(object):
-    def __init__(self, connection_string):
+    def __init__(self, connection_string : str):
         """
         Initializes the driver class.
 
@@ -92,7 +113,7 @@ class SQLODBCDriver(object):
         return reader.schema
 
 class MongoODBCDriver(object):
-    def __init__(self, connection_string, include_id=False):
+    def __init__(self, connection_string : str , include_id : bool = False):
         """
         Initializes the driver class.
 
@@ -138,7 +159,7 @@ class MongoODBCDriver(object):
         return schema
 
 class OracleODBCDriver(object):
-    def __init__(self, connection_string, upper_case_names = False, ansi_conversion = True):
+    def __init__(self, connection_string : str, upper_case_names : bool = False, ansi_conversion : bool = True):
         """
         Initializes the driver class.
 
@@ -185,7 +206,7 @@ class OracleODBCDriver(object):
         return reader.schema
 
 class SAPODBCDriver(object):
-    def __init__(self, connection_string):
+    def __init__(self, connection_string : str):
         """
         Initializes the driver class.
 
@@ -218,7 +239,7 @@ class SAPODBCDriver(object):
         return reader.schema
 
 class SnowflakeODBCDriver(object):
-    def __init__(self, connection_string, ansi_conversion = True):
+    def __init__(self, connection_string : str, ansi_conversion : bool = True):
         """
         Initializes the driver class.
 
@@ -257,8 +278,11 @@ class SnowflakeODBCDriver(object):
         )
         return reader.schema
 
+ODBCDriverTypes = Union[SQLODBCDriver, MongoODBCDriver, OracleODBCDriver,
+                        SAPODBCDriver, SnowflakeODBCDriver]
+
 class ODBCConnector(object):
-    def __init__(self, xgt_server, odbc_driver):
+    def __init__(self, xgt_server : xgt.Connection, odbc_driver : ODBCDriverTypes):
         """
         Initializes the connector class.
 
@@ -273,8 +297,8 @@ class ODBCConnector(object):
         self._default_namespace = xgt_server.get_default_namespace()
         self._driver = odbc_driver
 
-    def get_xgt_schemas(self, tables = None, max_text_size = None,
-                        max_binary_size = None):
+    def get_xgt_schemas(self, tables : Iterable[str] = None, max_text_size : int = None,
+                        max_binary_size : int = None) -> Dict:
         """
         Retrieve a dictionary containing the schema information for all of
         the tables requested and their mappings.
@@ -283,6 +307,20 @@ class ODBCConnector(object):
         ----------
         tables : iterable
             List of requested tables.
+        max_text_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length text fields.
+            When using VARCHAR from a database, if a limit isn't set for the length of the strings
+            like VARCHAR(255), the schema size of each string entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. For instance, each string in Snowflake
+            has an upper limit of 16MB length. This means when allocating the buffers to store the ODBC
+            batch_size would be 16MB multiplied by the batch_size. This parameter will impose a limit on
+            each string length when transferring. Default is determined by the database.
+        max_binary_size : int
+            The upper limit on the buffers used when transferring ODBC variable-length binary fields.
+            When using VARBINARY from a database, if a limit isn't set for the length of binary data
+            like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
+            database uses for each entry when reporting to ODBC. This parameter will impose a limit on
+            each binary field length when transferring. Default is determined by the database.
 
         Returns
         -------
@@ -314,8 +352,8 @@ class ODBCConnector(object):
 
         return result
 
-    def create_xgt_schemas(self, xgt_schemas, append = False,
-                           force = False, easy_edges = False) -> None:
+    def create_xgt_schemas(self, xgt_schemas : Mapping, append : bool = False,
+                           force : bool = False, easy_edges : bool = False) -> None:
         """
         Creates table, vertex and/or edge frames in Trovares xGT.
 
@@ -410,10 +448,10 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables = None, append = False, force = False,
-                        easy_edges = False, batch_size = 10000, transaction_size = 0,
-                        max_text_size = None, max_binary_size = None,
-                        suppress_errors = False, row_filter = None, on_duplicate_keys = "error") -> None:
+    def transfer_to_xgt(self, tables : Iterable = None, append : bool = False, force : bool = False,
+                        easy_edges : bool = False, batch_size : int = 10000, transaction_size : int = 0,
+                        max_text_size : int = None, max_binary_size : int = None,
+                        suppress_errors : bool = False, row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -425,7 +463,7 @@ class ODBCConnector(object):
 
         Parameters
         ----------
-        tables : list
+        tables : Iterable
             List of requested tables names.
             May be a tuple specify a mapping to xGT types. See documentation.
         append : boolean
@@ -483,11 +521,11 @@ class ODBCConnector(object):
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
         self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size, max_text_size, max_binary_size, suppress_errors, row_filter, on_duplicate_keys)
 
-    def transfer_query_to_xgt(self, query=None, mapping=None, append=False,
-                              force=False, easy_edges=False, batch_size=10000,
-                              transaction_size=0, max_text_size=None,
-                              max_binary_size=None, suppress_errors = False,
-                              row_filter = None, on_duplicate_keys = "error") -> None:
+    def transfer_query_to_xgt(self, query : str = None, mapping : Union[Map, tuple] = None, append : bool = False,
+                              force : bool = False, easy_edges : bool = False, batch_size : int = 10000,
+                              transaction_size : int = 0, max_text_size : int = None,
+                              max_binary_size : int = None, suppress_errors : bool = False,
+                              row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
 
@@ -556,9 +594,10 @@ class ODBCConnector(object):
                                       batch_size, transaction_size, max_text_size, max_binary_size,
                                       suppress_errors, row_filter, on_duplicate_keys)
 
-    def copy_data_to_xgt(self, xgt_schemas, batch_size = 10000, transaction_size = 0,
-                         max_text_size = None, max_binary_size = None,
-                         suppress_errors = False, row_filter = None, on_duplicate_keys = "error") -> None:
+    def copy_data_to_xgt(self, xgt_schemas : Map, batch_size : int = 10000, transaction_size : int = 0,
+                         max_text_size : int = None, max_binary_size : int = None,
+                         suppress_errors : bool = False, row_filter : str = None,
+                         on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
         in Trovares xGT.
@@ -658,9 +697,10 @@ class ODBCConnector(object):
                     transaction_size, max_text_size, max_binary_size,
                     suppress_errors, row_filter, on_duplicate_keys)
 
-    def transfer_to_odbc(self, vertices=None, edges=None,
-                         tables=None, namespace=None,
-                         batch_size=10000) -> None:
+    def transfer_to_odbc(self, vertices : Iterable[str] = None,
+                         edges : Iterable[str] = None,
+                         tables : Iterable[str] = None, namespace : str = None,
+                         batch_size : int = 10000) -> None:
         """
         Copies data from Trovares xGT to an ODBC application.
 
@@ -819,7 +859,7 @@ class ODBCConnector(object):
     def __check_for_error(self, frame, schema, writer, metadata):
         # Write an empty batch with metadata to indicate we are done.
         empty = [[]] * len(schema)
-        empty_batch = pa.RecordBatch.from_arrays(empty, schema)
+        empty_batch = pa.RecordBatch.from_arrays(empty, schema = schema)
         metadata_end = struct.pack('<i', 0)
         writer.write_with_metadata(empty_batch, metadata_end)
         buf = metadata.read()
