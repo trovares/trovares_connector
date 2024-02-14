@@ -297,7 +297,7 @@ class ODBCConnector(object):
         self._default_namespace = xgt_server.get_default_namespace()
         self._driver = odbc_driver
 
-    def get_xgt_schemas(self, tables : Iterable[str] = None, max_text_size : int = None,
+    def get_xgt_schemas(self, tables : Iter[str] = None, max_text_size : int = None,
                         max_binary_size : int = None) -> Dict:
         """
         Retrieve a dictionary containing the schema information for all of
@@ -352,7 +352,7 @@ class ODBCConnector(object):
 
         return result
 
-    def create_xgt_schemas(self, xgt_schemas : Mapping, append : bool = False,
+    def create_xgt_schemas(self, xgt_schemas : Map, append : bool = False,
                            force : bool = False, easy_edges : bool = False) -> None:
         """
         Creates table, vertex and/or edge frames in Trovares xGT.
@@ -448,7 +448,7 @@ class ODBCConnector(object):
                 self._xgt_server.create_edge_frame(name = schema['mapping']['frame'], schema = schema['xgt_schema'],
                                                    source = src, target = trg, source_key = src_key, target_key = trg_key)
 
-    def transfer_to_xgt(self, tables : Iterable = None, append : bool = False, force : bool = False,
+    def transfer_to_xgt(self, tables : Iter = None, append : bool = False, force : bool = False,
                         easy_edges : bool = False, batch_size : int = 10000, transaction_size : int = 0,
                         max_text_size : int = None, max_binary_size : int = None,
                         suppress_errors : bool = False, row_filter : str = None, on_duplicate_keys : str = "error") -> None:
@@ -697,9 +697,9 @@ class ODBCConnector(object):
                     transaction_size, max_text_size, max_binary_size,
                     suppress_errors, row_filter, on_duplicate_keys)
 
-    def transfer_to_odbc(self, vertices : Iterable[str] = None,
-                         edges : Iterable[str] = None,
-                         tables : Iterable[str] = None, namespace : str = None,
+    def transfer_to_odbc(self, vertices : Iter[str] = None,
+                         edges : Iter[str] = None,
+                         tables : Iter[str] = None, namespace : str = None,
                          batch_size : int = 10000) -> None:
         """
         Copies data from Trovares xGT to an ODBC application.
