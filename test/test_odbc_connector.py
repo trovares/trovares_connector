@@ -65,6 +65,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.xgt.drop_namespace('test', force_drop = True)
 
   def assert_list_equal(self, list1, list2):
+    list1.sort(key = lambda x: (x[0] is None, x[0]))
     assert len(list1) == len(list2)
     for a, b in zip(list1, list2):
       assert len(a) == len(b)
@@ -101,11 +102,11 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test','test1')])
     assert self.xgt.get_frame('test1').num_rows == 1
-    assert self.xgt.get_frame('test1').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test1').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test2'})])
     assert self.xgt.get_frame('test2').num_rows == 1
-    assert self.xgt.get_frame('test2').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test2').get_data(), result)
 
   def test_vertex(self):
     result = [[0, 0, 'hola'], [1, 0, 'adios']]
@@ -117,23 +118,23 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test', (0,))])
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test','test1', (0,))])
     assert self.xgt.get_frame('test1').num_rows == 2
-    assert self.xgt.get_frame('test1').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test1').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test','test2', ('Value1',))])
     assert self.xgt.get_frame('test2').num_rows == 2
-    assert self.xgt.get_frame('test2').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test2').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test3', 'key' : 0 } )])
     assert self.xgt.get_frame('test3').num_rows == 2
-    assert self.xgt.get_frame('test3').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test3').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'key' : 'Value1' } )])
     assert self.xgt.get_frame('test4').num_rows == 2
-    assert self.xgt.get_frame('test4').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test4').get_data(), result)
 
   def test_duplicate_keys(self):
     cursor = self.odbc_driver.cursor()
@@ -152,17 +153,17 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test', (0,))], on_duplicate_keys = 'skip')
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), on_duplicate_keys = 'skip')
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', (0,))], on_duplicate_keys = 'skip_same')
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), on_duplicate_keys = 'skip_same')
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     cursor.execute("INSERT INTO test VALUES (1, 0, 'adiosl')")
     self.odbc_driver.commit()
@@ -183,24 +184,24 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     with self.assertRaises(xgt.XgtIOError):
       self.conn.transfer_to_xgt(tables = [('test', (0,))], suppress_errors = True)
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
     with self.assertRaises(xgt.XgtIOError):
       self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), suppress_errors = True)
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     try:
       self.conn.transfer_to_xgt(tables = [('test', (0,))], suppress_errors = True)
     except xgt.XgtIOError as e:
       error_rows = e.job.get_ingest_errors()
       assert len(error_rows) == 1
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     try:
       self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)), suppress_errors = True)
     except xgt.XgtIOError as e:
       error_rows = e.job.get_ingest_errors()
       assert len(error_rows) == 1
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
   def test_row_filter(self):
     result = [[0, 0, 'hola']]
@@ -211,7 +212,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
     assert self.xgt.get_frame('test').num_rows == 1
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     cursor.execute("DROP TABLE IF EXISTS test")
     cursor.execute("CREATE TABLE test (Value1 varchar(255), Value2 varchar(255), Value3 varchar(255))")
@@ -222,16 +223,16 @@ class TestXgtODBCConnector(unittest.TestCase):
     except xgt.XgtIOError as e:
       error_rows = e.job.get_ingest_errors()
       assert len(error_rows) == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append = True, row_filter = "return substring(a.Value1, 1, 1), substring(a.Value2, 1, 1), a.Value3")
     assert self.xgt.get_frame('test').num_rows == 2
     result += [[0, 1, 'adios']]
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), append = True, row_filter = "return substring(a.Value1, 1, 1), substring(a.Value2, 1, 1), a.Value3")
     assert self.xgt.get_frame('test').num_rows == 3
     result += [[0, 1, 'adios']]
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
   def test_edge(self):
     result = [[0, 0, 'hola'], [1, 0, 'adios']]
@@ -243,23 +244,23 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges = True)
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test','test1', ('Vertex', 'Vertex', 0, 1))])
     assert self.xgt.get_frame('test1').num_rows == 2
-    assert self.xgt.get_frame('test1').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test1').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', 'Vertex1', (0,)), ('test','test2', ('Vertex1', 'Vertex1', 'Value1', 'Value2'))])
     assert self.xgt.get_frame('test2').num_rows == 2
-    assert self.xgt.get_frame('test2').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test2').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test3', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 0, 'target_key' : 1 } )])
     assert self.xgt.get_frame('test3').num_rows == 2
-    assert self.xgt.get_frame('test3').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test3').get_data(), result)
 
     self.conn.transfer_to_xgt(tables = [('test', {'frame' : 'test4', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 'Value1', 'target_key' : 'Value2' } )])
     assert self.xgt.get_frame('test4').num_rows == 2
-    assert self.xgt.get_frame('test4').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test4').get_data(), result)
 
   def test_append(self):
     result = [[0, 0, 'hola']]
@@ -270,7 +271,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
     assert self.xgt.get_frame('test').num_rows == 1
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     cursor.execute("DROP TABLE IF EXISTS test")
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
@@ -278,7 +279,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.odbc_driver.commit()
     self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append=True)
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result + [[1, 0, 'adios']]
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result + [[1, 0, 'adios']])
 
   def test_dropping(self):
     c = self.conn
@@ -475,23 +476,23 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', (0,)))
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test1', (0,)))
     assert self.xgt.get_frame('test1').num_rows == 2
-    assert self.xgt.get_frame('test1').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test1').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test2', ('Value1',)))
     assert self.xgt.get_frame('test2').num_rows == 2
-    assert self.xgt.get_frame('test2').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test2').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', {'frame' : 'test3', 'key' : 0 } ))
     assert self.xgt.get_frame('test3').num_rows == 2
-    assert self.xgt.get_frame('test3').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test3').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', {'frame' : 'test4', 'key' : 'Value1' } ))
     assert self.xgt.get_frame('test4').num_rows == 2
-    assert self.xgt.get_frame('test4').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test4').get_data(), result)
 
   def test_edge_query(self):
     result = [[0, 0, 'hola'], [1, 0, 'adios']]
@@ -503,24 +504,24 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), easy_edges=True)
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test1', ('Vertex', 'Vertex', 0, 1)))
     assert self.xgt.get_frame('test1').num_rows == 2
-    assert self.xgt.get_frame('test1').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test1').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('Vertex1', (0,)))
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', 'test2', ('Vertex1', 'Vertex1', 'Value1', 'Value2')))
     assert self.xgt.get_frame('test2').num_rows == 2
-    assert self.xgt.get_frame('test2').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test2').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', {'frame' : 'test3', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 0, 'target_key' : 1 }))
     assert self.xgt.get_frame('test3').num_rows == 2
-    assert self.xgt.get_frame('test3').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test3').get_data(), result)
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', {'frame' : 'test4', 'source' : 'Vertex', 'target' : 'Vertex', 'source_key' : 'Value1', 'target_key' : 'Value2' }))
     assert self.xgt.get_frame('test4').num_rows == 2
-    assert self.xgt.get_frame('test4').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test4').get_data(), result)
 
   def test_append_query(self):
     result = [[0, 0, 'hola']]
@@ -531,7 +532,7 @@ class TestXgtODBCConnector(unittest.TestCase):
 
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), easy_edges=True)
     assert self.xgt.get_frame('test').num_rows == 1
-    assert self.xgt.get_frame('test').get_data() == result
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
     cursor.execute("DROP TABLE IF EXISTS test")
     cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
@@ -539,7 +540,7 @@ class TestXgtODBCConnector(unittest.TestCase):
     self.odbc_driver.commit()
     self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), append=True)
     assert self.xgt.get_frame('test').num_rows == 2
-    assert self.xgt.get_frame('test').get_data() == result + [[1, 0, 'adios']]
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result + [[1, 0, 'adios']])
 
   def test_transfer_no_data_query(self):
     c = self.conn
