@@ -382,6 +382,7 @@ Limitations
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
 * The Databricks and Oracle drivers don't support transferring from xGT to them.
+* Transferring from xGT to MarieDB with None for floats is not supported.
 * Binary data types not supported.
 
 API Details
