@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../_static/documentation_options.js?v=8bb39fa6"></script>
+    <script src="../_static/documentation_options.js?v=7769aa4a"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -432,7 +432,7 @@ However, transfer_query_to_xgt will likely work with any vendor using the generi
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>These examples show typical usage patterns.</p>
 <section id="copy-a-sql-table">
-<h3>Copy a SQL table<a class="headerlink" href="#copy-a-sql-table" title="Link to this heading">#</a></h3>
+<span id="copy-examples"></span><h3>Copy a SQL table<a class="headerlink" href="#copy-a-sql-table" title="Link to this heading">#</a></h3>
 <p>This example copies test_table from the test database into test_table on xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -544,6 +544,7 @@ This functionality allows xGT to connect to any ODBC database and read data from
 <p>This would transfer the whole SqlTable to the xGT Friend edges.
 Similar to above the Person vertices would be automatically created.
 The mapping parameter is similar to the examples above except it takes single mapping instead of a list.
+See <a class="reference internal" href="#copy-examples"><span class="std std-ref">Copy a SQL table</span></a>.
 This specifies the frame and type you want the table to map to.</p>
 </section>
 <section id="appending-data">
@@ -713,6 +714,7 @@ See below for more details.</p>
 <li><p>When transferring to a database, the table must already be created.</p></li>
 <li><p>Transfer sizes/times are estimates and may not be available.</p></li>
 <li><p>The Databricks and Oracle drivers don’t support transferring from xGT to them.</p></li>
+<li><p>Transferring from xGT to MarieDB with None for floats is not supported.</p></li>
 <li><p>Binary data types not supported.</p></li>
 </ul>
 </section>

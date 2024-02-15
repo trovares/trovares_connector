@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+2.5.0 (02-14-2024)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added type hints.
+
+Fixed
+^^^^^
+  - pyarrow warning about schema parameter.
+
 2.4.0 (02-06-2024)
 ------------------
 

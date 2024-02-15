@@ -45,6 +45,8 @@ Examples
 
 These examples show typical usage patterns.
 
+.. _copy_examples:
+
 Copy a SQL table
 ^^^^^^^^^^^^^^^^
 
@@ -185,6 +187,7 @@ This functionality allows xGT to connect to any ODBC database and read data from
 This would transfer the whole SqlTable to the xGT Friend edges.
 Similar to above the Person vertices would be automatically created.
 The mapping parameter is similar to the examples above except it takes single mapping instead of a list.
+See :ref:`copy_examples`.
 This specifies the frame and type you want the table to map to.
 
 Appending data
@@ -379,6 +382,7 @@ Limitations
 * When transferring to a database, the table must already be created.
 * Transfer sizes/times are estimates and may not be available.
 * The Databricks and Oracle drivers don't support transferring from xGT to them.
+* Transferring from xGT to MarieDB with None for floats is not supported.
 * Binary data types not supported.
 
 API Details
