@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../_static/documentation_options.js?v=7769aa4a"></script>
+    <script src="../_static/documentation_options.js?v=a976f23f"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -563,6 +563,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 <li><p>The parameter <cite>suppress_errors</cite> if True, will ingest all valid rows and return an error with rows not ingested.</p></li>
 <li><p>The parameter <cite>on_duplicate_keys</cite> changes the behavior how duplicate vertex keys are handles.</p></li>
 <li><p>The parameter <cite>row_filter</cite> takes a Cypher fragment that modifies incoming data.</p></li>
+<li><p>The parameter <cite>column_mapping</cite> takes a dictionary of frame column names mapped to either column position or name.</p></li>
 </ul>
 <p>For details about the parameters see: <a class="reference internal" href="trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_to_xgt" title="trovares_connector.ODBCConnector.transfer_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_to_xgt()</span></code></a> or <a class="reference internal" href="trovares_connector.ODBCConnector.html#trovares_connector.ODBCConnector.transfer_query_to_xgt" title="trovares_connector.ODBCConnector.transfer_query_to_xgt"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transfer_query_to_xgt()</span></code></a>.</p>
 <p>For row filtering see the <a class="reference external" href="https://docs.trovares.com/user_ref/graphanalytics/tql_fragments.html">xGT Documentation</a>.
