@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.5.0 (02-20-2024)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Added paramaters for column mapping.
+
 2.5.0 (02-14-2024)
 ------------------
 

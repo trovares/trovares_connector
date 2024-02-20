@@ -234,6 +234,39 @@ class TestXgtODBCConnector(unittest.TestCase):
     result += [[0, 1, 'adios']]
     self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
 
+  def test_column_mapping(self):
+    result = [[0, 0, 'hola']]
+    cursor = self.odbc_driver.cursor()
+    cursor.execute("CREATE TABLE test (Value1 INT, Value2 INT, Value3 varchar(255))")
+    cursor.execute("INSERT INTO test VALUES (0, 0, 'hola')")
+    self.odbc_driver.commit()
+
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], easy_edges=True)
+    assert self.xgt.get_frame('test').num_rows == 1
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
+
+    cursor.execute("DROP TABLE IF EXISTS test")
+    cursor.execute("CREATE TABLE test (Value1 varchar(255), Value2 INT, Value3 INT)")
+    cursor.execute("INSERT INTO test VALUES ('adios', 0, 1)")
+    self.odbc_driver.commit()
+    try:
+      self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append = True, suppress_errors = True)
+    except xgt.XgtIOError as e:
+      error_rows = e.job.get_ingest_errors()
+      assert len(error_rows) == 1
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
+    self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append = True, column_mapping={"Value1" : "Value2", "Value2" : "Value3", "Value3" : "Value1"})
+    assert self.xgt.get_frame('test').num_rows == 2
+    result += [[0, 1, 'adios']]
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
+
+    self.conn.transfer_query_to_xgt("SELECT * FROM test", mapping = ('test', ('Vertex', 'Vertex', 0, 1)), append = True, column_mapping={"Value1" : 1, "Value2" : 2, "Value3" : 0})
+    assert self.xgt.get_frame('test').num_rows == 3
+    result += [[0, 1, 'adios']]
+    self.assert_list_equal(self.xgt.get_frame('test').get_data(), result)
+    with self.assertRaises(TypeError):
+      self.conn.transfer_to_xgt(tables = [('test', ('Vertex', 'Vertex', 0, 1))], append = True, column_mapping={"Value1" : (1,), "Value2" : "Value3", "Value3" : "Value1"})
+
   def test_edge(self):
     result = [[0, 0, 'hola'], [1, 0, 'adios']]
     cursor = self.odbc_driver.cursor()

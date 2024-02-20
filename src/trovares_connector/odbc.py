@@ -1062,7 +1062,7 @@ class ODBCConnector(object):
                 self.__check_for_error(frame, arrow_schema, writer, metadata)
             writer.close()
 
-    def __validate_column_mapping(column_mapping):
+    def __validate_column_mapping(self, column_mapping):
         error_msg = ('The data type of "column_mapping" is incorrect. '
                      'Expects a dictionary with string keys and string '
                      'or integer values.')

@@ -208,6 +208,7 @@ Other parameters when transffering to xGT
 * The parameter `suppress_errors` if True, will ingest all valid rows and return an error with rows not ingested.
 * The parameter `on_duplicate_keys` changes the behavior how duplicate vertex keys are handles.
 * The parameter `row_filter` takes a Cypher fragment that modifies incoming data.
+* The parameter `column_Mapping` takes a dictionary of frame column names mapped to either column position or name.
 
 For details about the parameters see: :py:meth:`~trovares_connector.ODBCConnector.transfer_to_xgt` or :py:meth:`~trovares_connector.ODBCConnector.transfer_query_to_xgt`.
 
