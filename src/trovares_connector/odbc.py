@@ -451,6 +451,7 @@ class ODBCConnector(object):
     def transfer_to_xgt(self, tables : Iter = None, append : bool = False, force : bool = False,
                         easy_edges : bool = False, batch_size : int = 10000, transaction_size : int = 0,
                         max_text_size : int = None, max_binary_size : int = None,
+                        column_mapping : Optional[Map[str, Union[str, int]]] = None,
                         suppress_errors : bool = False, row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
@@ -496,6 +497,10 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        column_mapping : dictionary
+            Maps the frame column names to SQL columns for the ingest. The key of
+            each element is a frame column name. The value is either the name of the
+            SQL column (from the table) or the table column index.
         suppress_errors : bool
             If true, will continue to insert data if an ingest error is encountered,
             placing the first 1000 errors in the job history. If false, stops on
@@ -519,12 +524,15 @@ class ODBCConnector(object):
             raise ValueError("Transaction size needs to be a multiple of the batch size and >= the batch size of " + str(batch_size))
         xgt_schema = self.get_xgt_schemas(tables, max_text_size, max_binary_size)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
-        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size, max_text_size, max_binary_size, suppress_errors, row_filter, on_duplicate_keys)
+        self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size,
+                              max_text_size, max_binary_size, column_mapping, 
+                              suppress_errors, row_filter, on_duplicate_keys)
 
     def transfer_query_to_xgt(self, query : str = None, mapping : Union[Map, tuple] = None, append : bool = False,
                               force : bool = False, easy_edges : bool = False, batch_size : int = 10000,
                               transaction_size : int = 0, max_text_size : int = None,
-                              max_binary_size : int = None, suppress_errors : bool = False,
+                              max_binary_size : int = None, column_mapping : Optional[Map[str, Union[str, int]]] = None,
+                              suppress_errors : bool = False,
                               row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to Trovares xGT.
@@ -569,6 +577,10 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        column_mapping : dictionary
+            Maps the frame column names to SQL columns for the ingest. The key of
+            each element is a frame column name. The value is either the name of the
+            SQL column (from the table) or the table column index.
         suppress_errors : bool
             If true, will continue to insert data if an ingest error is encountered,
             placing the first 1000 errors in the job history. If false, stops on
@@ -592,10 +604,11 @@ class ODBCConnector(object):
             raise ValueError("Transaction size needs to be a multiple of batch size and >= the batch size of " + str(batch_size))
         self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
                                       batch_size, transaction_size, max_text_size, max_binary_size,
-                                      suppress_errors, row_filter, on_duplicate_keys)
+                                      column_mapping, suppress_errors, row_filter, on_duplicate_keys)
 
     def copy_data_to_xgt(self, xgt_schemas : Map, batch_size : int = 10000, transaction_size : int = 0,
                          max_text_size : int = None, max_binary_size : int = None,
+                         column_mapping : Optional[Map[str, Union[str, int]]] = None,
                          suppress_errors : bool = False, row_filter : str = None,
                          on_duplicate_keys : str = "error") -> None:
         """
@@ -632,6 +645,10 @@ class ODBCConnector(object):
             like VARBINARY(255), the schema size of each binary entry could be whatever the max size of
             database uses for each entry when reporting to ODBC. This parameter will impose a limit on
             each binary field length when transferring. Default is determined by the database.
+        column_mapping : dictionary
+            Maps the frame column names to SQL columns for the ingest. The key of
+            each element is a frame column name. The value is either the name of the
+            SQL column (from the table) or the table column index.
         suppress_errors : bool
             If true, will continue to insert data if an ingest error is encountered,
             placing the first 1000 errors in the job history. If false, stops on
@@ -683,19 +700,22 @@ class ODBCConnector(object):
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
                     transaction_size, max_text_size, max_binary_size,
-                    suppress_errors, row_filter, on_duplicate_keys)
+                    column_mapping, suppress_errors, row_filter,
+                    on_duplicate_keys)
             for table, schema in xgt_schemas['vertices'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
                     transaction_size, max_text_size, max_binary_size,
-                    suppress_errors, row_filter, on_duplicate_keys)
+                    column_mapping, suppress_errors, row_filter,
+                    on_duplicate_keys)
             for table, schema in xgt_schemas['edges'].items():
                 self.__copy_data(self._driver._get_data_query(
                     table, schema['arrow_schema']), schema['mapping']['frame'],
                     schema['arrow_schema'], progress_bar, batch_size,
                     transaction_size, max_text_size, max_binary_size,
-                    suppress_errors, row_filter, on_duplicate_keys)
+                    column_mapping, suppress_errors, row_filter,
+                    on_duplicate_keys)
 
     def transfer_to_odbc(self, vertices : Iter[str] = None,
                          edges : Iter[str] = None,
@@ -799,9 +819,21 @@ class ODBCConnector(object):
                     reader=final_reader,
                 )
 
-    def __build_flight_path(self, frame_name, suppress_errors = False,
-                            row_filter = None, on_duplicate_keys = 'error'):
+    def __build_flight_path(self, frame_name, column_mapping = None,
+                            suppress_errors = False, row_filter = None,
+                            on_duplicate_keys = 'error'):
         path = (self._default_namespace, frame_name)
+
+        self.__validate_column_mapping(column_mapping)
+        if row_filter is None and column_mapping is not None:
+            map_values = ".map_column_names=[" + \
+                ','.join(f"{key}:{value}" for key, value in column_mapping.items()
+                    if isinstance(value, str)) + "]"
+            path += (map_values,)
+            map_values = ".map_column_ids=[" + \
+                ','.join(f"{key}:{value}" for key, value in column_mapping.items()
+                    if isinstance(value, int)) + "]"
+            path += (map_values,)
 
         suppress_errors_option = ".suppress_errors=" + str(suppress_errors).lower()
         on_duplicate_keys_option = ".on_duplicate_keys=" + str(on_duplicate_keys).lower()
@@ -814,9 +846,9 @@ class ODBCConnector(object):
 
         return path
 
-    def __arrow_writer(self, frame_name, schema, suppress_errors, row_filter, on_duplicate_keys):
+    def __arrow_writer(self, frame_name, schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys):
         arrow_conn = self._xgt_server.arrow_conn
-        flight_path = self.__build_flight_path(frame_name, suppress_errors, row_filter, on_duplicate_keys)
+        flight_path = self.__build_flight_path(frame_name, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
         writer, metadata = arrow_conn.do_put(
             pf.FlightDescriptor.for_path(*flight_path),
             schema)
@@ -827,7 +859,7 @@ class ODBCConnector(object):
         return arrow_conn.do_get(pf.Ticket(self._default_namespace + '__' + frame_name))
 
     def __copy_data(self, query_for_extract, frame, schema, progress_bar, batch_size,
-                    transaction_size, max_text_size, max_binary_size,
+                    transaction_size, max_text_size, max_binary_size, column_mapping,
                     suppress_errors, row_filter, on_duplicate_keys):
         reader = read_arrow_batches_from_odbc(
             query=query_for_extract,
@@ -837,7 +869,7 @@ class ODBCConnector(object):
             max_binary_size=max_binary_size,
         )
         count = 0
-        writer, metadata = self.__arrow_writer(frame, schema, suppress_errors, row_filter, on_duplicate_keys)
+        writer, metadata = self.__arrow_writer(frame, schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
         for batch in reader:
             # Process arrow batches
             writer.write(batch)
@@ -849,7 +881,7 @@ class ODBCConnector(object):
                 if (suppress_errors):
                     self.__check_for_error(frame, schema, writer, metadata)
                 writer.close()
-                writer, metadata = self.__arrow_writer(frame, schema, suppress_errors, row_filter, on_duplicate_keys)
+                writer, metadata = self.__arrow_writer(frame, schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
 
         if (suppress_errors):
           self.__check_for_error(frame, schema, writer, metadata)
@@ -977,7 +1009,7 @@ class ODBCConnector(object):
 
     def __copy_query_data_to_xgt(self, query, mapping, append, force, easy_edges,
                                  batch_size, transaction_size, max_text_size, max_binary_size,
-                                 suppress_errors, row_filter, on_duplicate_keys):
+                                 column_mapping, suppress_errors, row_filter, on_duplicate_keys):
         estimate = 0
         mapping_vertices = { }
         mapping_edges = { }
@@ -1011,7 +1043,7 @@ class ODBCConnector(object):
                 frame = schema['mapping']['frame']
 
             self.create_xgt_schemas(result, append, force, easy_edges)
-            writer, metadata = self.__arrow_writer(frame, arrow_schema, suppress_errors, row_filter, on_duplicate_keys)
+            writer, metadata = self.__arrow_writer(frame, arrow_schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
             count = 0
             for batch in reader:
                 # Process arrow batches
@@ -1024,8 +1056,21 @@ class ODBCConnector(object):
                     if (suppress_errors):
                         self.__check_for_error(frame, arrow_schema, writer, metadata)
                     writer.close()
-                    writer, metadata = self.__arrow_writer(frame, arrow_schema, suppress_errors, row_filter, on_duplicate_keys)
+                    writer, metadata = self.__arrow_writer(frame, arrow_schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
 
             if (suppress_errors):
                 self.__check_for_error(frame, arrow_schema, writer, metadata)
             writer.close()
+
+    def __validate_column_mapping(column_mapping):
+        error_msg = ('The data type of "column_mapping" is incorrect. '
+                     'Expects a dictionary with string keys and string '
+                     'or integer values.')
+        if column_mapping is not None:
+            if not isinstance(column_mapping, Mapping):
+                raise TypeError(error_msg)
+            for frame_col, file_col in column_mapping.items():
+                if not isinstance(file_col, (str, int)):
+                    raise TypeError(error_msg)
+                if not isinstance(frame_col, str):
+                    raise TypeError(error_msg)
