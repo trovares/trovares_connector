@@ -466,7 +466,7 @@ class ODBCConnector(object):
         ----------
         tables : Iterable
             List of requested tables names.
-            May be a tuple specify a mapping to xGT types. See documentation.
+            May be a tuple specify a mapping to xGT types. See documentation: :ref:`mapping-sql-label` or `Web Docs <https://trovares.github.io/trovares_connector/odbc/index.html#mapping-sql-tables-to-graphs>`_.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
@@ -525,7 +525,7 @@ class ODBCConnector(object):
         xgt_schema = self.get_xgt_schemas(tables, max_text_size, max_binary_size)
         self.create_xgt_schemas(xgt_schema, append, force, easy_edges)
         self.copy_data_to_xgt(xgt_schema, batch_size, transaction_size,
-                              max_text_size, max_binary_size, column_mapping, 
+                              max_text_size, max_binary_size, column_mapping,
                               suppress_errors, row_filter, on_duplicate_keys)
 
     def transfer_query_to_xgt(self, query : str = None, mapping : Union[Map, tuple] = None, append : bool = False,
@@ -546,7 +546,7 @@ class ODBCConnector(object):
         query : string
             SQL query to execute and insert into xGT. Syntax depends on the SQL syntax of the database you are connecting to.
         mapping :
-            May be a tuple specify a mapping to xGT types. See documentation.
+            May be a tuple specify a mapping to xGT types. See documentation: :ref:`mapping-sql-label` or `Web Docs <https://trovares.github.io/trovares_connector/odbc/index.html#mapping-sql-tables-to-graphs>`_.
         append : boolean
             Set to true when the xGT frames are already created and holding data
             that should be appended to.
