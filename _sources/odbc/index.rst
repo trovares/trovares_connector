@@ -91,7 +91,7 @@ Dictionary Mapping Examples
   # Mapping a SQL table to an xGT table:
   ('sql_table_name', {'frame': 'xgt_table_name'})
 
-   # Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):
+  # Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):
   ('sql_table_name', {'frame': 'xgt_vertex_user', 'key': 'username'})
 
   # Mapping a SQL table to a different xGT vertex (key is a column in the xgt_vertex_login frame):
