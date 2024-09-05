@@ -40,8 +40,99 @@ You can install the connector with dependencies for ODBC by executing this comma
 
    python -m pip install 'trovares_connector[odbc]'
 
-Examples
---------
+.. _mapping-sql-label:
+
+Mapping SQL Tables to Graphs
+----------------------------
+
+When transferring a table from SQL to xGT, the data must be mapped onto vertices and edge frames or as stand alone tables.
+
+- **Vertices**: Use a key to connect edges.
+- **Edges**: Use source and target keys from the edge row, along with a frame identifier, to connect to a specific row in the vertex frame.
+- **Table**: Similar to an SQL table: does not connect with other frames.
+
+When mapping a SQL table using the connector API, there are two ways to map data:
+
+1. **Name to dictionary**
+2. **Name to shorthand tuple**
+
+Mappings are provided in tuple form to allow multiple types to be transferred in one call. These mappings take the forms:
+
+- ``(SQL_TABLE, DICTIONARY)``
+- ``(SQL_TABLE, [XGT_FRAME], [TUPLE])``
+
+For multiple tables, an array of mappings is used. While dictionary mapping is more verbose, it offers clarity, especially for beginners, because all parameter names must be explicitly defined.
+
+Dictionary Mapping
+^^^^^^^^^^^^^^^^^^
+
+In dictionary mappings, the type is determined by the keys provided. Available keys are:
+
+- ``frame``
+- ``key``
+- ``source``
+- ``target``
+- ``source_key``
+- ``target_key``
+
+If the frame name is the same as the SQL table name, the frame key can be omitted.
+
+- **Table types** may have ``frame``.
+- **Vertex types** may have ``frame`` and require ``key``.
+- **Edge types** may have ``frame`` and require ``source``, ``target``, ``source_key``, and ``target_key``.
+
+Only these combinations are valid.
+
+Dictionary Mapping Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+  # Mapping a SQL table to an xGT table:
+  ('sql_table_name', {'frame': 'xgt_table_name'})
+
+   # Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):
+  ('sql_table_name', {'frame': 'xgt_vertex_user', 'key': 'username'})
+
+  # Mapping a SQL table to a different xGT vertex (key is a column in the xgt_vertex_login frame):
+  ('sql_different_table_name', {'frame': 'xgt_vertex_login', 'key': 'ip_address'})
+
+  # Mapping a SQL table to an xGT edge (source_key and target_key are columns in the xgt_edge_connection frame):
+  ('sql_table_name', {'frame': 'xgt_edge_connection', 'source': 'xgt_vertex_user', 'target': 'xgt_vertex_login', 'source_key': 'user_column', 'target_key': 'ip_column'})
+
+Note that for the edge frame, ``source`` and ``target`` refer to vertex frame names, not columns within the frame.
+
+Shorthand Tuple Mapping
+^^^^^^^^^^^^^^^^^^^^^^^
+
+To reduce verbosity, shorthand tuple mappings are available. The size of the tuple determines the xGT type:
+
+- **Table mapping**: ``(SQL_TABLE, [XGT_FRAME])``
+- **Vertex mapping**: ``(SQL_TABLE, [XGT_FRAME], (KEY,))``
+- **Edge mapping**: ``(SQL_TABLE, [XGT_FRAME], (SOURCE, TARGET, SOURCE_KEY, TARGET_KEY))``
+
+As before, the frame name can be omitted if it matches the SQL table name.
+
+Shorthand Mapping Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+  # Mapping a SQL table to an xGT table:
+  ('sql_table_name', 'xgt_table_name')
+
+  # Mapping a SQL table to an xGT vertex (key is a column in the xgt_vertex_user frame):
+  ('sql_table_name', 'xgt_vertex_user', ('username',))
+
+  # Mapping a SQL table to a different xGT vertex (key is a column in the xgt_vertex_login frame):
+  ('sql_different_table_name', 'xgt_vertex_login', ('ip_address',))
+  ('sql_table_name', 'xgt_edge_connection', ('xgt_vertex_user', 'xgt_vertex_login', 'user_column', 'ip_column'))
+
+
+Examples of these mappings used in the API are provided below.
+
+API Usage Examples
+------------------
 
 These examples show typical usage patterns.
 
