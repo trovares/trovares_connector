@@ -32,6 +32,10 @@ class TestXgtODBCConnector(unittest.TestCase):
   def setup_class(cls):
     # Create a connection to Trovares xGT
     cls.xgt = xgt.Connection()
+    try:
+      cls.xgt.create_namespace('test')
+    except:
+      pass
     cls.xgt.set_default_namespace('test')
     cls.odbc_driver, cls.conn = cls._setup_connector()
     return
