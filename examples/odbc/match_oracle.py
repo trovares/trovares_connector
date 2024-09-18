@@ -25,8 +25,6 @@ import pyodbc
 import xgt
 
 xgt_server = xgt.Connection()
-xgt_server.set_default_namespace('odbc_test')
-xgt_server.drop_namespace('odbc_test', force_drop=True)
 
 connection_string = 'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
 odbc_driver = OracleODBCDriver(connection_string)

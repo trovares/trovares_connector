@@ -25,8 +25,6 @@ import pyodbc
 import xgt
 
 xgt_server = xgt.Connection()
-xgt_server.set_default_namespace('odbc_test')
-xgt_server.drop_namespace('odbc_test', force_drop=True)
 
 # This could be either your ASE or IQ driver.
 connection_string = 'Driver={ASE};Database=test;Uid=sa;Pwd=test;Server=localhost;Port=5000;'

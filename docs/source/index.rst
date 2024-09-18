@@ -81,7 +81,6 @@ All of these data frames are created in Trovares xGT and then all of the data is
    from trovares_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('neo4j')
    neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_server)
 
@@ -106,7 +105,6 @@ Using this idiom requires knowing some schema information about the graph data s
    from trovares_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('neo4j')
    neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_server)
 
@@ -169,7 +167,6 @@ The connector can connect to AuraDB instances by setting the hostname and approp
    from neo4j import GraphDatabase
 
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('neo4j')
    # The protocol would be the part before ://. Usually this is neo4j+s.
    neo4j_server = Neo4jDriver(protocol='neo4j+s', hostname='hostname <something like ashdjs43.databases.neo4j.io>', auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_server)
@@ -191,7 +188,6 @@ Some examples of connecting:
    from neo4j import GraphDatabase
 
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('neo4j')
 
    neo4j_driver = GraphDatabase.driver("bolt://localhost", auth=('neo4j', 'foo'))
 

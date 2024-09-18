@@ -21,7 +21,6 @@ from trovares_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()
-xgt_server.set_default_namespace('test')
 
 neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
 c = Neo4jConnector(xgt_server, neo4j_driver)

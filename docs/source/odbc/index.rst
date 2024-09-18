@@ -25,7 +25,7 @@ ODBC Connector
 The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.
 
-The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
+The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
 The driver regularly runs unit tests against MariaDB.
 Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren't guaranteed to work.
@@ -150,7 +150,6 @@ This example copies test_table from the test database into test_table on xGT.
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -181,7 +180,6 @@ The simplest way is to pass the key column as tuple with the table name.
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -215,7 +213,6 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -248,7 +245,6 @@ This example will create the corresponding vertex frame for the source and targe
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -269,7 +265,6 @@ This functionality allows xGT to connect to any ODBC database and read data from
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -291,7 +286,7 @@ To append to a frame, set `append` to True on the transfer.
 
    conn.transfer_to_xgt(['Person'], append=True)
 
-Other parameters when transffering to xGT
+Other parameters when transferring to xGT
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * The parameter `batch_size` can be used to set the amount of rows to transfer at once.
@@ -329,13 +324,34 @@ After installing `Databricks' ODBC driver <https://www.databricks.com/spark/odbc
 
    connection_string="DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;"
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
    conn.transfer_to_xgt([('my_table', 'test_table')])
 
 This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
+
+Connecting to DB2
+^^^^^^^^^^^^^^^^^
+
+After installing `IBM's ODBC driver <https://www.ibm.com/support/pages/db2-odbc-cli-driver-download-and-installation-information>`_, connect like so:
+
+.. code-block:: python
+
+   import xgt
+   from trovares_connector import ODBCConnector, SQLODBCDriver
+
+   connection_string="DSN=db2;Database=test;UID=test;PWD=test;"
+   xgt_server = xgt.Connection()
+   odbc_server = SQLODBCDriver(connection_string)
+   conn = ODBCConnector(xgt_server, odbc_server)
+
+   conn.transfer_to_xgt([('my_table', 'test_table')])
+
+This would transfer the table, `my_table`, under the `test` database to the xGT table named `test_table`.
+With DB2 make sure you are using the correct driver.
+On 64-bit systems make sure you are using the libdb2o.so driver.
+The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.
 
 Connecting to Snowflake
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -349,7 +365,6 @@ After installing `Snowflake's ODBC driver <https://docs.snowflake.com/en/user-gu
 
    connection_string="DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SnowflakeODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -369,7 +384,6 @@ This example uses MongoDB 5 with CData's MongoDB ODBC driver.
 
    connection_string="DSN=MongoDB;Database=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = MongoODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -392,7 +406,6 @@ This example uses Oracle XE with their ODBC driver.
 
    connection_string = 'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = OracleODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -422,7 +435,6 @@ This example uses SAP ASE/IQ with their ODBC driver.
 
    connection_string = 'DSN={ASE};Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SAPODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
@@ -443,7 +455,6 @@ This example copies test_table from xGT to a test database.
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('odbc')
    odbc_server = SQLODBCDriver(connection_string)
    conn = ODBCConnector(xgt_server, odbc_server)
 
