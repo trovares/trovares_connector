@@ -39,7 +39,7 @@ jobs:
       with:
          pre-build-command: "apt-get -y update && apt-get -y install unixodbc"
     - name: Upload artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v4
       with:
         name: html-docs
         path: docs/build/html/
