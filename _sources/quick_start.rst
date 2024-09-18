@@ -50,7 +50,6 @@ A simple example below shows connecting to Neo4j and xGT, transferring the whole
 
    # Connect to xGT and Neo4j.
    xgt_server = xgt.Connection()
-   xgt_server.set_default_namespace('neo4j')
    neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_server)
 

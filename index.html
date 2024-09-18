@@ -456,7 +456,6 @@ All of these data frames are created in Trovares xGT and then all of the data is
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
 
@@ -477,7 +476,6 @@ Using this idiom requires knowing some schema information about the graph data s
 <span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
 
@@ -527,7 +525,6 @@ It’s possible to change the mapping of any label or relationship type by passi
 <span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
 <span class="c1"># The protocol would be the part before ://. Usually this is neo4j+s.</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;neo4j+s&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;hostname &lt;something like ashdjs43.databases.neo4j.io&gt;&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
@@ -545,7 +542,6 @@ These additional drivers can provide much faster performance than the default ne
 <span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
 
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="o">.</span><span class="n">driver</span><span class="p">(</span><span class="s2">&quot;bolt://localhost&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 

@@ -418,7 +418,6 @@ It uses the following data set that would need to be loaded into Neo4j: https://
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">)</span>
 <span class="n">database</span> <span class="o">=</span> <span class="s2">&quot;temporal-triangles-1M&quot;</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">),</span> <span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">)</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>

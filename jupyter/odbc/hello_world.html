@@ -421,7 +421,6 @@ document.write(`
 <span class="kn">import</span> <span class="nn">pyodbc</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">odbc_driver</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_driver</span><span class="p">)</span>

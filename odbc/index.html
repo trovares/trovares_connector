@@ -399,8 +399,9 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transffering-to-xgt">Other parameters when transffering to xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
@@ -426,7 +427,7 @@ document.write(`
 <span id="odbc"></span><h1>ODBC Connector<a class="headerlink" href="#odbc-connector" title="Link to this heading">#</a></h1>
 <p>The extra ODBC connector module allows for connecting to databases that support ODBC.
 The ODBC connector requires at least xGT 1.14.0.</p>
-<p>The ODBC driver has been tested against Databricks, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
+<p>The ODBC driver has been tested against Databricks, DB2, MySQL, MariaDB, Oracle, Snowflake, SAP ASE, and SAP IQ.
 The driver regularly runs unit tests against MariaDB.
 Some SQL specific drivers are available below for Oracle, Snowflake and SAP-based databases.
 In general, SQL syntax varies between vendors, so transfer_to_xgt or transfer_to_odbc aren’t guaranteed to work.
@@ -530,7 +531,6 @@ However, transfer_query_to_xgt will likely work with any vendor using the generi
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -555,7 +555,6 @@ The simplest way is to pass the key column as tuple with the table name.</p>
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -582,7 +581,6 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -607,7 +605,6 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -625,7 +622,6 @@ This functionality allows xGT to connect to any ODBC database and read data from
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -646,8 +642,8 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 </pre></div>
 </div>
 </section>
-<section id="other-parameters-when-transffering-to-xgt">
-<h3>Other parameters when transffering to xGT<a class="headerlink" href="#other-parameters-when-transffering-to-xgt" title="Link to this heading">#</a></h3>
+<section id="other-parameters-when-transferring-to-xgt">
+<h3>Other parameters when transferring to xGT<a class="headerlink" href="#other-parameters-when-transferring-to-xgt" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p></li>
 <li><p>The parameter <cite>transaction_size</cite> number of rows to treat as a single transaction to xGT.</p></li>
@@ -677,7 +673,6 @@ Additional errors can be seen like so:</p>
 
 <span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;&quot;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -685,6 +680,25 @@ Additional errors can be seen like so:</p>
 </pre></div>
 </div>
 <p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.</p>
+</section>
+<section id="connecting-to-db2">
+<h3>Connecting to DB2<a class="headerlink" href="#connecting-to-db2" title="Link to this heading">#</a></h3>
+<p>After installing <a class="reference external" href="https://www.ibm.com/support/pages/db2-odbc-cli-driver-download-and-installation-information">IBM’s ODBC driver</a>, connect like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
+
+<span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=db2;Database=test;UID=test;PWD=test;&quot;</span>
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">([(</span><span class="s1">&#39;my_table&#39;</span><span class="p">,</span> <span class="s1">&#39;test_table&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>This would transfer the table, <cite>my_table</cite>, under the <cite>test</cite> database to the xGT table named <cite>test_table</cite>.
+With DB2 make sure you are using the correct driver.
+On 64-bit systems make sure you are using the libdb2o.so driver.
+The 32-bit driver does not work correctly with 64-bit systems, and will only transfer part of the data.</p>
 </section>
 <section id="connecting-to-snowflake">
 <h3>Connecting to Snowflake<a class="headerlink" href="#connecting-to-snowflake" title="Link to this heading">#</a></h3>
@@ -694,7 +708,6 @@ Additional errors can be seen like so:</p>
 
 <span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;&quot;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SnowflakeODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -711,7 +724,6 @@ Additional errors can be seen like so:</p>
 
 <span class="n">connection_string</span><span class="o">=</span><span class="s2">&quot;DSN=MongoDB;Database=test;Uid=test;Pwd=test;&quot;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">MongoODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -731,7 +743,6 @@ If this field is present when saving to MongoDB, it will replace documents with 
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">OracleODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -757,7 +768,6 @@ Interval types likely don’t work through ODBC as well.</p>
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;DSN=</span><span class="si">{ASE}</span><span class="s1">;Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SAPODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -775,7 +785,6 @@ Transferring data from xGT to SAP ASE/IQ also works.</p>
 
 <span class="n">connection_string</span> <span class="o">=</span> <span class="s1">&#39;Driver=</span><span class="si">{MariaDB}</span><span class="s1">;Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;&#39;</span>
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">xgt_server</span><span class="o">.</span><span class="n">set_default_namespace</span><span class="p">(</span><span class="s1">&#39;odbc&#39;</span><span class="p">)</span>
 <span class="n">odbc_server</span> <span class="o">=</span> <span class="n">SQLODBCDriver</span><span class="p">(</span><span class="n">connection_string</span><span class="p">)</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">ODBCConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">odbc_server</span><span class="p">)</span>
 
@@ -898,8 +907,9 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transffering-to-xgt">Other parameters when transffering to xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
