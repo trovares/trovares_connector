@@ -8,10 +8,6 @@ Fixed
 ^^^^^
   - Allow for fully qualified names when mapping.
 
-New Features
-^^^^^^^^^^^^
-  - Added paramaters for column mapping.
-
 2.6.0 (02-20-2024)
 ------------------
 
