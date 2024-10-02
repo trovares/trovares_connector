@@ -1,7 +1,18 @@
 Release Notes
 =============
 
-2.5.0 (02-20-2024)
+2.6.1 (10-02-2024)
+------------------
+
+Fixed
+^^^^^
+  - Allow for fully qualified names when mapping.
+
+New Features
+^^^^^^^^^^^^
+  - Added paramaters for column mapping.
+
+2.6.0 (02-20-2024)
 ------------------
 
 New Features

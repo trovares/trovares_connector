@@ -822,7 +822,14 @@ class ODBCConnector(object):
     def __build_flight_path(self, frame_name, column_mapping = None,
                             suppress_errors = False, row_filter = None,
                             on_duplicate_keys = 'error'):
-        path = (self._default_namespace, frame_name)
+        if '__' in frame_name:
+            # Split by '__' and use the first part as the namespace
+            namespace, name = frame_name.split('__', 1)
+        else:
+            # Use the default namespace if no '__' is found
+            namespace, name = self._default_namespace, frame_name
+
+        path = (namespace, name)
 
         self.__validate_column_mapping(column_mapping)
         if row_filter is None and column_mapping is not None:
