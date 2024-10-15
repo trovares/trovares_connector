@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=128a7022"></script>
+    <script src="../../_static/documentation_options.js?v=05fef044"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -984,13 +984,13 @@ document.write(`
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            None</span>
+<span class="sd">            array of transfer information in the form of [row count, byte count]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">transaction_size</span> <span class="o">&lt;</span> <span class="n">batch_size</span> <span class="ow">or</span> <span class="n">transaction_size</span> <span class="o">%</span> <span class="n">batch_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Transaction size needs to be a multiple of batch size and &gt;= the batch size of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">batch_size</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__copy_query_data_to_xgt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span>
-                                      <span class="n">batch_size</span><span class="p">,</span> <span class="n">transaction_size</span><span class="p">,</span> <span class="n">max_text_size</span><span class="p">,</span> <span class="n">max_binary_size</span><span class="p">,</span>
-                                      <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy_query_data_to_xgt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">,</span>
+                                             <span class="n">batch_size</span><span class="p">,</span> <span class="n">transaction_size</span><span class="p">,</span> <span class="n">max_text_size</span><span class="p">,</span> <span class="n">max_binary_size</span><span class="p">,</span>
+                                             <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ODBCConnector.copy_data_to_xgt">
@@ -1445,11 +1445,15 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">create_xgt_schemas</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="n">easy_edges</span><span class="p">)</span>
             <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
             <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">bytes_transferred</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">bytes_transferred</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">nbytes</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
                 <span class="c1"># Process arrow batches</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
                 <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
                 <span class="n">count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
+                <span class="n">row_count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
                 <span class="c1"># Start a new transaction</span>
                 <span class="k">if</span> <span class="n">transaction_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">transaction_size</span><span class="p">:</span>
                     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1461,6 +1465,8 @@ document.write(`
             <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">bytes_transferred</span>
 
     <span class="k">def</span> <span class="nf">__validate_column_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">):</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;The data type of &quot;column_mapping&quot; is incorrect. &#39;</span>

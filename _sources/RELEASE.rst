@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.6.2 (10-15-2024)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Transfer query now returns row count and byte count of the transfer.
+
 2.6.1 (10-02-2024)
 ------------------
 
