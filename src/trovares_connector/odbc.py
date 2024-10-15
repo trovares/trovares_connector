@@ -1056,7 +1056,6 @@ class ODBCConnector(object):
             row_count = 0
             for batch in reader:
                 bytes_transferred += sum(column.nbytes for column in batch)
-                #bytes_transferred += sum(buffer.size for column in batch for buffer in column.buffers())
                 # Process arrow batches
                 writer.write(batch)
                 progress_bar.show_progress(batch.num_rows)
@@ -1070,11 +1069,11 @@ class ODBCConnector(object):
                     writer.close()
                     writer, metadata = self.__arrow_writer(frame, arrow_schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
 
-            return row_count, bytes_transferred
-
             if (suppress_errors):
                 self.__check_for_error(frame, arrow_schema, writer, metadata)
             writer.close()
+            
+            return row_count, bytes_transferred
 
     def __validate_column_mapping(self, column_mapping):
         error_msg = ('The data type of "column_mapping" is incorrect. '
