@@ -1,0 +1,800 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Trovares Connector &#8212; Trovares Connector</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=05fef044"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Start" href="quick_start.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Trovares Connector</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1 current active">
+                <a class="reference internal" href="#">
+                    Trovares Connector
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="jupyter/index.html">Jupyter Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/neo4j/hello_world.html">Hello World Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/neo4j/temporal_triangles.html">Temporal Triangles Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/cypher_with_sql.html">Non-Graph analytics ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/hello_world.html">Hello World ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/save_to_mysql.html">Transfer or backup data to MySQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/temporal_triangles.html">Temporal Triangles ODBC</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="odbc/index.html">ODBC Connector</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.ODBCConnector.html">trovares_connector.ODBCConnector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SQLODBCDriver.html">trovares_connector.SQLODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">trovares_connector.MongoODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.OracleODBCDriver.html">trovares_connector.OracleODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SAPODBCDriver.html">trovares_connector.SAPODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SnowflakeODBCDriver.html">trovares_connector.SnowflakeODBCDriver</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="trovares_connector.Neo4jConnector.html">trovares_connector.Neo4jConnector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trovares_connector.Neo4jDriver.html">trovares_connector.Neo4jDriver</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/trovares/trovares_connector" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/trovares/trovares_connector/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Trovares Connector</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-auradb">Connecting to AuraDB</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-various-neo4j-drivers">Using various Neo4j drivers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-relationship-with-multiple-node-conversion">Single relationship with multiple node conversion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#translating-cypher-queries">Translating Cypher queries</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-topics">Additional Topics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-details">API Details</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="trovares-connector">
+<h1>Trovares Connector<a class="headerlink" href="#trovares-connector" title="Link to this heading">#</a></h1>
+<p>This Python package is for connecting the <a class="reference external" href="https://www.trovares.com/">Trovares xGT</a> graph analytics engine with various applications.
+Trovares xGT can <a class="reference external" href="https://www.trovares.com/trovaresvneo4j">significantly speedup Neo4j queries</a>.</p>
+<p>The connector <a class="reference external" href="http://github.com/trovares/trovares_connector/">source code</a> is available on github.</p>
+<p>A basic guide is provided below.
+For a quick start see <a class="reference internal" href="quick_start.html#quick-start"><span class="std std-ref">Quick Start</span></a>.</p>
+<p>The default connector provided is for connecting to Neo4j or AuraDB.
+The package also provides an optional <a class="reference internal" href="odbc/index.html#odbc"><span class="std std-ref">ODBC Connector</span></a> for connecting to databases or applications that support ODBC.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>You can install this python package by executing this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>trovares_connector
+</pre></div>
+</div>
+<p>If you don’t have Trovares xGT, it is available through the AWS Marketplace or you can use the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>trovares/xgt
+docker<span class="w"> </span>run<span class="w"> </span>--publish<span class="o">=</span><span class="m">4367</span>:4367<span class="w"> </span>trovares/xgt
+</pre></div>
+</div>
+<p>For requirements and optional components see <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
+</section>
+<section id="using-the-trovares-connector">
+<h2>Using the Trovares Connector<a class="headerlink" href="#using-the-trovares-connector" title="Link to this heading">#</a></h2>
+<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>trovares_connector</cite> is all that is needed to operate this connector.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+</pre></div>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>These examples show typical usage patterns.</p>
+<section id="copy-entire-graph-from-neo4j-to-trovares-xgt">
+<h3>Copy entire graph from Neo4j to Trovares xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-trovares-xgt" title="Link to this heading">#</a></h3>
+<p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
+All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">neo4j_node_labels</span><span class="p">,</span>
+                     <span class="n">edges</span><span class="o">=</span><span class="n">conn</span><span class="o">.</span><span class="n">neo4j_relationship_types</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarly if no vertices or edges are provided, the transfer will use all of them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">
+<h3>Copy a portion of a graph based on node labels and/or relationship types<a class="headerlink" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types" title="Link to this heading">#</a></h3>
+<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
+Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
+
+<span class="n">nodes_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">]</span>
+<span class="n">edges_to_copy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KNOWS&#39;</span><span class="p">]</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">nodes_to_copy</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="n">edges_to_copy</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When transferring, vertex types will be auto-inferred and transferred with edge types.
+The code below would auto-transfer the Person node.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="n">edges_to_copy</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This feature can be disabled by setting <cite>import_edge_nodes</cite> to False.</p>
+</section>
+<section id="appending-data">
+<h3>Appending data<a class="headerlink" href="#appending-data" title="Link to this heading">#</a></h3>
+<p>By default a transfer will drop any associated frame on xGT.
+To append to a frame, set <cite>append</cite> to True on the transfer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When appending edges to existing vertices, care must be taken to not import the nodes as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Person&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">import_edge_nodes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="mapping-neo4j-labels-and-types">
+<h3>Mapping Neo4j labels and types<a class="headerlink" href="#mapping-neo4j-labels-and-types" title="Link to this heading">#</a></h3>
+<p>When transferring, labels and relationship types are automatically mapped to the same name in xGT.
+The exception is that unlabeled vertices are mapped to the frame “unlabeled” because xGT doesn’t support empty names.
+It’s possible to change the mapping of any label or relationship type by passing a pair where the first element represents the Neo4j label or relationship type and the second represents the xGT type.</p>
+<p>An example of changing the mapping of Person and KNOWS, but not Job:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;Person&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">),</span> <span class="s1">&#39;Job&#39;</span><span class="p">],</span> <span class="n">edges</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;KNOWS&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>In addition the unlabeled nodes in Neo4j are named ‘’ and this can be used to map these to a custom xGT type:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span><span class="o">.</span><span class="n">transfer_to_xgt</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;my_empty_type&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+</section>
+<section id="connecting-to-auradb">
+<h3>Connecting to AuraDB<a class="headerlink" href="#connecting-to-auradb" title="Link to this heading">#</a></h3>
+<p>The connector can connect to AuraDB instances by setting the hostname and appropriate protocol:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<span class="c1"># The protocol would be the part before ://. Usually this is neo4j+s.</span>
+<span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;neo4j+s&#39;</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;hostname &lt;something like ashdjs43.databases.neo4j.io&gt;&#39;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_server</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-various-neo4j-drivers">
+<h3>Using various Neo4j drivers<a class="headerlink" href="#using-various-neo4j-drivers" title="Link to this heading">#</a></h3>
+<p>The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
+<p>Some examples of connecting:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
+<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
+
+<span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="o">.</span><span class="n">driver</span><span class="p">(</span><span class="s2">&quot;bolt://localhost&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+
+<span class="c1"># Using Neo4j&#39;s Python driver.</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">)</span>
+
+<span class="c1"># Using Neo4j&#39;s Python driver with a specific database.</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s1">&#39;my_database&#39;</span><span class="p">))</span>
+
+<span class="c1"># Using the Trovares Neo4j driver with bolt.</span>
+<span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;my_database&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These additional connectors will connect to Neo4j with a combination of connections currently and may have some limitations.</p>
+</section>
+<section id="additional-examples">
+<h3>Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading">#</a></h3>
+<p>More detailed examples can be found in <a class="reference internal" href="jupyter/index.html#jupyter"><span class="std std-ref">Jupyter Notebooks</span></a> or on github:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/trovares/trovares_connector/tree/main/examples/neo4j">Python Examples</a></p></li>
+<li><p><a class="reference external" href="https://github.com/trovares/trovares_connector/tree/main/jupyter/neo4j">Jupyter Notebooks</a></p></li>
+</ul>
+</section>
+</section>
+<section id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">#</a></h2>
+<p>Doesn’t support the following:</p>
+<ul class="simple">
+<li><p>Multiple types for a single property.</p></li>
+</ul>
+<p>Other limitations:</p>
+<ul class="simple">
+<li><p>Duration data type is converted into an integer representing nanoseconds.</p></li>
+<li><p>Multiple labels on a single node will translate into multiple nodes in xGT.</p></li>
+<li><p>Multiple node types for a single relationship type will translate the single relationship into multiple distinct relationship types.
+See below for more details.</p></li>
+<li><p>Point data type is converted into a list.</p></li>
+<li><p>Unlabeled vertices are supported, but will be typed with the name “unlabeled” by default.</p></li>
+<li><p>Transfer times are estimates based on Neo4j’s count stores and may be inaccurate especially for edges going to multiple node labels.</p></li>
+</ul>
+<section id="single-relationship-with-multiple-node-conversion">
+<h3>Single relationship with multiple node conversion<a class="headerlink" href="#single-relationship-with-multiple-node-conversion" title="Link to this heading">#</a></h3>
+<p>xGT is schema based and requires an edge to have distinct types.
+Neo4j is schema-less so can have multiple node types per edge type.
+In the case where the are multiple node types for single edge type, the connector will convert the single edge type in Neo4j into multiple edge types in xGT.
+xGT will take the original edge type and create edge types in the format: source_label + _ + edge_label + _ target_label.
+This only occurs for these cases.</p>
+<p>An example would be the following schema in Neo4j:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Would get converted to the following when transferring to xGT:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">A_PART_OF_B</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">B_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">C_PART_OF_D</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">D</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In addition, multiple labels on a single node will cause a similar behavior:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">PART_OF</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Would get converted to the following when transferring to xGT:</p>
+<div class="highlight-cypher notranslate"><div class="highlight"><pre><span></span><span class="p">(:</span><span class="n">A</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">A_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">),</span><span class="w"> </span><span class="p">(:</span><span class="n">B</span><span class="p">)</span><span class="o">-[</span><span class="p">:</span><span class="n">B_PART_OF_C</span><span class="o">]-&gt;</span><span class="p">(:</span><span class="n">C</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="translating-cypher-queries">
+<h3>Translating Cypher queries<a class="headerlink" href="#translating-cypher-queries" title="Link to this heading">#</a></h3>
+<p>Because of the translation of names from Relationship Types in Neo4j to Edge Frame names in xGT, Cypher queries that work in Neo4j may not work in xGT.
+To aid in translating Cypher from the Neo4j version to the inferred graph schema in xGT, there is a <cite>query_translate</cite> method in the <cite>Neo4jConnector</cite> class (see <a class="reference internal" href="#api-details"><span class="std std-ref">API Details</span></a>).</p>
+</section>
+</section>
+<section id="additional-topics">
+<h2>Additional Topics<a class="headerlink" href="#additional-topics" title="Link to this heading">#</a></h2>
+<p>The following topics provide additional material.</p>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Additional Topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quick_start.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quick_start.html#run-a-query">Run a query</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jupyter/index.html">Jupyter Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/neo4j/hello_world.html">Hello World Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/neo4j/temporal_triangles.html">Temporal Triangles Neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/cypher_with_sql.html">Non-Graph analytics ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/hello_world.html">Hello World ODBC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/save_to_mysql.html">Transfer or backup data to MySQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jupyter/odbc/temporal_triangles.html">Temporal Triangles ODBC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="odbc/index.html">ODBC Connector</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="odbc/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/index.html#mapping-sql-tables-to-graphs">Mapping SQL Tables to Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/index.html#api-usage-examples">API Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/index.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/index.html#api-details">API Details</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#optional">Optional</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.2 (10-15-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.1 (10-02-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id3">2.6.0 (02-20-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.5.0 (02-14-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id8">2.4.0 (02-06-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.3.0 (12-18-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id13">2.2.0 (12-07-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id14">2.1.0 (08-23-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id16">2.0.0 (06-14-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">1.7.0 (02-22-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id21">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id26">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id28">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id30">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id34">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id36">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id38">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id40">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id47">1.0.0 (06-13-2022)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="api-details">
+<span id="id1"></span><h2>API Details<a class="headerlink" href="#api-details" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver" title="trovares_connector.Neo4jDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jDriver</span></code></a>([host, bolt_port, http_port, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="quick_start.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quick Start</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-auradb">Connecting to AuraDB</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-various-neo4j-drivers">Using various Neo4j drivers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#single-relationship-with-multiple-node-conversion">Single relationship with multiple node conversion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#translating-cypher-queries">Translating Cypher queries</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-topics">Additional Topics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-details">API Details</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By trovares.com
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022-2024, Trovares, Inc..
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
