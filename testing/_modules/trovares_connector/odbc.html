@@ -1449,7 +1449,6 @@ document.write(`
             <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="n">bytes_transferred</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">nbytes</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>
-                <span class="c1">#bytes_transferred += sum(buffer.size for column in batch for buffer in column.buffers())</span>
                 <span class="c1"># Process arrow batches</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
                 <span class="n">progress_bar</span><span class="o">.</span><span class="n">show_progress</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
@@ -1463,11 +1462,11 @@ document.write(`
                     <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                     <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__arrow_writer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">row_filter</span><span class="p">,</span> <span class="n">on_duplicate_keys</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">bytes_transferred</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="n">suppress_errors</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__check_for_error</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">arrow_schema</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="k">return</span> <span class="n">row_count</span><span class="p">,</span> <span class="n">bytes_transferred</span>
 
     <span class="k">def</span> <span class="nf">__validate_column_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_mapping</span><span class="p">):</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;The data type of &quot;column_mapping&quot; is incorrect. &#39;</span>
