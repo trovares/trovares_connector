@@ -41,7 +41,7 @@ copyright = '2022-2024, Trovares, Inc.'
 author = 'trovares.com'
 
 # The full version, including alpha/beta/rc tags
-release = '2.6.1'
+release = '2.6.2'
 
 # -- General configuration ---------------------------------------------------
 

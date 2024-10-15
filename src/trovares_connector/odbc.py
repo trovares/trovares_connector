@@ -598,13 +598,13 @@ class ODBCConnector(object):
 
         Returns
         -------
-            None
+            array of transfer information in the form of [row count, byte count]
         """
         if transaction_size > 0 and (transaction_size < batch_size or transaction_size % batch_size != 0):
             raise ValueError("Transaction size needs to be a multiple of batch size and >= the batch size of " + str(batch_size))
-        self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
-                                      batch_size, transaction_size, max_text_size, max_binary_size,
-                                      column_mapping, suppress_errors, row_filter, on_duplicate_keys)
+        return self.__copy_query_data_to_xgt(query, mapping, append, force, easy_edges,
+                                             batch_size, transaction_size, max_text_size, max_binary_size,
+                                             column_mapping, suppress_errors, row_filter, on_duplicate_keys)
 
     def copy_data_to_xgt(self, xgt_schemas : Map, batch_size : int = 10000, transaction_size : int = 0,
                          max_text_size : int = None, max_binary_size : int = None,
@@ -1052,11 +1052,16 @@ class ODBCConnector(object):
             self.create_xgt_schemas(result, append, force, easy_edges)
             writer, metadata = self.__arrow_writer(frame, arrow_schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
             count = 0
+            bytes_transferred = 0
+            row_count = 0
             for batch in reader:
+                bytes_transferred += sum(column.nbytes for column in batch)
+                #bytes_transferred += sum(buffer.size for column in batch for buffer in column.buffers())
                 # Process arrow batches
                 writer.write(batch)
                 progress_bar.show_progress(batch.num_rows)
                 count += batch.num_rows
+                row_count += batch.num_rows
                 # Start a new transaction
                 if transaction_size > 0 and count >= transaction_size:
                     count = 0
@@ -1064,6 +1069,8 @@ class ODBCConnector(object):
                         self.__check_for_error(frame, arrow_schema, writer, metadata)
                     writer.close()
                     writer, metadata = self.__arrow_writer(frame, arrow_schema, column_mapping, suppress_errors, row_filter, on_duplicate_keys)
+
+            return row_count, bytes_transferred
 
             if (suppress_errors):
                 self.__check_for_error(frame, arrow_schema, writer, metadata)
