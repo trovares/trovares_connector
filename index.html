@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -34,12 +36,13 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=05fef044"></script>
+    <script src="_static/documentation_options.js?v=be027259"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,6 +54,7 @@
     <link rel="next" title="Quick Start" href="quick_start.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -66,19 +70,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -86,7 +79,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -94,8 +86,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -113,7 +105,8 @@
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -143,15 +136,11 @@
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -198,9 +187,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -344,24 +338,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -646,27 +632,28 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.2 (10-15-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.1 (10-02-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id3">2.6.0 (02-20-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.5.0 (02-14-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id8">2.4.0 (02-06-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.3.0 (12-18-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id13">2.2.0 (12-07-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id14">2.1.0 (08-23-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id16">2.0.0 (06-14-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">1.7.0 (02-22-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id21">1.6.0 (10-21-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.5.2 (08-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id26">1.5.1 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id28">1.5.0 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id30">1.4.0 (07-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id34">1.3.1 (07-11-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id36">1.3.0 (07-08-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id38">1.2.1 (07-01-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id40">1.2.0 (06-24-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.1.0 (06-17-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id47">1.0.0 (06-13-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.3 (02-12-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.2 (10-15-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id4">2.6.1 (10-02-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.6.0 (02-20-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">2.5.0 (02-14-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.4.0 (02-06-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">2.3.0 (12-18-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">2.2.0 (12-07-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.1.0 (08-23-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">2.0.0 (06-14-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id22">1.7.0 (02-22-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id27">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id31">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id33">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id37">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id39">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id46">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id50">1.0.0 (06-13-2022)</a></li>
 </ul>
 </li>
 </ul>
@@ -715,7 +702,8 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -767,7 +755,7 @@ By trovares.com
 
   <p class="copyright">
     
-      © Copyright 2022-2024, Trovares, Inc..
+      © Copyright 2022-2025, Trovares, Inc..
       <br/>
     
   </p>
@@ -791,8 +779,8 @@ By trovares.com
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
