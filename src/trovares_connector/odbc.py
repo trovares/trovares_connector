@@ -25,21 +25,7 @@ import pyarrow.flight as pf
 
 from collections.abc import Iterable, Mapping, Sequence
 
-# In Python 3.9 and above, the abstract base classes (ABCs) from collections.abc
-# can be used directly as type hints. This includes Iterable, Mapping, and
-# Sequence, among others. For compatibility with versions below 3.9, we define
-# aliases using the typing module, which has equivalent types with the same
-# names. This ensures our code can use consistent type hints across different
-# Python versions.
-if sys.version_info >= (3, 9):
-  # Directly use the ABCs from collections.abc in type hints since it is
-  # supported. List and Dict type hints are directly available as built-in types
-  # in Python 3.9+.
-  Iter, Map, Seq, List, Dict = Iterable, Mapping, Sequence, list, dict
-else:
-   # For Python versions below 3.9, use the typing module for type hints.
-  from typing import (Iterable as Iter, Mapping as Map, Sequence as Seq, List,
-                                  Dict)
+Iter, Map, Seq, List, Dict = Iterable, Mapping, Sequence, list, dict
 
 from arrow_odbc import read_arrow_batches_from_odbc
 from arrow_odbc import insert_into_table

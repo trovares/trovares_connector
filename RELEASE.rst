@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+2.6.3 (02-18-2025)
+------------------
+
+New Features
+^^^^^^^^^^^^
+  - Add support for python 3.13.
+
+Changed
+^^^^^^^
+  - Drop support for python 3.7 and 3.8.
+
 2.6.2 (10-15-2024)
 ------------------
 
