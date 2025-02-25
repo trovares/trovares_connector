@@ -1,6 +1,6 @@
 # xgt_connector Package
 
-[![CI](https://github.com/trovares/xgt_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
+[![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
 [![Available on Pypi](https://img.shields.io/pypi/v/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
 [![Pypi Versions](https://img.shields.io/pypi/pyversions/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
 [![License](https://img.shields.io/github/license/trovares/xgt_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
