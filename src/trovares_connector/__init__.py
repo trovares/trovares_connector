@@ -16,6 +16,15 @@
 #
 #===----------------------------------------------------------------------===#
 
+import warnings
+
+warnings.warn(
+  "The `trovares-connector` package is deprecated and will no longer receive updates. "
+  "Please install `xgt-connector` instead: pip install xgt-connector",
+  DeprecationWarning,
+  stacklevel=2
+)
+
 __ALL__ = [
   'Neo4jConnector',
   'Neo4jDriver',

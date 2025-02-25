@@ -1,3 +1,13 @@
+# ⚠️ DEPRECATION NOTICE
+
+🚨 **This package (`trovares_connector`) has been deprecated and renamed to `xgt_connector`.** 🚨  
+
+Please migrate to `xgt_connector` by running:
+
+```sh
+pip install xgt_connector
+```
+
 # trovares_connector Package
 
 [![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
