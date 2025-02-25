@@ -22,8 +22,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-xGT Connector
-=============
+.. role:: nocap
+   :class: nocap
+
+.. |xgt| replace:: :nocap:`xGT`
+
+|xgt| Connector
+===============
 
 This Python package is for connecting the `Rocketgraph xGT <https://www.rocketgraph.com/>`_ graph analytics engine with various applications.
 Rocketgraph xGT can `significantly speedup Neo4j queries <https://rocketgraph.com/benchmarks-neo4j/>`_.

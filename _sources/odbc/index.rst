@@ -17,6 +17,11 @@
    #
    #===----------------------------------------------------------------------===#
 
+.. role:: nocap
+   :class: nocap
+
+.. |xgt| replace:: :nocap:`xGT`
+
 .. _odbc:
 
 ODBC Connector
@@ -286,8 +291,8 @@ To append to a frame, set `append` to True on the transfer.
 
    conn.transfer_to_xgt(['Person'], append=True)
 
-Other parameters when transferring to xGT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Other parameters when transferring to |xgt|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * The parameter `batch_size` can be used to set the amount of rows to transfer at once.
 * The parameter `transaction_size` number of rows to treat as a single transaction to xGT.
@@ -443,8 +448,8 @@ This example uses SAP ASE/IQ with their ODBC driver.
 This would transfer the table, `test_table`, to the xGT table named `test_table`.
 Transferring data from xGT to SAP ASE/IQ also works.
 
-Transferring data from xGT to ODBC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Transferring data from |xgt| to ODBC
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example copies test_table from xGT to a test database.
 

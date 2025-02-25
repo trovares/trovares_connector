@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/trovares.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/rocketgraph.css?v=5b05318b" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -405,14 +405,14 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to <span class="nocap">xGT</span></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sap-ase-iq">Connecting to SAP ASE/IQ</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from xGT to ODBC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from <span class="nocap">xGT</span> to ODBC</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>
@@ -649,7 +649,7 @@ To append to a frame, set <cite>append</cite> to True on the transfer.</p>
 </div>
 </section>
 <section id="other-parameters-when-transferring-to-xgt">
-<h3>Other parameters when transferring to xGT<a class="headerlink" href="#other-parameters-when-transferring-to-xgt" title="Link to this heading">#</a></h3>
+<h3>Other parameters when transferring to <span class="nocap">xGT</span><a class="headerlink" href="#other-parameters-when-transferring-to-xgt" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>The parameter <cite>batch_size</cite> can be used to set the amount of rows to transfer at once.</p></li>
 <li><p>The parameter <cite>transaction_size</cite> number of rows to treat as a single transaction to xGT.</p></li>
@@ -784,7 +784,7 @@ Interval types likely don’t work through ODBC as well.</p>
 Transferring data from xGT to SAP ASE/IQ also works.</p>
 </section>
 <section id="transferring-data-from-xgt-to-odbc">
-<h3>Transferring data from xGT to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Link to this heading">#</a></h3>
+<h3>Transferring data from <span class="nocap">xGT</span> to ODBC<a class="headerlink" href="#transferring-data-from-xgt-to-odbc" title="Link to this heading">#</a></h3>
 <p>This example copies test_table from xGT to a test database.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">ODBCConnector</span><span class="p">,</span> <span class="n">SQLODBCDriver</span>
@@ -913,14 +913,14 @@ See below for more details.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-sql-table-to-edges-without-a-vertex-table">Copy a SQL table to edges without a vertex table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-and-transferring-sql-commands">Executing and transferring SQL commands</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-parameters-when-transferring-to-xgt">Other parameters when transferring to <span class="nocap">xGT</span></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-databricks">Connecting to Databricks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-db2">Connecting to DB2</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-snowflake">Connecting to Snowflake</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-mongodb">Connecting to MongoDB</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-oracle">Connecting to Oracle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-sap-ase-iq">Connecting to SAP ASE/IQ</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from xGT to ODBC</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transferring-data-from-xgt-to-odbc">Transferring data from <span class="nocap">xGT</span> to ODBC</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">Additional Examples</a></li>
 </ul>
 </li>
