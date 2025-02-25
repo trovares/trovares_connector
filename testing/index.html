@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>xGT Connector &#8212; Trovares Connector</title>
+    <title>xGT Connector &#8212; xGT Connector</title>
   
   
   
@@ -138,7 +138,7 @@
   
   
   
-    <p class="title logo__title">Trovares Connector</p>
+    <p class="title logo__title">xGT Connector</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -386,9 +386,9 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-rocketgraph-connector">Using the Rocketgraph Connector</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt">Copy entire graph from Neo4j to Rocketgraph xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
@@ -417,8 +417,8 @@ document.write(`
                   
   <section id="xgt-connector">
 <h1>xGT Connector<a class="headerlink" href="#xgt-connector" title="Link to this heading">#</a></h1>
-<p>This Python package is for connecting the <a class="reference external" href="https://www.rocketgraph.com/">Trovares xGT</a> graph analytics engine with various applications.
-Trovares xGT can <a class="reference external" href="https://rocketgraph.com/benchmarks-neo4j/">significantly speedup Neo4j queries</a>.</p>
+<p>This Python package is for connecting the <a class="reference external" href="https://www.rocketgraph.com/">Rocketgraph xGT</a> graph analytics engine with various applications.
+Rocketgraph xGT can <a class="reference external" href="https://rocketgraph.com/benchmarks-neo4j/">significantly speedup Neo4j queries</a>.</p>
 <p>The connector <a class="reference external" href="http://github.com/trovares/trovares_connector/">source code</a> is available on github.</p>
 <p>A basic guide is provided below.
 For a quick start see <a class="reference internal" href="quick_start.html#quick-start"><span class="std std-ref">Quick Start</span></a>.</p>
@@ -430,15 +430,15 @@ The package also provides an optional <a class="reference internal" href="odbc/i
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>xgt_connector
 </pre></div>
 </div>
-<p>If you don’t have Trovares xGT, it is available through the AWS Marketplace or you can use the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a>:</p>
+<p>If you don’t have Rocketgraph xGT, it is available through the AWS Marketplace or you can use the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>trovares/xgt
 docker<span class="w"> </span>run<span class="w"> </span>--publish<span class="o">=</span><span class="m">4367</span>:4367<span class="w"> </span>trovares/xgt
 </pre></div>
 </div>
 <p>For requirements and optional components see <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
 </section>
-<section id="using-the-trovares-connector">
-<h2>Using the Trovares Connector<a class="headerlink" href="#using-the-trovares-connector" title="Link to this heading">#</a></h2>
+<section id="using-the-rocketgraph-connector">
+<h2>Using the Rocketgraph Connector<a class="headerlink" href="#using-the-rocketgraph-connector" title="Link to this heading">#</a></h2>
 <p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>xgt_connector</cite> is all that is needed to operate this connector.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
@@ -448,10 +448,10 @@ docker<span class="w"> </span>run<span class="w"> </span>--publish<span class="o
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>These examples show typical usage patterns.</p>
-<section id="copy-entire-graph-from-neo4j-to-trovares-xgt">
-<h3>Copy entire graph from Neo4j to Trovares xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-trovares-xgt" title="Link to this heading">#</a></h3>
+<section id="copy-entire-graph-from-neo4j-to-rocketgraph-xgt">
+<h3>Copy entire graph from Neo4j to Rocketgraph xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt" title="Link to this heading">#</a></h3>
 <p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
-All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.</p>
+All of these data frames are created in Rocketgraph xGT and then all of the data is copied from Neo4j to xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
@@ -470,7 +470,7 @@ All of these data frames are created in Trovares xGT and then all of the data is
 </section>
 <section id="copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">
 <h3>Copy a portion of a graph based on node labels and/or relationship types<a class="headerlink" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types" title="Link to this heading">#</a></h3>
-<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
+<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Rocketgraph xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
 <span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
@@ -534,7 +534,7 @@ It’s possible to change the mapping of any label or relationship type by passi
 <section id="using-various-neo4j-drivers">
 <h3>Using various Neo4j drivers<a class="headerlink" href="#using-various-neo4j-drivers" title="Link to this heading">#</a></h3>
 <p>The connector supports passing a xgt_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
-The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+The Rocketgraph Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
 These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
 <p>Some examples of connecting:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
@@ -551,7 +551,7 @@ These additional drivers can provide much faster performance than the default ne
 <span class="c1"># Using Neo4j&#39;s Python driver with a specific database.</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s1">&#39;my_database&#39;</span><span class="p">))</span>
 
-<span class="c1"># Using the Trovares Neo4j driver with bolt.</span>
+<span class="c1"># Using the Rocketgraph Neo4j driver with bolt.</span>
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;my_database&#39;</span><span class="p">)</span>
 </pre></div>
@@ -727,9 +727,9 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-rocketgraph-connector">Using the Rocketgraph Connector</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt">Copy entire graph from Neo4j to Rocketgraph xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
