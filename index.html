@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Trovares Connector &#8212; Trovares Connector</title>
+    <title>xGT Connector</title>
   
   
   
@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/trovares.css" />
   
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=be027259"></script>
+    <script src="_static/documentation_options.js?v=2b17f088"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +51,6 @@
     <link rel="next" title="Quick Start" href="quick_start.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -70,8 +66,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -79,6 +86,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -86,8 +94,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -105,8 +113,7 @@
       
         
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -130,24 +137,34 @@
   
   
   
+    
+    
+      
+    
+    
+    <img src="_static/logo-light.svg" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="_static/logo-dark.svg" class="logo__image only-dark" alt=" - Home"/>`);</script>
   
-    <p class="title logo__title">Trovares Connector</p>
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Trovares Connector
+                    xGT Connector
                 </a>
             </li>
         </ul>
@@ -164,12 +181,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="odbc/index.html">ODBC Connector</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.ODBCConnector.html">trovares_connector.ODBCConnector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SQLODBCDriver.html">trovares_connector.SQLODBCDriver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.MongoODBCDriver.html">trovares_connector.MongoODBCDriver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.OracleODBCDriver.html">trovares_connector.OracleODBCDriver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SAPODBCDriver.html">trovares_connector.SAPODBCDriver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="odbc/trovares_connector.SnowflakeODBCDriver.html">trovares_connector.SnowflakeODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.ODBCConnector.html">xgt_connector.ODBCConnector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.SQLODBCDriver.html">xgt_connector.SQLODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.MongoODBCDriver.html">xgt_connector.MongoODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.OracleODBCDriver.html">xgt_connector.OracleODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.SAPODBCDriver.html">xgt_connector.SAPODBCDriver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="odbc/xgt_connector.SnowflakeODBCDriver.html">xgt_connector.SnowflakeODBCDriver</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
@@ -177,8 +194,8 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python API</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="trovares_connector.Neo4jConnector.html">trovares_connector.Neo4jConnector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trovares_connector.Neo4jDriver.html">trovares_connector.Neo4jDriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.Neo4jConnector.html">xgt_connector.Neo4jConnector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xgt_connector.Neo4jDriver.html">xgt_connector.Neo4jDriver</a></li>
 </ul>
 
     </div>
@@ -187,14 +204,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -238,7 +250,7 @@
       
       
       
-      <li><a href="https://github.com/trovares/trovares_connector" target="_blank"
+      <li><a href="https://github.com/trovares/xgt_connector" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -255,7 +267,7 @@
       
       
       
-      <li><a href="https://github.com/trovares/trovares_connector/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/trovares/xgt_connector/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -338,16 +350,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -361,7 +381,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Trovares Connector</h1>
+    <h1>xGT Connector</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -372,9 +392,9 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-rocketgraph-connector">Using the Rocketgraph Connector</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt">Copy entire graph from Neo4j to Rocketgraph xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
@@ -401,10 +421,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="trovares-connector">
-<h1>Trovares Connector<a class="headerlink" href="#trovares-connector" title="Link to this heading">#</a></h1>
-<p>This Python package is for connecting the <a class="reference external" href="https://www.trovares.com/">Trovares xGT</a> graph analytics engine with various applications.
-Trovares xGT can <a class="reference external" href="https://www.trovares.com/trovaresvneo4j">significantly speedup Neo4j queries</a>.</p>
+  <section id="xgt-connector">
+<h1>xGT Connector<a class="headerlink" href="#xgt-connector" title="Link to this heading">#</a></h1>
+<p>This Python package is for connecting the <a class="reference external" href="https://www.rocketgraph.com/">Rocketgraph xGT</a> graph analytics engine with various applications.
+Rocketgraph xGT can <a class="reference external" href="https://rocketgraph.com/benchmarks-neo4j/">significantly speedup Neo4j queries</a>.</p>
 <p>The connector <a class="reference external" href="http://github.com/trovares/trovares_connector/">source code</a> is available on github.</p>
 <p>A basic guide is provided below.
 For a quick start see <a class="reference internal" href="quick_start.html#quick-start"><span class="std std-ref">Quick Start</span></a>.</p>
@@ -413,33 +433,33 @@ The package also provides an optional <a class="reference internal" href="odbc/i
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p>You can install this python package by executing this command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>trovares_connector
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>xgt_connector
 </pre></div>
 </div>
-<p>If you don’t have Trovares xGT, it is available through the AWS Marketplace or you can use the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a>:</p>
+<p>If you don’t have Rocketgraph xGT, it is available through the AWS Marketplace or you can use the <a class="reference external" href="https://hub.docker.com/r/trovares/xgt">Developer version of xGT with Docker</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>trovares/xgt
 docker<span class="w"> </span>run<span class="w"> </span>--publish<span class="o">=</span><span class="m">4367</span>:4367<span class="w"> </span>trovares/xgt
 </pre></div>
 </div>
 <p>For requirements and optional components see <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
 </section>
-<section id="using-the-trovares-connector">
-<h2>Using the Trovares Connector<a class="headerlink" href="#using-the-trovares-connector" title="Link to this heading">#</a></h2>
-<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>trovares_connector</cite> is all that is needed to operate this connector.</p>
+<section id="using-the-rocketgraph-connector">
+<h2>Using the Rocketgraph Connector<a class="headerlink" href="#using-the-rocketgraph-connector" title="Link to this heading">#</a></h2>
+<p>From any Python environment, simply importing both <cite>xgt</cite> and <cite>xgt_connector</cite> is all that is needed to operate this connector.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span>
 </pre></div>
 </div>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <p>These examples show typical usage patterns.</p>
-<section id="copy-entire-graph-from-neo4j-to-trovares-xgt">
-<h3>Copy entire graph from Neo4j to Trovares xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-trovares-xgt" title="Link to this heading">#</a></h3>
+<section id="copy-entire-graph-from-neo4j-to-rocketgraph-xgt">
+<h3>Copy entire graph from Neo4j to Rocketgraph xGT<a class="headerlink" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt" title="Link to this heading">#</a></h3>
 <p>This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
-All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.</p>
+All of these data frames are created in Rocketgraph xGT and then all of the data is copied from Neo4j to xGT.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
@@ -456,10 +476,10 @@ All of these data frames are created in Trovares xGT and then all of the data is
 </section>
 <section id="copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">
 <h3>Copy a portion of a graph based on node labels and/or relationship types<a class="headerlink" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types" title="Link to this heading">#</a></h3>
-<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
+<p>In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Rocketgraph xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">neo4j_server</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
@@ -507,7 +527,7 @@ It’s possible to change the mapping of any label or relationship type by passi
 <h3>Connecting to AuraDB<a class="headerlink" href="#connecting-to-auradb" title="Link to this heading">#</a></h3>
 <p>The connector can connect to AuraDB instances by setting the hostname and appropriate protocol:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 <span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
@@ -519,12 +539,12 @@ It’s possible to change the mapping of any label or relationship type by passi
 </section>
 <section id="using-various-neo4j-drivers">
 <h3>Using various Neo4j drivers<a class="headerlink" href="#using-various-neo4j-drivers" title="Link to this heading">#</a></h3>
-<p>The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
-The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+<p>The connector supports passing a xgt_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The Rocketgraph Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
 These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">Requirements</span></a>.</p>
 <p>Some examples of connecting:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xgt</span>
-<span class="kn">from</span> <span class="nn">trovares_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
+<span class="kn">from</span> <span class="nn">xgt_connector</span> <span class="kn">import</span> <span class="n">Neo4jConnector</span><span class="p">,</span> <span class="n">Neo4jDriver</span>
 <span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
 
 <span class="n">xgt_server</span> <span class="o">=</span> <span class="n">xgt</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
@@ -537,7 +557,7 @@ These additional drivers can provide much faster performance than the default ne
 <span class="c1"># Using Neo4j&#39;s Python driver with a specific database.</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="p">(</span><span class="n">neo4j_driver</span><span class="p">,</span> <span class="s1">&#39;my_database&#39;</span><span class="p">))</span>
 
-<span class="c1"># Using the Trovares Neo4j driver with bolt.</span>
+<span class="c1"># Using the Rocketgraph Neo4j driver with bolt.</span>
 <span class="n">neo4j_driver</span> <span class="o">=</span> <span class="n">Neo4jDriver</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;neo4j&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">))</span>
 <span class="n">conn</span> <span class="o">=</span> <span class="n">Neo4jConnector</span><span class="p">(</span><span class="n">xgt_server</span><span class="p">,</span> <span class="n">neo4j_driver</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="s1">&#39;my_database&#39;</span><span class="p">)</span>
 </pre></div>
@@ -632,28 +652,29 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="RELEASE.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.3 (02-12-2025)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.2 (10-15-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id4">2.6.1 (10-02-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id5">2.6.0 (02-20-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">2.5.0 (02-14-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id10">2.4.0 (02-06-2024)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">2.3.0 (12-18-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id15">2.2.0 (12-07-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.1.0 (08-23-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">2.0.0 (06-14-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id22">1.7.0 (02-22-2023)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.6.0 (10-21-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id27">1.5.2 (08-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">1.5.1 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id31">1.5.0 (07-29-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id33">1.4.0 (07-26-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id37">1.3.1 (07-11-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id39">1.3.0 (07-08-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.2.1 (07-01-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.2.0 (06-24-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id46">1.1.0 (06-17-2022)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id50">1.0.0 (06-13-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id1">2.6.4 (02-25-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id2">2.6.3 (02-12-2025)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id4">2.6.2 (10-15-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id6">2.6.1 (10-02-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id7">2.6.0 (02-20-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id9">2.5.0 (02-14-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id12">2.4.0 (02-06-2024)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id14">2.3.0 (12-18-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id17">2.2.0 (12-07-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id19">2.1.0 (08-23-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id21">2.0.0 (06-14-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id24">1.7.0 (02-22-2023)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id26">1.6.0 (10-21-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id29">1.5.2 (08-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id31">1.5.1 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id33">1.5.0 (07-29-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id35">1.4.0 (07-26-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id39">1.3.1 (07-11-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id41">1.3.0 (07-08-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id43">1.2.1 (07-01-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id45">1.2.0 (06-24-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id48">1.1.0 (06-17-2022)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RELEASE.html#id52">1.0.0 (06-13-2022)</a></li>
 </ul>
 </li>
 </ul>
@@ -663,10 +684,10 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
 <span id="id1"></span><h2>API Details<a class="headerlink" href="#api-details" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="trovares_connector.Neo4jConnector.html#trovares_connector.Neo4jConnector" title="trovares_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="xgt_connector.Neo4jConnector.html#xgt_connector.Neo4jConnector" title="xgt_connector.Neo4jConnector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jConnector</span></code></a>(xgt_server, neo4j_driver[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trovares_connector.Neo4jDriver.html#trovares_connector.Neo4jDriver" title="trovares_connector.Neo4jDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jDriver</span></code></a>([host, bolt_port, http_port, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="xgt_connector.Neo4jDriver.html#xgt_connector.Neo4jDriver" title="xgt_connector.Neo4jDriver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neo4jDriver</span></code></a>([host, bolt_port, http_port, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -702,8 +723,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -713,9 +733,9 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-trovares-connector">Using the Trovares Connector</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-rocketgraph-connector">Using the Rocketgraph Connector</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-trovares-xgt">Copy entire graph from Neo4j to Trovares xGT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-entire-graph-from-neo4j-to-rocketgraph-xgt">Copy entire graph from Neo4j to Rocketgraph xGT</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-a-portion-of-a-graph-based-on-node-labels-and-or-relationship-types">Copy a portion of a graph based on node labels and/or relationship types</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appending-data">Appending data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapping-neo4j-labels-and-types">Mapping Neo4j labels and types</a></li>
@@ -745,7 +765,7 @@ To aid in translating Cypher from the Neo4j version to the inferred graph schema
   <div class="footer-item">
     
 <p class="component-author">
-By trovares.com
+By rocketgraph.com
 </p>
 
   </div>
@@ -779,8 +799,8 @@ By trovares.com
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>

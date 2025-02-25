@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.6.4 (02-25-2025)
+------------------
+
+Changed
+^^^^^^^
+  - Renamed python module from trovares_connector to xgt_connector.
+
 2.6.3 (02-12-2025)
 ------------------
 

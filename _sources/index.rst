@@ -17,16 +17,16 @@
    #
    #===----------------------------------------------------------------------===#
 
-.. trovares_connector documentation master file, created by
+.. xgt_connector documentation master file, created by
    sphinx-quickstart on Fri Apr 29 15:54:24 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Trovares Connector
-==================
+xGT Connector
+=============
 
-This Python package is for connecting the `Trovares xGT <https://www.trovares.com/>`_ graph analytics engine with various applications.
-Trovares xGT can `significantly speedup Neo4j queries <https://www.trovares.com/trovaresvneo4j>`_.
+This Python package is for connecting the `Rocketgraph xGT <https://www.rocketgraph.com/>`_ graph analytics engine with various applications.
+Rocketgraph xGT can `significantly speedup Neo4j queries <https://rocketgraph.com/benchmarks-neo4j/>`_.
 
 The connector `source code <http://github.com/trovares/trovares_connector/>`_ is available on github.
 
@@ -43,9 +43,9 @@ You can install this python package by executing this command:
 
 .. code-block:: bash
 
-   python -m pip install trovares_connector
+   python -m pip install xgt_connector
 
-If you don't have Trovares xGT, it is available through the AWS Marketplace or you can use the `Developer version of xGT with Docker <https://hub.docker.com/r/trovares/xgt>`_:
+If you don't have Rocketgraph xGT, it is available through the AWS Marketplace or you can use the `Developer version of xGT with Docker <https://hub.docker.com/r/trovares/xgt>`_:
 
 .. code-block:: bash
 
@@ -54,31 +54,31 @@ If you don't have Trovares xGT, it is available through the AWS Marketplace or y
 
 For requirements and optional components see :ref:`requirements`.
 
-Using the Trovares Connector
-----------------------------
+Using the Rocketgraph Connector
+-------------------------------
 
-From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
+From any Python environment, simply importing both `xgt` and `xgt_connector` is all that is needed to operate this connector.
 
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector
+   from xgt_connector import Neo4jConnector
 
 Examples
 --------
 
 These examples show typical usage patterns.
 
-Copy entire graph from Neo4j to Trovares xGT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Copy entire graph from Neo4j to Rocketgraph xGT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
-All of these data frames are created in Trovares xGT and then all of the data is copied from Neo4j to xGT.
+All of these data frames are created in Rocketgraph xGT and then all of the data is copied from Neo4j to xGT.
 
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from xgt_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
    neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
@@ -96,13 +96,13 @@ Similarly if no vertices or edges are provided, the transfer will use all of the
 Copy a portion of a graph based on node labels and/or relationship types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Trovares xGT.
+In this example, only some of the node labels (vertex types) and some of the relationship types (edge types) are copied into Rocketgraph xGT.
 Using this idiom requires knowing some schema information about the graph data stored in Neo4j.
 
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from xgt_connector import Neo4jConnector, Neo4jDriver
 
    xgt_server = xgt.Connection()
    neo4j_server = Neo4jDriver(auth=('neo4j', 'foo'))
@@ -163,7 +163,7 @@ The connector can connect to AuraDB instances by setting the hostname and approp
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from xgt_connector import Neo4jConnector, Neo4jDriver
    from neo4j import GraphDatabase
 
    xgt_server = xgt.Connection()
@@ -175,8 +175,8 @@ The connector can connect to AuraDB instances by setting the hostname and approp
 Using various Neo4j drivers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The connector supports passing a trovares_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
-The Trovares Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
+The connector supports passing a xgt_connector.Neo4jDriver, neo4j.BoltDriver, or a neo4j.Neo4jDriver.
+The Rocketgraph Neo4jDriver provides support for connecting to the Neo4j server through a combination of choices such as http, arrow, bolt, or other drivers.
 These additional drivers can provide much faster performance than the default neo4j.Neo4jDriver, but may require the optional components as explained in :ref:`requirements`.
 
 Some examples of connecting:
@@ -184,7 +184,7 @@ Some examples of connecting:
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from xgt_connector import Neo4jConnector, Neo4jDriver
    from neo4j import GraphDatabase
 
    xgt_server = xgt.Connection()
@@ -197,7 +197,7 @@ Some examples of connecting:
    # Using Neo4j's Python driver with a specific database.
    conn = Neo4jConnector(xgt_server, (neo4j_driver, 'my_database'))
 
-   # Using the Trovares Neo4j driver with bolt.
+   # Using the Rocketgraph Neo4j driver with bolt.
    neo4j_driver = Neo4jDriver(auth=('neo4j', 'foo'))
    conn = Neo4jConnector(xgt_server, neo4j_driver, database='my_database')
 
@@ -288,9 +288,9 @@ The following topics provide additional material.
 API Details
 -----------
 
-.. currentmodule:: trovares_connector
+.. currentmodule:: xgt_connector
 
-.. automodule:: trovares_connector
+.. automodule:: xgt_connector
   :no-members:
   :no-inherited-members:
   :noindex:

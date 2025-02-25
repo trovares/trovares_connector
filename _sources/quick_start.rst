@@ -36,7 +36,7 @@ In another terminal install the connector:
 
 .. code-block:: bash
 
-   python -m pip install trovares_connector
+   python -m pip install xgt_connector
 
 Run a query
 -----------
@@ -46,7 +46,7 @@ A simple example below shows connecting to Neo4j and xGT, transferring the whole
 .. code-block:: python
 
    import xgt
-   from trovares_connector import Neo4jConnector, Neo4jDriver
+   from xgt_connector import Neo4jConnector, Neo4jDriver
 
    # Connect to xGT and Neo4j.
    xgt_server = xgt.Connection()

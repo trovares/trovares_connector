@@ -38,7 +38,7 @@ You can install the connector with dependencies for ODBC by executing this comma
 
 .. code-block:: bash
 
-   python -m pip install 'trovares_connector[odbc]'
+   python -m pip install 'xgt_connector[odbc]'
 
 .. _mapping-sql-label:
 
@@ -146,7 +146,7 @@ This example copies test_table from the test database into test_table on xGT.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -176,7 +176,7 @@ The simplest way is to pass the key column as tuple with the table name.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -209,7 +209,7 @@ The simplest way is to pass the frames and source and target columns as tuple wi
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -241,7 +241,7 @@ This example will create the corresponding vertex frame for the source and targe
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -261,7 +261,7 @@ This functionality allows xGT to connect to any ODBC database and read data from
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -296,9 +296,9 @@ Other parameters when transferring to xGT
 * The parameter `row_filter` takes a Cypher fragment that modifies incoming data.
 * The parameter `column_mapping` takes a dictionary of frame column names mapped to either column position or name.
 
-For details about the parameters see: :py:meth:`~trovares_connector.ODBCConnector.transfer_to_xgt` or :py:meth:`~trovares_connector.ODBCConnector.transfer_query_to_xgt`.
+For details about the parameters see: :py:meth:`~xgt_connector.ODBCConnector.transfer_to_xgt` or :py:meth:`~xgt_connector.ODBCConnector.transfer_query_to_xgt`.
 
-For row filtering see the `xGT Documentation <https://docs.trovares.com/user_ref/graphanalytics/tql_fragments.html>`_.
+For row filtering see the `xGT Documentation <https://docs.rocketgraph.com/user_ref/graphanalytics/tql_fragments.html>`_.
 The column names will correspond to the names of the columns coming from the database table.
 For instance the row filter would look something like `WHERE a.key = 1 RETURN toString(a.key), a.name"` where `key` and `name` are two columns from table.
 
@@ -320,7 +320,7 @@ After installing `Databricks' ODBC driver <https://www.databricks.com/spark/odbc
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string="DSN=databricks;Database=test;AuthMech=3;Uid=token;Pwd=f98b2a5c1d34e7890abf123456defabc6789;"
    xgt_server = xgt.Connection()
@@ -339,7 +339,7 @@ After installing `IBM's ODBC driver <https://www.ibm.com/support/pages/db2-odbc-
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string="DSN=db2;Database=test;UID=test;PWD=test;"
    xgt_server = xgt.Connection()
@@ -361,7 +361,7 @@ After installing `Snowflake's ODBC driver <https://docs.snowflake.com/en/user-gu
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SnowflakeODBCDriver
+   from xgt_connector import ODBCConnector, SnowflakeODBCDriver
 
    connection_string="DSN=snowflake;Database=test;Warehouse=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
@@ -380,7 +380,7 @@ This example uses MongoDB 5 with CData's MongoDB ODBC driver.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, MongoODBCDriver
+   from xgt_connector import ODBCConnector, MongoODBCDriver
 
    connection_string="DSN=MongoDB;Database=test;Uid=test;Pwd=test;"
    xgt_server = xgt.Connection()
@@ -402,7 +402,7 @@ This example uses Oracle XE with their ODBC driver.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, OracleODBCDriver
+   from xgt_connector import ODBCConnector, OracleODBCDriver
 
    connection_string = 'DSN={OracleODBC-19};Server=127.0.0.1;Port=1521;Uid=c##test;Pwd=test;DBQ=XE;'
    xgt_server = xgt.Connection()
@@ -431,7 +431,7 @@ This example uses SAP ASE/IQ with their ODBC driver.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SAPODBCDriver
+   from xgt_connector import ODBCConnector, SAPODBCDriver
 
    connection_string = 'DSN={ASE};Server=127.0.0.1;Port=5000;Uid=test;Pwd=test;Database=test;'
    xgt_server = xgt.Connection()
@@ -451,7 +451,7 @@ This example copies test_table from xGT to a test database.
 .. code-block:: python
 
    import xgt
-   from trovares_connector import ODBCConnector, SQLODBCDriver
+   from xgt_connector import ODBCConnector, SQLODBCDriver
 
    connection_string = 'Driver={MariaDB};Server=127.0.0.1;Port=3306;Database=test;Uid=test;Pwd=foo;'
    xgt_server = xgt.Connection()
@@ -476,8 +476,8 @@ Additional Examples
 
 More detailed examples can be found in :ref:`jupyter` or on github:
 
-* `Python Examples <https://github.com/trovares/trovares_connector/tree/main/examples/odbc>`_
-* `Jupyter Notebooks <https://github.com/trovares/trovares_connector/tree/main/jupyter/odbc>`_
+* `Python Examples <https://github.com/trovares/xgt_connector/tree/main/examples/odbc>`_
+* `Jupyter Notebooks <https://github.com/trovares/xgt_connector/tree/main/jupyter/odbc>`_
 
 Limitations
 -----------
@@ -491,7 +491,7 @@ Limitations
 API Details
 -----------
 
-.. currentmodule:: trovares_connector
+.. currentmodule:: xgt_connector
 
 .. autosummary::
   :toctree:
