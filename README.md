@@ -3,7 +3,7 @@
 [![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
 [![Available on Pypi](https://img.shields.io/pypi/v/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
 [![Pypi Versions](https://img.shields.io/pypi/pyversions/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
-[![License](https://img.shields.io/github/license/trovares/xgt_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT) -->
 
 This Python package is for connecting the Rocketgraph xGT graph analytics engine to other applications.
