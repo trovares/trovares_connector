@@ -30,7 +30,7 @@ class TestXgtODBCConnector(unittest.TestCase):
   maxDiff=None
   @classmethod
   def setup_class(cls):
-    # Create a connection to Trovares xGT
+    # Create a connection to Rocketgraph xGT
     cls.xgt = xgt.Connection()
     try:
       cls.xgt.create_namespace('test')

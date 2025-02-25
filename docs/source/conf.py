@@ -119,7 +119,7 @@ html_theme_options = {
 }
 
 # Left sidebar title
-html_title = "Trovares Connector"
+html_title = "xGT Connector"
 
 # Don't execute notebooks when executing.
 nb_execution_mode = "off"
