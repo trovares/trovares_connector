@@ -20,7 +20,7 @@
 # This example creates a graph in SAP ASE/IQ SQL, transfers it to xGT, and
 # runs a query on it in xGT.
 
-from trovares_connector import ODBCConnector, SAPODBCDriver
+from xgt_connector import ODBCConnector, SAPODBCDriver
 import pyodbc
 import xgt
 

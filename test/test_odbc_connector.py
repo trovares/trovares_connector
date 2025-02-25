@@ -23,7 +23,7 @@ import time
 import unittest
 import xgt
 from datetime import date, datetime, time
-from trovares_connector.odbc import ODBCConnector, SQLODBCDriver
+from xgt_connector.odbc import ODBCConnector, SQLODBCDriver
 
 class TestXgtODBCConnector(unittest.TestCase):
   # Print all diffs on failure.

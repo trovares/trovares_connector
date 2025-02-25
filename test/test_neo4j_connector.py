@@ -23,7 +23,7 @@ import time
 
 import neo4j
 import xgt
-from trovares_connector import Neo4jConnector, Neo4jDriver
+from xgt_connector import Neo4jConnector, Neo4jDriver
 
 @parameterized_class([
    { "driver": "neo4j" },

@@ -18,7 +18,7 @@
 #===----------------------------------------------------------------------===#
 
 from pprint import pprint
-from trovares_connector import Neo4jConnector, Neo4jDriver
+from xgt_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()

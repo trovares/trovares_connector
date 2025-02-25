@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+2.6.3 (02-24-2025)
+------------------
+
+Changed
+^^^^^^^
+  - Renamed python module to xgt_connector.
+
 2.6.3 (02-12-2025)
 ------------------
 

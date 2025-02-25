@@ -1,13 +1,13 @@
-# trovares_connector Package
+# xgt_connector Package
 
-[![CI](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
-[![Available on Pypi](https://img.shields.io/pypi/v/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
-[![Pypi Versions](https://img.shields.io/pypi/pyversions/trovares_connector)](https://pypi.python.org/pypi/trovares_connector)
-[![License](https://img.shields.io/github/license/trovares/trovares_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
-[![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT)
+[![CI](https://github.com/trovares/xgt_connector/actions/workflows/pytest.yml/badge.svg)](https://github.com/trovares/trovares_connector/actions/workflows/pytest.yml)
+[![Available on Pypi](https://img.shields.io/pypi/v/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
+[![Pypi Versions](https://img.shields.io/pypi/pyversions/xgt_connector)](https://pypi.python.org/pypi/xgt_connector)
+[![License](https://img.shields.io/github/license/trovares/xgt_connector)](https://github.com/trovares/trovares_connector/blob/main/LICENSE)
+<!-- [![Twitter Follow](https://img.shields.io/twitter/follow/TrovaresxGT)](https://twitter.com/TrovaresxGT) -->
 
-This Python package is for connecting the Trovares xGT graph analytics engine to other applications.
-Trovares xGT can [significantly speedup Neo4j queries](https://www.trovares.com/trovaresvneo4j).
+This Python package is for connecting the Rocketgraph xGT graph analytics engine to other applications.
+Rocketgraph xGT can [significantly speedup Neo4j queries](https://rocketgraph.com/benchmarks-neo4j/).
 
 The default connector provided is for Neo4j or AuraDB.
 The package also provides an optional ODBC connector for connecting to databases or applications that support ODBC.
@@ -16,7 +16,7 @@ Information about the ODBC connector can be found [in the documentation](https:/
 <table>
   <tr>
     <td><b>Homepage:</b></td>
-    <td><a href="https://www.trovares.com">trovares.com</a></td>
+    <td><a href="https://www.rocketgraph.com">rocketgraph.com</a></td>
   </tr>
   <tr>
     <td><b>Documentation:</b></td>
@@ -33,36 +33,36 @@ Information about the ODBC connector can be found [in the documentation](https:/
  - [Neo4j Python](https://pypi.org/project/neo4j/)
  - [xGT Python](https://pypi.org/project/xgt/)
  - [Pyarrow](https://pypi.org/project/pyarrow/)
- - [Trovares xGT](https://www.trovares.com)
+ - [Rocketgraph xGT](https://www.rocketgraph.com)
 
 ## Installation
 
 You can install this python package by executing this command:
 
 ```bash
-python -m pip install trovares_connector
+python -m pip install xgt_connector
 ```
 
 If you want to use the ODBC connector, you can install the optional dependencies like so:
 ```bash
-python -m pip install 'trovares_connector[odbc]'
+python -m pip install 'xgt_connector[odbc]'
 ```
 
-If you don't have Trovares xGT, you can install and run the [Developer version](https://hub.docker.com/r/trovares/xgt) from Docker:
+If you don't have Rocketgraph xGT, you can install and run the [Developer version](https://hub.docker.com/r/trovares/xgt) from Docker:
 
 ```bash
 docker pull trovares/xgt
 docker run --publish=4367:4367 trovares/xgt
 ```
-## Using the trovares_connector
+## Using the xgt_connector
 
-From any Python environment, simply importing both `xgt` and `trovares_connector` is all that is needed to operate this connector.
+From any Python environment, simply importing both `xgt` and `xgt_connector` is all that is needed to operate this connector.
 
 A simple example below shows connecting to Neo4j and xGT, transferring the whole graph database to xGT, running a query in xGT, and printing the results:
 
 ```python
 import xgt
-from trovares_connector import Neo4jConnector, Neo4jDriver
+from xgt_connector import Neo4jConnector, Neo4jDriver
 
 # Connect to xGT and Neo4j.
 xgt_server = xgt.Connection()

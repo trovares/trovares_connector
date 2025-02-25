@@ -23,7 +23,7 @@ scriptdir=$(cd $(dirname $0) && pwd)
 # go to repo root
 cd ${scriptdir}/..
 
-target=src/trovares_connector/neo4j_connector/frontend
+target=src/xgt_connector/neo4j_connector/frontend
 
 curl -o antlr-4.jar https://www.antlr.org/download/antlr-4.10.1-complete.jar
 

@@ -18,7 +18,7 @@
 #===----------------------------------------------------------------------===#
 
 from pprint import pprint
-from trovares_connector import Neo4jConnector
+from xgt_connector import Neo4jConnector
 from neo4j import GraphDatabase
 import xgt
 

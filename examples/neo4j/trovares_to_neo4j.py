@@ -20,7 +20,7 @@
 # This example just creates a graph in xGT, transfers it to Neo4j, and
 # runs the same query in xGT in Neo4j.
 
-from trovares_connector import Neo4jConnector, Neo4jDriver
+from xgt_connector import Neo4jConnector, Neo4jDriver
 import xgt
 
 xgt_server = xgt.Connection()

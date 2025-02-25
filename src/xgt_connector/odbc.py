@@ -341,7 +341,7 @@ class ODBCConnector(object):
     def create_xgt_schemas(self, xgt_schemas : Map, append : bool = False,
                            force : bool = False, easy_edges : bool = False) -> None:
         """
-        Creates table, vertex and/or edge frames in Trovares xGT.
+        Creates table, vertex and/or edge frames in Rocketgraph xGT.
 
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
@@ -440,7 +440,7 @@ class ODBCConnector(object):
                         column_mapping : Optional[Map[str, Union[str, int]]] = None,
                         suppress_errors : bool = False, row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
-        Copies data from the ODBC application to Trovares xGT.
+        Copies data from the ODBC application to Rocketgraph xGT.
 
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
@@ -521,7 +521,7 @@ class ODBCConnector(object):
                               suppress_errors : bool = False,
                               row_filter : str = None, on_duplicate_keys : str = "error") -> None:
         """
-        Copies data from the ODBC application to Trovares xGT.
+        Copies data from the ODBC application to Rocketgraph xGT.
 
         This function first infers the schemas for the query.
         Then it maps to the type specificed in mapping.
@@ -599,7 +599,7 @@ class ODBCConnector(object):
                          on_duplicate_keys : str = "error") -> None:
         """
         Copies data from the ODBC application to the requested table, vertex and/or edge frames
-        in Trovares xGT.
+        in Rocketgraph xGT.
 
         This function copies data from the ODBC application to xGT for all of the tables, vertices
         and edges, one frame at a time.
@@ -708,7 +708,7 @@ class ODBCConnector(object):
                          tables : Iter[str] = None, namespace : str = None,
                          batch_size : int = 10000) -> None:
         """
-        Copies data from Trovares xGT to an ODBC application.
+        Copies data from Rocketgraph xGT to an ODBC application.
 
         Parameters
         ----------

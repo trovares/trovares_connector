@@ -301,7 +301,7 @@ class Neo4jConnector(object):
         ----------
         xgt_server : xgt.Connection
             Connection object to xGT.
-        neo4j_driver : neo4j.Neo4jDriver, neo4j.BoltDriver, tuple(neo4j.Neo4jDriver, database), tuple(neo4j.BoltDriver, database), or trovares_connector.Neo4jDriver
+        neo4j_driver : neo4j.Neo4jDriver, neo4j.BoltDriver, tuple(neo4j.Neo4jDriver, database), tuple(neo4j.BoltDriver, database), or xgt_connector.Neo4jDriver
             Connection object to Neo4j.
         verbose : bool
             Print detailed information during calls.
@@ -344,7 +344,7 @@ class Neo4jConnector(object):
 
     @property
     def xgt_server(self):
-        """Retrieve the Trovares driver used to connect to the xGT server."""
+        """Retrieve the xGT driver used to connect to the xGT server."""
         return self._xgt_server
 
     @property
@@ -542,7 +542,7 @@ class Neo4jConnector(object):
     def create_xgt_schemas(self, xgt_schemas, append = False,
                            force = False) -> None:
         """
-        Creates vertex and/or edge frames in Trovares xGT.
+        Creates vertex and/or edge frames in Rocketgraph xGT.
 
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
@@ -635,7 +635,7 @@ class Neo4jConnector(object):
     def copy_data_to_xgt(self, xgt_schemas) -> None:
         """
         Copies data from Neo4j to the requested vertex and/or edge frames
-        in Trovares xGT.
+        in Rocketgraph xGT.
 
         This function copies data from Neo4j to xGT for all of the nodes and
         all of the relationships, one frame at a time.
@@ -741,7 +741,7 @@ class Neo4jConnector(object):
                         append = False, force = False,
                         import_edge_nodes = True) -> None:
         """
-        Copies data from Neo4j to Trovares xGT.
+        Copies data from Neo4j to Rocketgraph xGT.
 
         This function first infers the schemas for all of the needed frames in xGT to
         store the requested data.
@@ -792,7 +792,7 @@ class Neo4jConnector(object):
     def transfer_to_neo4j(self, vertices = None, edges = None, namespace = None,
                           edge_keys = False, vertex_keys = False):
         """
-        Copies data from Trovares xGT to Neo4j.
+        Copies data from Rocketgraph xGT to Neo4j.
 
         All of the nodes and all of the relationships are copied,
         one frame at a time, from xGT to Neo4j.
@@ -972,17 +972,17 @@ class Neo4jConnector(object):
 
     def translate_query(self, query:str) -> str:
         """
-        Translate a Cypher query to be ready to run in Trovares xGT.
+        Translate a Cypher query to be ready to run in Rocketgraph xGT.
 
         It is sometimes necessary to make alterations to naming of graph components
         as part of the automatic graph schema creation from a Neo4j database to 
-        hold data in a Trovares xGT server.  One example of this is when a
+        hold data in a Rocketgraph xGT server.  One example of this is when a
         relationship type consists of some edges from one source node label and
         other edges from a different source node label.
 
         Given a Cypher query that formulated to run against a Neo4j database, there
         may be some changes required in order to run that same query against a
-        Trovares xGT server holding a graph schema that has been auto-generated.
+        Rocketgraph xGT server holding a graph schema that has been auto-generated.
 
         Parameters
         ----------

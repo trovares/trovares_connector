@@ -29,16 +29,16 @@ class QueryTranslator(object):
     """
     It is sometimes necessary to make alterations to naming of graph components
     as part of the automatic graph schema creation from a Neo4j database to 
-    hold data in a Trovares xGT server.  One example of this is when a
+    hold data in a Rocketgraph xGT server.  One example of this is when a
     relationship type consists of some edges from one source node label and
     other edges from a different source node label.
 
     Given a Cypher query that formulated to run against a Neo4j database, there
     may be some changes required in order to run that same query against a
-    Trovares xGT server holding a graph schema that has been auto-generated.
+    Rocketgraph xGT server holding a graph schema that has been auto-generated.
 
     This class provides the service of translating a Neo4j-targeted query into
-    a Trovares xGT-targeted query.
+    a Rocketgraph xGT-targeted query.
     """
     def __init__(self, xgt_schemas, verbose = False):
         """
@@ -47,7 +47,7 @@ class QueryTranslator(object):
         Parameters
         ----------
         xgt_schemas : dict
-            Information about an auto-generated schema for Trovares xGT
+            Information about an auto-generated schema for Rocketgraph xGT
             based on a Neo4j database.  The structure of this schema should
             be the same the data returned from the
             :py:meth:`~Neo4jConnector.get_xgt_schemas` method.
@@ -76,7 +76,7 @@ class QueryTranslator(object):
     
     def translate(self, query:str) -> str:
         """
-        Translates a Cypher query from a Neo4j-targeted query to a Trovares
+        Translates a Cypher query from a Neo4j-targeted query to a Rocketgraph
         xGT-targeted query.
 
         Parameters

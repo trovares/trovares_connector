@@ -36,12 +36,12 @@ print(f"Sys.path: {sys.path}")
 
 # -- Project information -----------------------------------------------------
 
-project = 'trovares_connector'
+project = 'xgt_connector'
 copyright = '2022-2025, Trovares, Inc.'
-author = 'trovares.com'
+author = 'rocketgraph.com'
 
 # The full version, including alpha/beta/rc tags
-release = '2.6.3'
+release = '2.6.4'
 
 # -- General configuration ---------------------------------------------------
 
@@ -108,7 +108,7 @@ html_show_sourcelink = False
 html_theme_options = {
   'home_page_in_toc' : True,
   'extra_navbar' : '',
-  'repository_url' : 'https://github.com/trovares/trovares_connector',
+  'repository_url' : 'https://github.com/trovares/xgt_connector',
   'path_to_docs' : 'docs/source',
   'repository_branch' : 'main',
   #"use_edit_page_button": True,

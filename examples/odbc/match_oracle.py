@@ -20,7 +20,7 @@
 # This example creates a graph in Oracle SQL, transfers it to xGT, and
 # runs a query on it in xGT.
 
-from trovares_connector import ODBCConnector, OracleODBCDriver
+from xgt_connector import ODBCConnector, OracleODBCDriver
 import pyodbc
 import xgt
 
