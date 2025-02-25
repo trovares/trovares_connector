@@ -30,9 +30,10 @@
 #
 import os
 import sys
+from docutils import nodes
+
 sys.path.insert(0, os.path.abspath('../../src'))
 print(f"Sys.path: {sys.path}")
-
 
 # -- Project information -----------------------------------------------------
 
@@ -144,7 +145,9 @@ nb_execution_mode = "off"
 def setup(app):
   # This adds a stylesheet 'link' tag to each page using RELATIVE paths rather
   # than a single fixed path if it was added directly to the 'layout.html' file.
-  app.add_css_file('trovares.css')
+  app.add_css_file('rocketgraph.css')
+  # Add special classes for autodocs.
+  app.connect("doctree-resolved", add_autodoc_classes)
 
 # Napoleon settings.
 # This module enable Sphinx to process NumPy and Google docstrings.
@@ -159,3 +162,16 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
+
+def add_autodoc_classes(app, doctree, docname):
+  # Add autodoc-section class to sections that are determined to be python api.
+  # This is just inferred from the parse tree.
+  for node in doctree.traverse():
+    if isinstance(node, nodes.section):  # Ensures we only process <section> elements
+      # If the first element for a section is py, then it is an autodoc python type.
+      for child in node.traverse():
+        if (isinstance(child, nodes.Element) and
+            child.get("classes") and
+            len(child["classes"]) > 0 and
+            child["classes"][0] == "py"):
+          node["classes"].append("autodoc-section")
