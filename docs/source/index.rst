@@ -59,8 +59,8 @@ If you don't have Rocketgraph xGT, it is available through the AWS Marketplace o
 
 For requirements and optional components see :ref:`requirements`.
 
-Using the Rocketgraph Connector
--------------------------------
+Using the |xgt| Connector
+-------------------------
 
 From any Python environment, simply importing both `xgt` and `xgt_connector` is all that is needed to operate this connector.
 
@@ -74,8 +74,8 @@ Examples
 
 These examples show typical usage patterns.
 
-Copy entire graph from Neo4j to Rocketgraph xGT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Copy entire graph from Neo4j to Rocketgraph |xgt|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This example uses two properties of the connector object that return a list of all of the node labels (vertex types) and all of the relationship types (edge types) in the Neo4j data.
 All of these data frames are created in Rocketgraph xGT and then all of the data is copied from Neo4j to xGT.

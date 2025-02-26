@@ -88,14 +88,14 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 #html_theme = 'alabaster'
-html_theme = 'sphinx_book_theme'
+html_theme = 'pydata_sphinx_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-#html_js_files = ["custom.js"]
+html_js_files = ["rocketgraph-icon.js", "pypi-icon.js"]
 
 # Combined with the ".. autosummary" directive in rST files and the
 # sphinx-apidoc program, this option enables building separate pages for
@@ -109,25 +109,62 @@ html_show_sourcelink = False
 # These options are specific to the 'sphinx_book_theme' currently used. If/when
 # we switch to a custom theme, this will change or may go away entirely.
 html_theme_options = {
-  'home_page_in_toc' : True,
-  'extra_navbar' : '',
-  'repository_url' : 'https://github.com/trovares/xgt_connector',
-  'path_to_docs' : 'docs/source',
-  'repository_branch' : 'main',
-  #"use_edit_page_button": True,
-  'use_issues_button': True,
-  'use_repository_button': True,
-  'use_download_button': True,
+  'use_edit_page_button': False,
   'show_toc_level': 2,
+  "external_links": [
+    {
+      "url": "https://rocketgraph.com/",
+      "name": "Rocketgraph Website",
+    },
+    {
+      "url": "https://docs.rocketgraph.com/",
+      "name": "Rocketgraph xGT",
+    },
+  ],
+  "header_links_before_dropdown": 4,
   'logo': {
-      'image_ligh': '_static/logo-light.svg',
-      'image_dark': '_static/logo-dark.svg',
+    'image_ligh': '_static/logo-light.svg',
+    'image_dark': '_static/logo-dark.svg',
   },
+  "icon_links": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/trovares/trovares_connector",
+      "icon": "fa-brands fa-github",
+    },
+    {
+      "name": "PyPI",
+      "url": "https://pypi.org/project/xgt_connector",
+      "icon": "fa-custom fa-pypi",
+    },
+    {
+      "name": "Rocketgraph",
+      "url": "https://rocketgraph.com",
+      "icon": "fa-custom fa-rocketgraph",
+    },
+  ],
+}
+
+html_context = {
+  # "github_url": "https://github.com", # or your GitHub Enterprise site
+  "github_user": "trovares",
+  "github_repo": "trovares_connector",
+  "github_version": "main",
+  "doc_path": "docs/source",
 }
 
 # Left sidebar title
 html_title = ""
 html_logo = "_static/logo-light.svg"
+
+# Workaround to disable empty sidebars.
+html_sidebars = {
+  "quick_start": [],
+  "requirements": [],
+  "RELEASE": [],
+  "xgt_connector.Neo4jConnector": [],
+  "xgt_connector.Neo4jDriver": [],
+}
 
 # Don't execute notebooks when executing.
 nb_execution_mode = "off"

@@ -38,3 +38,25 @@ pre, code {
 .nocap {
   text-transform: none !important;
 }
+
+/* prevent logo from being to wide and text clashing with next item */
+
+.navbar-header-items__start .navbar-item {
+  width: 100%;
+}
+
+.navbar-item .navbar-brand {
+  width: 90%;
+  min-width: 250px;
+}
+
+.navbar-brand img {
+  min-width: 0;
+  height: auto;
+  max-height: 100%;
+  flex-shrink: 1;
+}
+
+.navbar-brand p {
+  flex: 0 1 auto;
+}
